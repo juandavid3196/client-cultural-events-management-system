@@ -90,6 +90,11 @@
 					transition: background-color 0.3s;
 				}
 
+				.selected {
+					background-color: #3995F8;
+					color: white;
+				}
+
 				.eyeslashes-box:hover {
 					background-color: #3995F8;
 					color: white;
@@ -156,6 +161,14 @@
 							select:focus {
 								outline: none;
 								border: 1.5px solid #3995F8;
+							}
+
+							.error-message {
+								color: red;
+								font-size: 12px;
+								display: flex;
+								align-items: center;
+								gap: 4px;
 							}
 						}
 

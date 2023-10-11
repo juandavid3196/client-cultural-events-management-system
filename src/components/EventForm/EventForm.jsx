@@ -6,6 +6,9 @@ const EventForm = ({ onCloseForm }) => {
 
 	const [section, setSection] = useState('evento');
 	const [close, setClose] = useState(false);
+
+	const [errors, setErrors] = useState({});
+
 	const [formData, setFormData] = useState({
 		eventType: '',
 		state: '',
@@ -33,13 +36,30 @@ const EventForm = ({ onCloseForm }) => {
 
 	});
 
+	const validateForm = () => {
+		const newErrors = {};
+		const regex = /^[0-9]+$/;
+		if (regex.test(formData.phone)) {
+			newErrors.phone = true;
+		}
+		if (parseInt(formData.duration) < 0) {
+			newErrors.duration = true
+		}
+		return newErrors;
+	};
+
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
 		setFormData({
 			...formData,
 			[name]: value,
 		});
+
+		const newErrors = validateForm();
+		setErrors(newErrors);
+
 	};
+
 
 	const handleClose = () => {
 		setClose(true);
@@ -57,10 +77,10 @@ const EventForm = ({ onCloseForm }) => {
 				</div>
 				<div className='main-form'>
 					<div className='form-eyeslashes'>
-						<span className='eyeslashes-box' onClick={() => setSection('evento')}>Evento</span>
-						<span className='eyeslashes-box' onClick={() => setSection('cliente')}>Cliente</span>
-						<span className='eyeslashes-box' onClick={() => setSection('tecnica')}>Tecnica</span>
-						<span className='eyeslashes-box' onClick={() => setSection('comunicaciones')}>Comunicaciones</span>
+						<span className={`eyeslashes-box ${section === 'evento' ? 'selected' : ''}`} onClick={() => setSection('evento')}>Evento</span>
+						<span className={`eyeslashes-box ${section === 'cliente' ? 'selected' : ''}`} onClick={() => setSection('cliente')}>Cliente</span>
+						<span className={`eyeslashes-box ${section === 'tecnica' ? 'selected' : ''}`} onClick={() => setSection('tecnica')}>Tecnica</span>
+						<span className={`eyeslashes-box ${section === 'comunicaciones' ? 'selected' : ''}`} onClick={() => setSection('comunicaciones')}>Comunicaciones</span>
 					</div>
 					<form action="">
 
@@ -151,6 +171,7 @@ const EventForm = ({ onCloseForm }) => {
 										<div className="form-box">
 											<label htmlFor="phone">Celular</label>
 											<input type="text" name='phone' onChange={handleInputChange} value={formData.phone} placeholder='Celular' />
+											{!errors.phone && formData.phone != '' && (<span className='error-message'>Este campo solo permite numeros <i class="fa-solid fa-circle-xmark"></i></span>)}
 										</div>
 										<div className="form-box">
 											<label htmlFor="identification">Identificación</label>
@@ -180,6 +201,7 @@ const EventForm = ({ onCloseForm }) => {
 										<div className="form-box">
 											<label htmlFor="duration">Duracion</label>
 											<input type="number" name='duration' onChange={handleInputChange} value={formData.duration} placeholder='0 Horas' />
+											{errors.duration && formData.duration != '' && (<span className='error-message'>El valor debe ser mayor a 0<i class="fa-solid fa-circle-xmark"></i></span>)}
 										</div>
 										<div className="form-box">
 											<label htmlFor="mountingDate">Fecha Montaje</label>
