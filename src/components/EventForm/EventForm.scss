@@ -33,6 +33,7 @@
 		flex-direction: column;
 		width: 90%;
 		min-height: 430px;
+		overflow: hidden;
 		opacity: 0;
 		transition: opacity 0.5s ease-in-out;
 		animation: fadeIn 0.5s ease forwards;
@@ -182,7 +183,7 @@
 						gap: 25px;
 
 						.form-box {
-							width: 45%;
+							width: 50%;
 						}
 					}
 

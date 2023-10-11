@@ -4,8 +4,42 @@ import '../EventForm/EventForm.scss';
 
 const EventForm = ({ onCloseForm }) => {
 
-	const [section, setSection] = useState('administrativa');
+	const [section, setSection] = useState('evento');
 	const [close, setClose] = useState(false);
+	const [formData, setFormData] = useState({
+		eventType: '',
+		state: '',
+		generalName: '',
+		specificName: '',
+		dateStart: '',
+		dateFinishing: '',
+		hourStart: '',
+		hourFinishing: '',
+		place: '',
+		userName: '',
+		phone: '',
+		identification: '',
+		email: '',
+		description: '',
+		duration: '',
+		mountingDate: '',
+		mountingHour: '',
+		technicContact: '',
+		communicationContact: '',
+		pulep: '',
+		accessData: '',
+		ticketCompany: '',
+		ageRestriction: '',
+
+	});
+
+	const handleInputChange = (e) => {
+		const { name, value } = e.target;
+		setFormData({
+			...formData,
+			[name]: value,
+		});
+	};
 
 	const handleClose = () => {
 		setClose(true);
@@ -23,21 +57,45 @@ const EventForm = ({ onCloseForm }) => {
 				</div>
 				<div className='main-form'>
 					<div className='form-eyeslashes'>
-						<span className='eyeslashes-box' onClick={() => setSection('administrativa')}>Administrativa</span>
-						<span className='eyeslashes-box' onClick={() => setSection('produccion')}>Producción</span>
+						<span className='eyeslashes-box' onClick={() => setSection('evento')}>Evento</span>
+						<span className='eyeslashes-box' onClick={() => setSection('cliente')}>Cliente</span>
 						<span className='eyeslashes-box' onClick={() => setSection('tecnica')}>Tecnica</span>
 						<span className='eyeslashes-box' onClick={() => setSection('comunicaciones')}>Comunicaciones</span>
 					</div>
 					<form action="">
 
 						{
-							section === 'administrativa' && (
+							section === 'evento' && (
 								<div className='form-section'>
 									<span className='section-title'>Datos del Evento</span>
-									<div className="row">
+									<div className="row two-colums">
 										<div className="form-box">
-											<label htmlFor="name">Nombre</label>
-											<input type="text" name='name' placeholder='Nombre' />
+											<label htmlFor="eventType">Tipo de Evento</label>
+											<select name="eventType" onChange={handleInputChange} value={formData.eventType}>
+												<option value="propio">Propio</option>
+												<option value="copro">Co-Producción</option>
+												<option value="canje">Canje</option>
+												<option value="apoyo">Apoyo</option>
+												<option value="alquiler">Alquiler</option>
+											</select>
+										</div>
+										<div className="form-box">
+											<label htmlFor="state">Estado</label>
+											<select name="state" onChange={handleInputChange} value={formData.state}>
+												<option value="confirmado">Confirmado</option>
+												<option value="pre-reserva">Pre-reserva</option>
+												<option value="cancelado">Cancelado</option>
+											</select>
+										</div>
+									</div>
+									<div className="row two-colums">
+										<div className="form-box">
+											<label htmlFor="generalName">Nombre General</label>
+											<input type="text" name='generalName' onChange={handleInputChange} value={formData.generalName} placeholder='Nombre General' />
+										</div>
+										<div className="form-box">
+											<label htmlFor="specificName">Nombre Especifico</label>
+											<input type="text" name='specificName' onChange={handleInputChange} value={formData.specificName} placeholder='Nombre Especifico' />
 										</div>
 									</div>
 
@@ -45,29 +103,29 @@ const EventForm = ({ onCloseForm }) => {
 									<div className="row two-colums">
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="date-start">Inicio</label>
-												<input type="date" name='date-start' placeholder='dd/mm/yy' />
+												<label htmlFor="dateStart">Inicio</label>
+												<input type="date" name='dateStart' onChange={handleInputChange} value={formData.dateStart} placeholder='dd/mm/yy' />
 											</div>
 											<div className="form-box">
-												<label htmlFor="date-finishing">Finalización</label>
-												<input type="date" name='date-finishing' placeholder='dd/mm/yy' />
+												<label htmlFor="dateFinishing">Finalización</label>
+												<input type="date" name='dateFinishing' onChange={handleInputChange} value={formData.dateFinishing} placeholder='dd/mm/yy' />
 											</div>
 										</div>
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="hour-start">Inicio</label>
-												<input type="time" name='hour-start' placeholder='00:00' />
+												<label htmlFor="hourStart">Inicio</label>
+												<input type="time" name='hourStart' onChange={handleInputChange} value={formData.hourStart} placeholder='00:00' />
 											</div>
 											<div className="form-box">
-												<label htmlFor="hour-finishing">Finalización</label>
-												<input type="time" name='hour-finishing' placeholder='00:00' />
+												<label htmlFor="hourFinishing">Finalización</label>
+												<input type="time" name='hourFinishing' onChange={handleInputChange} value={formData.hourFinishing} placeholder='00:00' />
 											</div>
 										</div>
 									</div>
 									<div className="row">
 										<div className="form-box">
 											<label htmlFor="place">Lugar</label>
-											<select name="place">
+											<select name="place" onChange={handleInputChange} value={formData.place}>
 												<option value="sala">sala</option>
 												<option value="cafe-teatro">Cafe Teatro</option>
 												<option value="plazoleta">Plazoleta</option>
@@ -80,35 +138,35 @@ const EventForm = ({ onCloseForm }) => {
 							)
 						}
 						{
-							section === 'produccion' && (
+							section === 'cliente' && (
 								<div className="form-section">
 									<span className='section-title'>Datos del Solicitante</span>
 									<div className="row">
 										<div className="form-box">
-											<label htmlFor="user-name">Nombre</label>
-											<input type="text" name='user-name' placeholder='Name' />
+											<label htmlFor="userName">Nombre</label>
+											<input type="text" name='userName' onChange={handleInputChange} value={formData.userName} placeholder='Name' />
 										</div>
 									</div>
 									<div className="row two-colums">
 										<div className="form-box">
 											<label htmlFor="phone">Celular</label>
-											<input type="text" name='phone' placeholder='Celular' />
+											<input type="text" name='phone' onChange={handleInputChange} value={formData.phone} placeholder='Celular' />
 										</div>
 										<div className="form-box">
 											<label htmlFor="identification">Identificación</label>
-											<input type="text" name='identification' placeholder='C.C, RUT, NIT' />
+											<input type="text" name='identification' onChange={handleInputChange} value={formData.identification} placeholder='C.C, RUT, NIT' />
 										</div>
 									</div>
 									<div className="row">
 										<div className="form-box">
 											<label htmlFor="email">Email</label>
-											<input type="email" name='email' placeholder='Correo Electronico' />
+											<input type="email" name='email' onChange={handleInputChange} value={formData.email} placeholder='Correo Electronico' />
 										</div>
 									</div>
 									<div className="row">
 										<div className="form-box">
 											<label htmlFor="description">Descripción</label>
-											<input type="text" name='description' placeholder='Breve descripción del evento' />
+											<input type="text" name='description' onChange={handleInputChange} value={formData.description} placeholder='Breve descripción del evento' />
 										</div>
 									</div>
 								</div>
@@ -121,21 +179,21 @@ const EventForm = ({ onCloseForm }) => {
 									<div className="row three-colums">
 										<div className="form-box">
 											<label htmlFor="duration">Duracion</label>
-											<input type="number" name='duration' placeholder='0 Horas' />
+											<input type="number" name='duration' onChange={handleInputChange} value={formData.duration} placeholder='0 Horas' />
 										</div>
 										<div className="form-box">
-											<label htmlFor="mounting-date">Fecha Montaje</label>
-											<input type="date" name='mounting-date' placeholder='dd/mm/yy' />
+											<label htmlFor="mountingDate">Fecha Montaje</label>
+											<input type="date" name='mountingDate' onChange={handleInputChange} value={formData.mountingDate} placeholder='dd/mm/yy' />
 										</div>
 										<div className="form-box">
-											<label htmlFor="mounting-hour">Hora Montaje</label>
-											<input type="time" name='mounting-hour' placeholder='00:00' />
+											<label htmlFor="mountingHour">Hora Montaje</label>
+											<input type="time" name='mountingHour' onChange={handleInputChange} value={formData.mountingHour} placeholder='00:00' />
 										</div>
 									</div>
 									<div className="row">
 										<div className="form-box">
-											<label htmlFor="technic-contact">Contacto montaje tecnico</label>
-											<input type="text" name='technic-contact' placeholder='Nombre' />
+											<label htmlFor="technicContact">Contacto montaje tecnico</label>
+											<input type="text" name='technicContact' onChange={handleInputChange} value={formData.technicContact} placeholder='Nombre' />
 										</div>
 									</div>
 								</div>
@@ -147,31 +205,31 @@ const EventForm = ({ onCloseForm }) => {
 									<span className='section-title'>Datos Comunicaciones</span>
 									<div className="row">
 										<div className="form-box">
-											<label htmlFor="communication-contact">Contacto comunicaciones</label>
-											<input type="text" name='communication-contact' placeholder='Artista, Manager, Comunicador' />
+											<label htmlFor="communicationContact">Contacto comunicaciones</label>
+											<input type="text" name='communicationContact' onChange={handleInputChange} value={formData.communicationContact} placeholder='Artista, Manager, Comunicador' />
 										</div>
 									</div>
 									<div className="row two-colums">
 										<div className="form-box">
 											<label htmlFor="pulep">PULEP</label>
-											<select name="pulep">
+											<select name="pulep" onChange={handleInputChange} value={formData.pulep}>
 												<option value="True">Aplica</option>
 												<option value="False">No Aplica</option>
 											</select>
 										</div>
 										<div className="form-box">
-											<label htmlFor="access-data">Información de ingreso</label>
-											<input type="text" name='access-data' placeholder='Modalida, Costo, Cuenta bancaria' />
+											<label htmlFor="accessData">Información de ingreso</label>
+											<input type="text" name='accessData' onChange={handleInputChange} value={formData.accessData} placeholder='Modalida, Costo, Cuenta bancaria' />
 										</div>
 									</div>
 									<div className="row">
 										<div className="form-box">
-											<label htmlFor="ticket-company">Empresa de boleteria</label>
-											<input type="text" name='ticket-company' placeholder='Nombre Empresa' />
+											<label htmlFor="ticketCompany">Empresa de boleteria</label>
+											<input type="text" name='ticketCompany' onChange={handleInputChange} value={formData.ticketCompany} placeholder='Nombre Empresa' />
 										</div>
 										<div className="form-box">
-											<label htmlFor="age-restriction">Restriccion de edad</label>
-											<select name="age-restriction">
+											<label htmlFor="ageRestriction">Restriccion de edad</label>
+											<select name="ageRestriction" onChange={handleInputChange} value={formData.ageRestriction}>
 												<option value="NA" selected>No Aplica</option>
 												<option value="10" >10</option>
 												<option value="11" >11</option>
