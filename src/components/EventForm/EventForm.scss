@@ -1,0 +1,238 @@
+.form-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	backdrop-filter: blur(10px);
+	z-index: 1000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	opacity: 0;
+	transition: opacity 0.5s ease-in-out;
+	animation: fadeIn 0.5s ease forwards;
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+
+		to {
+			opacity: 1;
+		}
+	}
+
+
+	.form-main-box {
+		background-color: #F2F1F6;
+		border-radius: 5px;
+		z-index: 1001;
+		display: flex;
+		flex-direction: column;
+		width: 90%;
+		min-height: 430px;
+		opacity: 0;
+		transition: opacity 0.5s ease-in-out;
+		animation: fadeIn 0.5s ease forwards;
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+		.form-title {
+			display: flex;
+			align-items: center;
+			padding: 10px;
+			background-color: #1F4E99;
+
+			span {
+				width: 95%;
+				text-align: center;
+				color: white;
+				font-weight: 16px;
+				font-weight: 500;
+			}
+
+			i {
+				color: rgb(218, 33, 33);
+				font-size: 18px;
+				cursor: pointer;
+			}
+		}
+
+		.main-form {
+
+			.form-eyeslashes {
+				width: 100%;
+				height: 35px;
+				display: flex;
+
+				.eyeslashes-box {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					padding: 0 10px;
+					background-color: white;
+					height: 100%;
+					border-right: 1.5px solid #979797;
+					cursor: pointer;
+					color: #454545;
+					font-size: 14px;
+					transition: background-color 0.3s;
+				}
+
+				.eyeslashes-box:hover {
+					background-color: #3995F8;
+					color: white;
+				}
+
+			}
+
+			form {
+				.form-section {
+					display: flex;
+					flex-direction: column;
+					gap: 10px;
+					padding: 15px 20px 35px;
+
+					.section-title {
+						margin: 10px 0;
+						font-size: 17px;
+					}
+
+					.form-subtitle {
+						font-size: 14px;
+						font-weight: 400;
+						padding: 10px 0;
+					}
+
+					.row {
+						display: flex;
+						flex-direction: column;
+						gap: 10px;
+
+						.form-box {
+							width: 100%;
+							display: flex;
+							flex-direction: column;
+
+							label {
+								font-size: 13px;
+								color: #373737;
+							}
+
+							input {
+								background-color: white;
+								height: 30px;
+								border-style: none;
+								border: 1px solid #D3D3D3;
+								border-radius: 5px;
+								padding-left: 5px;
+							}
+
+							input:focus {
+								outline: none;
+								border: 1.5px solid #3995F8;
+							}
+
+							select {
+								height: 35px;
+								border-style: none;
+								border: 1px solid #D3D3D3;
+								border-radius: 5px;
+								padding-left: 5px;
+
+							}
+
+							select:focus {
+								outline: none;
+								border: 1.5px solid #3995F8;
+							}
+						}
+
+						.date-container {
+							display: flex;
+							flex-direction: row;
+							justify-content: space-between;
+							align-items: flex-end;
+						}
+
+					}
+
+					.three-colums {
+						flex-direction: row;
+						justify-content: space-between;
+
+						.form-box {
+							width: 30%;
+						}
+					}
+
+					.two-colums {
+						flex-direction: row;
+						justify-content: space-between;
+						gap: 25px;
+
+						.form-box {
+							width: 45%;
+						}
+					}
+
+					.two-colums-small {
+						flex-direction: row;
+						width: 50%;
+						justify-content: space-between;
+
+						.form-box {
+							width: 50%
+						}
+					}
+				}
+			}
+		}
+
+	}
+
+	.form-main-box.close {
+		opacity: 1;
+		transition: opacity 0.5s ease-in-out;
+		animation: fadeoff 0.5s ease forwards;
+
+		@keyframes fadeoff {
+			from {
+				opacity: 1;
+			}
+
+			to {
+				opacity: 0;
+			}
+		}
+	}
+
+}
+
+.form-container.close {
+
+	opacity: 1;
+	transition: opacity 0.5s ease-in-out;
+	animation: fadeoff 0.5s ease forwards;
+
+	@keyframes fadeoff {
+		from {
+			opacity: 1;
+		}
+
+		to {
+			opacity: 0;
+		}
+	}
+
+}
