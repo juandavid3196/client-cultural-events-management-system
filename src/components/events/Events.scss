@@ -94,6 +94,54 @@
                 justify-content: space-between;
                 transition: background-color 0.3s;
 
+                .event-options {
+                    position: absolute;
+                    background-color: white;
+                    border: 1px solid #d3d3d3;
+                    border-bottom: none;
+                    border-radius: 5px;
+                    z-index: 1001;
+                    width: 200px;
+                    right: 22px;
+                    top: 25px;
+                    opacity: 0;
+                    transition: opacity 0.5s ease-in-out;
+                    animation: fadeIn 0.5s ease forwards;
+
+                    @keyframes fadeIn {
+                        from {
+                            opacity: 0;
+                        }
+
+                        to {
+                            opacity: 1;
+                        }
+                    }
+
+                    ul {
+                        list-style: none;
+                        display: contents;
+
+                        li {
+                            height: 40px;
+                            border-bottom: 1px solid #D3D3D3;
+                            color: #767676;
+                            font-size: 13px;
+                            font-weight: 500;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            transition: background-color 0.1s;
+                            cursor: pointer;
+                        }
+
+                        li:hover {
+                            background-color: #3995F8;
+                            color: white;
+                        }
+                    }
+                }
+
                 .event-text {
                     padding: 15px 10px;
                     color: #7B7878;
@@ -115,6 +163,7 @@
                     color: white;
                     background-color: #3995F8;
                     border-radius: 50%;
+                    z-index: 1000;
                 }
 
                 .icon-container {

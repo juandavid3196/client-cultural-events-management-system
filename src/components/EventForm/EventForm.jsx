@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import '../EventForm/EventForm.scss';
 
 
-const EventForm = ({ onCloseForm }) => {
+const EventForm = ({ onCloseForm, onFinishForm }) => {
 
+	const uuid = require('uuid');
 	const [section, setSection] = useState('evento');
 	const [close, setClose] = useState(false);
 
 	const [errors, setErrors] = useState({});
 
 	const [formData, setFormData] = useState({
+
+		id: uuid.v4(),
 		eventType: '',
 		state: '',
 		generalName: '',
@@ -37,18 +40,18 @@ const EventForm = ({ onCloseForm }) => {
 	});
 
 	const validateForm = () => {
+
 		const newErrors = {};
 		const regex = /^[0-9]+$/;
+
 		if (regex.test(formData.phone)) {
 			newErrors.phone = true;
-		}
-		if (parseInt(formData.duration) < 0) {
-			newErrors.duration = true
 		}
 		return newErrors;
 	};
 
 	const handleInputChange = (e) => {
+
 		const { name, value } = e.target;
 		setFormData({
 			...formData,
@@ -68,6 +71,25 @@ const EventForm = ({ onCloseForm }) => {
 		}, 500)
 	}
 
+	const resetFormData = () => {
+		const keys = Object.keys(formData);
+		const emptyFormData = {};
+
+		keys.forEach((key) => {
+			emptyFormData[key] = '';
+		});
+
+		setFormData(emptyFormData);
+	};
+
+
+	const handleForm = (e) => {
+		e.preventDefault();
+		console.log(formData);
+		resetFormData();
+		onFinishForm();
+	}
+
 	return (
 		<div className={`form-container ${close ? 'close' : ''}`}>
 			<div className={`form-main-box ${close ? 'close' : ''}`}>
@@ -82,7 +104,7 @@ const EventForm = ({ onCloseForm }) => {
 						<span className={`eyeslashes-box ${section === 'tecnica' ? 'selected' : ''}`} onClick={() => setSection('tecnica')}>Tecnica</span>
 						<span className={`eyeslashes-box ${section === 'comunicaciones' ? 'selected' : ''}`} onClick={() => setSection('comunicaciones')}>Comunicaciones</span>
 					</div>
-					<form action="">
+					<form onSubmit={handleForm}>
 
 						{
 							section === 'evento' && (
@@ -171,7 +193,7 @@ const EventForm = ({ onCloseForm }) => {
 										<div className="form-box">
 											<label htmlFor="phone">Celular</label>
 											<input type="text" name='phone' onChange={handleInputChange} value={formData.phone} placeholder='Celular' />
-											{!errors.phone && formData.phone != '' && (<span className='error-message'>Este campo solo permite numeros <i class="fa-solid fa-circle-xmark"></i></span>)}
+											{!errors.phone && formData.phone !== '' && (<span className='error-message'>Este campo solo permite numeros <i class="fa-solid fa-circle-xmark"></i></span>)}
 										</div>
 										<div className="form-box">
 											<label htmlFor="identification">Identificación</label>
@@ -200,8 +222,7 @@ const EventForm = ({ onCloseForm }) => {
 									<div className="row three-colums">
 										<div className="form-box">
 											<label htmlFor="duration">Duracion</label>
-											<input type="number" name='duration' onChange={handleInputChange} value={formData.duration} placeholder='0 Horas' />
-											{errors.duration && formData.duration != '' && (<span className='error-message'>El valor debe ser mayor a 0<i class="fa-solid fa-circle-xmark"></i></span>)}
+											<input type="number" name='duration' onChange={handleInputChange} value={formData.duration} min={0} max={24} placeholder='0 Horas' />
 										</div>
 										<div className="form-box">
 											<label htmlFor="mountingDate">Fecha Montaje</label>
@@ -241,10 +262,10 @@ const EventForm = ({ onCloseForm }) => {
 										</div>
 										<div className="form-box">
 											<label htmlFor="accessData">Información de ingreso</label>
-											<input type="text" name='accessData' onChange={handleInputChange} value={formData.accessData} placeholder='Modalida, Costo, Cuenta bancaria' />
+											<input type="text" name='accessData' onChange={handleInputChange} value={formData.accessData} placeholder='Modalida, Costo, Cuenta Bancaria' />
 										</div>
 									</div>
-									<div className="row">
+									<div className="row two-colums">
 										<div className="form-box">
 											<label htmlFor="ticketCompany">Empresa de boleteria</label>
 											<input type="text" name='ticketCompany' onChange={handleInputChange} value={formData.ticketCompany} placeholder='Nombre Empresa' />
@@ -263,6 +284,11 @@ const EventForm = ({ onCloseForm }) => {
 												<option value="17" >17</option>
 												<option value="18" >18</option>
 											</select>
+										</div>
+									</div>
+									<div className="row">
+										<div className="form-box form-box-btn">
+											<button className='btn-send-form' type='submit'>Guardar</button>
 										</div>
 									</div>
 								</div>

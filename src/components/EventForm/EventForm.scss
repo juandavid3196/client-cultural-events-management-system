@@ -6,7 +6,7 @@
 	height: 100%;
 	background-color: rgba(0, 0, 0, 0.6);
 	backdrop-filter: blur(10px);
-	z-index: 1000;
+	z-index: 1003;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -28,7 +28,7 @@
 	.form-main-box {
 		background-color: #F2F1F6;
 		border-radius: 5px;
-		z-index: 1001;
+		z-index: 1004;
 		display: flex;
 		flex-direction: column;
 		width: 90%;
@@ -170,6 +170,19 @@
 								align-items: center;
 								gap: 4px;
 							}
+
+							.btn-send-form {
+								background-color: #3995F8;
+								color: white;
+								font-size: 15px;
+								font-weight: 400;
+								border-style: none;
+								border-radius: 5px;
+								height: 35px;
+								width: 200px;
+								margin-top: 20px;
+								cursor: pointer;
+							}
 						}
 
 						.date-container {
@@ -177,6 +190,11 @@
 							flex-direction: row;
 							justify-content: space-between;
 							align-items: flex-end;
+						}
+
+						.form-box-btn {
+							flex-direction: row;
+							justify-content: flex-end;
 						}
 
 					}

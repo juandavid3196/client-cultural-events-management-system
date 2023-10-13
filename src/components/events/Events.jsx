@@ -6,14 +6,25 @@ import EventForm from '../EventForm/EventForm';
 const Events = () => {
 
 	const [openForm, setOpenForm] = useState(false);
+	const [openMenu, setOpenMenu] = useState(false);
+	const [id, setId] = useState('');
 
 	const closeForm = () => {
 		setOpenForm(false);
 	}
 
+	const handleMenu = (id) => {
+		setId(id);
+		setOpenMenu(!openMenu);
+	}
+
+	const finishForm = () => {
+		setOpenForm(false);
+	}
+
 	return (
 		<div className='container'>
-			{openForm && <EventForm onCloseForm={closeForm} />}
+			{openForm && <EventForm onCloseForm={closeForm} onFinishForm={finishForm} />}
 			<div className='section-title'>
 				<h3>Gestión de eventos</h3>
 			</div>
@@ -31,14 +42,23 @@ const Events = () => {
 					{
 						events.map((element, index) => (
 							<div key={index} className='event-box'>
+								{id === element.id && openMenu && <div className='event-options'>
+									<ul>
+										<li>Crear Sub-evento</li>
+										<li>Añadir Responsabilidad</li>
+										<li>Crear Carpetas</li>
+										<li>Editar</li>
+										<li>Eliminar</li>
+									</ul>
+								</div>}
 								<div className="event-text">
-									{element.text}
+									{element.generalName}
 								</div>
-								{element.subEvents > 0 && (
-									<span className='sub-events-count'>{element.subEvents}</span>
+								{element.subEventos > 0 && (
+									<span className='sub-events-count'>{element.subEventos}</span>
 								)}
 								<div className="icon-container">
-									<i className="fa-solid fa-ellipsis-vertical"></i>
+									<i className="fa-solid fa-ellipsis-vertical" onClick={() => handleMenu(element.id)}></i>
 								</div>
 							</div>
 						))
