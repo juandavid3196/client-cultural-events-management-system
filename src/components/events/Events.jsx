@@ -50,14 +50,22 @@ const Events = () => {
 	}
 
 	const deleteEvent = (eventId) => {
-		axios.delete(`http://localhost:5000/programming/${eventId}`)
-			.then(response => {
-				console.log('Elemento eliminado');
-			})
-			.catch(error => {
-				console.error('Error al eliminar el elemento:', error);
-			});
-		toast.success('¡Evento Eliminado con Exito!');
+
+		const confirm = window.confirm("¿Esta seguro de eliminar este elemento?");
+
+		if (confirm) {
+			axios.delete(`http://localhost:5000/programming/${eventId}`)
+				.then(response => {
+					console.log('Elemento eliminado');
+				})
+				.catch(error => {
+					console.error('Error al eliminar el elemento:', error);
+				});
+			toast.success('¡Evento Eliminado con Exito!');
+		} else {
+			return;
+		}
+
 	}
 
 	const updateEvent = (id) => {
@@ -134,7 +142,7 @@ const Events = () => {
 			</div>
 			<ToastContainer
 				position="top-right"
-				autoClose={2000}
+				autoClose={800}
 				hideProgressBar={false}
 				newestOnTop={false}
 				closeOnClick

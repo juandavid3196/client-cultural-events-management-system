@@ -14,15 +14,16 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const [formData, setFormData] = useState({
 
 		id: uuid.v4(),
-		eventType: 'propio',
-		state: 'confirmado',
+		eventType: 'defected',
+		state: 'pre-reserva',
+		dateState: '',
 		generalName: '',
 		specificName: '',
 		dateStart: '',
 		dateFinishing: '',
 		hourStart: '',
 		hourFinishing: '',
-		place: 'sala',
+		place: 'defected',
 		userName: '',
 		phone: '',
 		identificationType: 'CC',
@@ -35,30 +36,51 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		mountingStartHour: '',
 		mountingFinishingHour: '',
 		technicContact: '',
+		rider: null,
+		minTomin: null,
 		communicationContact: '',
-		pulep: 'True',
+		pulep: '',
 		accessData: '',
 		ticketCompany: '',
-		ageRestriction: 'False',
+		ageRestriction: '',
+		agreement: '',
 
 	});
 
 	useEffect(() => {
-		console.log(formData);
+		getDate();
+	}, []);
+
+
+	useEffect(() => {
 		calculateDuration();
-	}, [formData])
+		console.log(formData);
+	}, [formData]);
+
 
 	useEffect(() => {
 		if (update) setFormData(updateItem);
 	}, [update, updateItem])
 
+
 	const handleInputChange = (e) => {
 
-		const { name, value } = e.target;
-		setFormData({
-			...formData,
-			[name]: value,
-		});
+		const { name, value, type } = e.target;
+
+		if (type === 'file') {
+			const { files } = e.target;
+			const f = new FormData();
+			f.append('file', files[0]);
+			setFormData({
+				...formData,
+				[name]: f,
+			});
+		} else {
+			setFormData({
+				...formData,
+				[name]: value,
+			});
+		}
 
 	};
 
@@ -153,7 +175,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				hours = hours + totalHours;
 				minutes = minutes % 60;
 			}
-		} else if (StartHour == finishingHour) {
+		} else if (StartHour === finishingHour) {
 			hours = 0;
 			if (finishingMinutes > StartMinutes) {
 				minutes = finishingMinutes - StartMinutes;
@@ -170,9 +192,24 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 			}
 		}
 
-		let time = `${hours > 0 ? `${hours} Horas` : ''} ${minutes > 0 ? ` ${minutes} Minutos` : ''}`;
+		let time = `${hours === 1 ? `${hours} Hora` : hours > 1 ? `${hours} Horas` : ''}${minutes === 1 ? ` ${minutes} Minuto` : minutes > 1 ? ` ${minutes} Minutos` : ''}`;
 
 		setDuration(time);
+	}
+
+	const getDate = () => {
+		const date = new Date();
+
+		let day = date.getDate();
+		let month = date.getMonth() + 1;
+		let year = date.getFullYear();
+
+		let fullDate = `${day}/${month}/${year}`;
+
+		setFormData({
+			...formData,
+			dateState: fullDate,
+		});
 	}
 
 	return (
@@ -199,6 +236,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										<div className="form-box">
 											<label htmlFor="eventType">Tipo de Evento</label>
 											<select name="eventType" onChange={handleInputChange} value={formData.eventType}>
+												<option value="defected">seleccionar</option>
 												<option value="propio">Propio</option>
 												<option value="copro">Co-Producción</option>
 												<option value="canje">Canje</option>
@@ -218,11 +256,11 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<div className="row two-colums">
 										<div className="form-box">
 											<label htmlFor="generalName">Nombre General</label>
-											<input type="text" name='generalName' onChange={handleInputChange} value={formData.generalName} placeholder='Nombre General' />
+											<input type="text" name='generalName' onChange={handleInputChange} value={formData.generalName} placeholder='Nombre General' required />
 										</div>
 										<div className="form-box">
 											<label htmlFor="specificName">Nombre Especifico</label>
-											<input type="text" name='specificName' onChange={handleInputChange} value={formData.specificName} placeholder='Nombre Especifico' />
+											<input type="text" name='specificName' disabled onChange={handleInputChange} value={formData.specificName} placeholder='Nombre Especifico' />
 										</div>
 									</div>
 
@@ -253,6 +291,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										<div className="form-box">
 											<label htmlFor="place">Lugar</label>
 											<select name="place" onChange={handleInputChange} value={formData.place}>
+												<option value="defected" selected>Seleccionar</option>
 												<option value="sala">sala</option>
 												<option value="cafe-teatro">Cafe Teatro</option>
 												<option value="plazoleta">Plazoleta</option>
@@ -321,7 +360,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<div className="row two-colums">
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="duration">Duracion</label>
+												<label htmlFor="duration">Duración</label>
 												<input type="text" name='duration' disabled onChange={handleInputChange} value={duration} min={0} max={24} placeholder='0' />
 											</div>
 											<div className="form-box">
@@ -342,8 +381,18 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									</div>
 									<div className="row">
 										<div className="form-box">
-											<label htmlFor="technicContact">Contacto montaje tecnico</label>
-											<input type="text" name='technicContact' onChange={handleInputChange} value={formData.technicContact} placeholder='Nombre / Celular' />
+											<label htmlFor="technicContact">Contacto Montaje Tecnico</label>
+											<textarea name="technicContact" onChange={handleInputChange} value={formData.technicContact} placeholder='Nombre / Celular' cols="30" rows="5"></textarea>
+										</div>
+									</div>
+									<div className="row two-colums">
+										<div className="form-box">
+											<label htmlFor="rider">Rider</label>
+											<input type="file" name='rider' onChange={handleInputChange} />
+										</div>
+										<div className="form-box">
+											<label htmlFor="minTomin">Minuto a Minuto</label>
+											<input type="file" name='minTomin' onChange={handleInputChange} />
 										</div>
 									</div>
 								</div>
@@ -362,14 +411,11 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<div className="row two-colums">
 										<div className="form-box">
 											<label htmlFor="pulep">PULEP</label>
-											<select name="pulep" onChange={handleInputChange} value={formData.pulep}>
-												<option value="True">Aplica</option>
-												<option value="False">No Aplica</option>
-											</select>
+											<input type="text" name='pulep' onChange={handleInputChange} value={formData.pulep} />
 										</div>
 										<div className="form-box">
 											<label htmlFor="accessData">Información de ingreso</label>
-											<input type="text" name='accessData' onChange={handleInputChange} value={formData.accessData} placeholder='Modalida, Costo, Cuenta Bancaria' />
+											<input type="text" name='accessData' onChange={handleInputChange} value={formData.accessData} placeholder='Modalidad, Costo, Cuenta Bancaria' />
 										</div>
 									</div>
 									<div className="row two-colums">
@@ -379,18 +425,13 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										</div>
 										<div className="form-box">
 											<label htmlFor="ageRestriction">Restriccion de edad</label>
-											<select name="ageRestriction" onChange={handleInputChange} value={formData.ageRestriction}>
-												<option value="False">No Aplica</option>
-												<option value="10" >10</option>
-												<option value="11" >11</option>
-												<option value="12" >12</option>
-												<option value="13" >13</option>
-												<option value="14" >14</option>
-												<option value="15" >15</option>
-												<option value="16" >16</option>
-												<option value="17" >17</option>
-												<option value="18" >18</option>
-											</select>
+											<input type="text" name="ageRestriction" onChange={handleInputChange} value={formData.ageRestriction} />
+										</div>
+									</div>
+									<div className="row">
+										<div className="form-box">
+											<label htmlFor="agreement">Convenio / Alianzas</label>
+											<input type="text" name="agreement" onChange={handleInputChange} value={formData.agreement} />
 										</div>
 									</div>
 									<div className="row">
