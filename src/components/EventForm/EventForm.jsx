@@ -11,10 +11,12 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const [section, setSection] = useState('evento');
 	const [close, setClose] = useState(false);
 	const [duration, setDuration] = useState('');
+	const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+	const [icon, setIcon] = useState(false);
 	const [formData, setFormData] = useState({
 
 		id: uuid.v4(),
-		eventType: 'defected',
+		eventType: '',
 		state: 'pre-reserva',
 		dateState: '',
 		generalName: '',
@@ -23,7 +25,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		dateFinishing: '',
 		hourStart: '',
 		hourFinishing: '',
-		place: 'defected',
+		place: '',
 		userName: '',
 		phone: '',
 		identificationType: 'CC',
@@ -76,10 +78,12 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				[name]: f,
 			});
 		} else {
+
 			setFormData({
 				...formData,
 				[name]: value,
 			});
+
 		}
 
 	};
@@ -109,16 +113,33 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		e.preventDefault();
 
 		if (update) {
-			updateData(formData.id, formData);
-			toast.success('¡Evento Editado con Exito!');
-			onUpdateState();
+			if (validateErrors()) {
+				setIsFormSubmitted(true);
+				setIcon(true);
+				return;
+			} else {
+				updateData(formData.id, formData);
+				toast.success('¡Evento Editado con Exito!');
+				onUpdateState();
+			}
 		} else {
-			postData(formData);
-			toast.success('¡Evento Añadido con Exito!');
+
+			if (validateErrors()) {
+				setIsFormSubmitted(true);
+				setIcon(true);
+				return;
+			} else {
+				setIsFormSubmitted(false);
+				setIcon(false);
+				postData(formData);
+				toast.success('¡Evento Añadido con Exito!');
+			}
 		}
+
 		resetFormData();
 		onFinishForm();
-	}
+	};
+
 
 	const postData = (newItem) => {
 		axios.post('http://localhost:5000/programming', newItem)
@@ -152,49 +173,56 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	}
 
 	const calculateDuration = () => {
-		let hours = 0;
-		let totalHours = 0;
-		let minutes = 0;
-		const StartHour = parseInt(`${formData.mountingStartHour[0]}${formData.mountingStartHour[1]}`);
-		const StartMinutes = parseInt(`${formData.mountingStartHour[3]}${formData.mountingStartHour[4]}`);
-		const finishingHour = parseInt(`${formData.mountingFinishingHour[0]}${formData.mountingFinishingHour[1]}`);
-		const finishingMinutes = parseInt(`${formData.mountingFinishingHour[3]}${formData.mountingFinishingHour[4]}`);
 
 
-		if (StartHour < finishingHour) {
-			hours = finishingHour - StartHour;
+		if (formData.mountingStartHour && formData.mountingFinishingHour) {
 
-			if (StartMinutes <= finishingMinutes) {
-				minutes = finishingMinutes - StartMinutes;
+			let hours = 0;
+			let totalHours = 0;
+			let minutes = 0;
+			const StartHour = parseInt(`${formData.mountingStartHour[0]}${formData.mountingStartHour[1]}`);
+			const StartMinutes = parseInt(`${formData.mountingStartHour[3]}${formData.mountingStartHour[4]}`);
+			const finishingHour = parseInt(`${formData.mountingFinishingHour[0]}${formData.mountingFinishingHour[1]}`);
+			const finishingMinutes = parseInt(`${formData.mountingFinishingHour[3]}${formData.mountingFinishingHour[4]}`);
+
+
+
+			if (StartHour < finishingHour) {
+				hours = finishingHour - StartHour;
+
+				if (StartMinutes <= finishingMinutes) {
+					minutes = finishingMinutes - StartMinutes;
+				} else {
+					hours--;
+					minutes = (60 - StartMinutes) + finishingMinutes;
+				}
+				if (minutes > 60) {
+					totalHours = Math.floor(minutes / 60);
+					hours = hours + totalHours;
+					minutes = minutes % 60;
+				}
+			} else if (StartHour === finishingHour) {
+				hours = 0;
+				if (finishingMinutes > StartMinutes) {
+					minutes = finishingMinutes - StartMinutes;
+				}
+
 			} else {
-				hours--;
+				hours = (23 - StartHour) + finishingHour;
 				minutes = (60 - StartMinutes) + finishingMinutes;
-			}
-			if (minutes > 60) {
-				totalHours = Math.floor(minutes / 60);
-				hours = hours + totalHours;
-				minutes = minutes % 60;
-			}
-		} else if (StartHour === finishingHour) {
-			hours = 0;
-			if (finishingMinutes > StartMinutes) {
-				minutes = finishingMinutes - StartMinutes;
+
+				if (minutes >= 60) {
+					totalHours = Math.floor(minutes / 60);
+					hours = hours + totalHours;
+					minutes = minutes % 60;
+				}
 			}
 
-		} else {
-			hours = (23 - StartHour) + finishingHour;
-			minutes = (60 - StartMinutes) + finishingMinutes;
+			let time = `${hours === 1 ? `${hours} Hora` : hours > 1 ? `${hours} Horas` : ''}${minutes === 1 ? ` ${minutes} Minuto` : minutes > 1 ? ` ${minutes} Minutos` : ''}`;
 
-			if (minutes >= 60) {
-				totalHours = Math.floor(minutes / 60);
-				hours = hours + totalHours;
-				minutes = minutes % 60;
-			}
+			setDuration(time);
+
 		}
-
-		let time = `${hours === 1 ? `${hours} Hora` : hours > 1 ? `${hours} Horas` : ''}${minutes === 1 ? ` ${minutes} Minuto` : minutes > 1 ? ` ${minutes} Minutos` : ''}`;
-
-		setDuration(time);
 	}
 
 	const getDate = () => {
@@ -212,6 +240,26 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		});
 	}
 
+
+	const validateErrors = () => {
+
+		let hasErrors = false;
+
+		if (formData.generalName === '') {
+			hasErrors = true;
+		}
+
+		if (formData.eventType === '') {
+			hasErrors = true;
+		}
+
+		if (formData.place === '') {
+			hasErrors = true;
+		}
+
+		return hasErrors;
+	}
+
 	return (
 		<div className={`form-container ${close ? 'close' : ''}`}>
 			<div className={`form-main-box ${close ? 'close' : ''}`}>
@@ -221,7 +269,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				</div>
 				<div className='main-form'>
 					<div className='form-eyeslashes'>
-						<span className={`eyeslashes-box ${section === 'evento' ? 'selected' : ''}`} onClick={() => setSection('evento')}>Evento</span>
+						<span className={`eyeslashes-box ${section === 'evento' ? 'selected' : ''}`} onClick={() => setSection('evento')}>Evento&nbsp;&nbsp;{icon && validateErrors() ? (<i class="fa-solid fa-triangle-exclamation"></i>) : ''}</span>
 						<span className={`eyeslashes-box ${section === 'cliente' ? 'selected' : ''}`} onClick={() => setSection('cliente')}>Cliente</span>
 						<span className={`eyeslashes-box ${section === 'tecnica' ? 'selected' : ''}`} onClick={() => setSection('tecnica')}>Info Técnica</span>
 						<span className={`eyeslashes-box ${section === 'comunicaciones' ? 'selected' : ''}`} onClick={() => setSection('comunicaciones')}>Info Comunicaciones</span>
@@ -236,13 +284,17 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										<div className="form-box">
 											<label htmlFor="eventType">Tipo de Evento</label>
 											<select name="eventType" onChange={handleInputChange} value={formData.eventType}>
-												<option value="defected">seleccionar</option>
+												<option value="" disabled>seleccionar</option>
 												<option value="propio">Propio</option>
 												<option value="copro">Co-Producción</option>
 												<option value="canje">Canje</option>
 												<option value="apoyo">Apoyo</option>
 												<option value="alquiler">Alquiler</option>
 											</select>
+											{isFormSubmitted && formData.eventType === '' && (
+												<div className="message-error">Este campo es obligatorio</div>
+											)}
+
 										</div>
 										<div className="form-box">
 											<label htmlFor="state">Estado</label>
@@ -257,6 +309,10 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										<div className="form-box">
 											<label htmlFor="generalName">Nombre General</label>
 											<input type="text" name='generalName' onChange={handleInputChange} value={formData.generalName} placeholder='Nombre General' required />
+											{isFormSubmitted && formData.generalName === '' && (
+												<div className="message-error">Este campo es obligatorio</div>
+											)}
+
 										</div>
 										<div className="form-box">
 											<label htmlFor="specificName">Nombre Especifico</label>
@@ -269,21 +325,21 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										<div className="row two-colums-small">
 											<div className="form-box">
 												<label htmlFor="dateStart">Inicio</label>
-												<input type="date" name='dateStart' onChange={handleInputChange} value={formData.dateStart} placeholder='dd/mm/yy' />
+												<input type="date" name='dateStart' onChange={handleInputChange} value={formData.dateStart} />
 											</div>
 											<div className="form-box">
 												<label htmlFor="dateFinishing">Finalización</label>
-												<input type="date" name='dateFinishing' onChange={handleInputChange} value={formData.dateFinishing} placeholder='dd/mm/yy' />
+												<input type="date" name='dateFinishing' onChange={handleInputChange} value={formData.dateFinishing} />
 											</div>
 										</div>
 										<div className="row two-colums-small">
 											<div className="form-box">
 												<label htmlFor="hourStart">Inicio</label>
-												<input type="time" name='hourStart' onChange={handleInputChange} value={formData.hourStart} placeholder='00:00' />
+												<input type="time" name='hourStart' onChange={handleInputChange} value={formData.hourStart} />
 											</div>
 											<div className="form-box">
 												<label htmlFor="hourFinishing">Finalización</label>
-												<input type="time" name='hourFinishing' onChange={handleInputChange} value={formData.hourFinishing} placeholder='00:00' />
+												<input type="time" name='hourFinishing' onChange={handleInputChange} value={formData.hourFinishing} />
 											</div>
 										</div>
 									</div>
@@ -291,13 +347,16 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										<div className="form-box">
 											<label htmlFor="place">Lugar</label>
 											<select name="place" onChange={handleInputChange} value={formData.place}>
-												<option value="defected" selected>Seleccionar</option>
+												<option value="" disabled>Seleccionar</option>
 												<option value="sala">sala</option>
 												<option value="cafe-teatro">Cafe Teatro</option>
 												<option value="plazoleta">Plazoleta</option>
 												<option value="aula-taller">Aula Taller</option>
 												<option value="otros">Otros</option>
 											</select>
+											{isFormSubmitted && formData.place === '' && (
+												<div className="message-error">Este campo es obligatorio</div>
+											)}
 										</div>
 										<div className="form-box">
 											<label htmlFor="description">Descripción</label>
@@ -361,21 +420,21 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										<div className="row two-colums-small">
 											<div className="form-box">
 												<label htmlFor="duration">Duración</label>
-												<input type="text" name='duration' disabled onChange={handleInputChange} value={duration} min={0} max={24} placeholder='0' />
+												<input type="text" name='duration' disabled onChange={handleInputChange} value={duration} placeholder='0' />
 											</div>
 											<div className="form-box">
 												<label htmlFor="mountingDate">Fecha Montaje</label>
-												<input type="date" name='mountingDate' onChange={handleInputChange} value={formData.mountingDate} placeholder='dd/mm/yy' />
+												<input type="date" name='mountingDate' onChange={handleInputChange} value={formData.mountingDate} />
 											</div>
 										</div>
 										<div className="row two-colums-small">
 											<div className="form-box">
 												<label htmlFor="mountingStartHour">Hora Inicio </label>
-												<input type="time" name='mountingStartHour' onChange={handleInputChange} value={formData.mountingStartHour} placeholder='00:00' />
+												<input type="time" name='mountingStartHour' onChange={handleInputChange} value={formData.mountingStartHour} />
 											</div>
 											<div className="form-box">
 												<label htmlFor="mountingFinishigHour">Hora Finalización</label>
-												<input type="time" name='mountingFinishingHour' onChange={handleInputChange} value={formData.mountingFinishingHour} placeholder='00:00' />
+												<input type="time" name='mountingFinishingHour' onChange={handleInputChange} value={formData.mountingFinishingHour} />
 											</div>
 										</div>
 									</div>

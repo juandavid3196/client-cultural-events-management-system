@@ -88,6 +88,10 @@
 					color: #454545;
 					font-size: 14px;
 					transition: background-color 0.3s;
+
+					i {
+						color: red;
+					}
 				}
 
 				.selected {
@@ -176,7 +180,7 @@
 								border: 1.5px solid #3995F8;
 							}
 
-							.error-message {
+							.message-error {
 								color: red;
 								font-size: 12px;
 								display: flex;
