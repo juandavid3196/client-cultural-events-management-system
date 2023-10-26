@@ -1,11 +1,14 @@
 import React from 'react'
-import Events from './components/events/Events.jsx';
+import Events from './components/events/Events'
+import { AppContextProvider } from './contexts/AppContext';
 
 const App = () => {
 	return (
-		<div>
-			<Events />
-		</div>
+		<AppContextProvider>
+			<div>
+				<Events />
+			</div>
+		</AppContextProvider>
 	)
 }
 

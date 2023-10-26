@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import '../EventForm/EventForm.scss';
-import axios from 'axios';
+import './EventForm.scss';
 import { toast } from 'react-toastify';
+import crudService from '../../services/crudService'
 import 'react-toastify/dist/ReactToastify.css';
+import { useAppContext } from '../../contexts/AppContext';
 
 
 const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateState }) => {
@@ -13,6 +14,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const [duration, setDuration] = useState('');
 	const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 	const [icon, setIcon] = useState(false);
+	const { setSubEvent, subEvent, id } = useAppContext();
+
 	const [formData, setFormData] = useState({
 
 		id: uuid.v4(),
@@ -56,7 +59,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 	useEffect(() => {
 		calculateDuration();
-		console.log(formData);
 	}, [formData]);
 
 
@@ -112,27 +114,54 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const handleForm = (e) => {
 		e.preventDefault();
 
-		if (update) {
-			if (validateErrors()) {
-				setIsFormSubmitted(true);
-				setIcon(true);
-				return;
-			} else {
-				updateData(formData.id, formData);
-				toast.success('¡Evento Editado con Exito!');
-				onUpdateState();
-			}
-		} else {
+		if (subEvent) {
 
-			if (validateErrors()) {
-				setIsFormSubmitted(true);
-				setIcon(true);
-				return;
+			if (update) {
+				if (validateErrors()) {
+					setIsFormSubmitted(true);
+					setIcon(true);
+					return;
+				} else {
+					crudService.updateItem('subevent', formData.id, formData);
+					toast.success('¡Sub-Evento Editado con Exito!');
+					onUpdateState();
+					refresh();
+				}
 			} else {
-				setIsFormSubmitted(false);
-				setIcon(false);
-				postData(formData);
-				toast.success('¡Evento Añadido con Exito!');
+				if (validateErrors()) {
+					setIsFormSubmitted(true);
+					setIcon(true);
+					return;
+				} else {
+					formData.eventId = id;
+					crudService.createItem('subevent', formData);
+					toast.success('¡Sub-Evento Añadido con Exito!');
+					refresh();
+				}
+			}
+			setSubEvent(!subEvent);
+		} else {
+			if (update) {
+				if (validateErrors()) {
+					setIsFormSubmitted(true);
+					setIcon(true);
+					return;
+				} else {
+					crudService.updateItem('event', formData.id, formData);
+					toast.success('¡Evento Editado con Exito!');
+					onUpdateState();
+					refresh();
+				}
+			} else {
+				if (validateErrors()) {
+					setIsFormSubmitted(true);
+					setIcon(true);
+					return;
+				} else {
+					crudService.createItem('event', formData);
+					toast.success('¡Evento Añadido con Exito!');
+					refresh();
+				}
 			}
 		}
 
@@ -140,27 +169,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		onFinishForm();
 	};
 
-
-	const postData = (newItem) => {
-		axios.post('http://localhost:5000/programming', newItem)
-			.then(response => {
-				console.log('Nuevo elemento creado:', response.data);
-			})
-			.catch(error => {
-				console.error('Error al crear el elemento:', error);
-			});
-	}
-
-	const updateData = (id, item) => {
-		axios.put(`http://localhost:5000/programming/${id}`, item)
-			.then(response => {
-				console.log('Elemento actualizado');
-			})
-			.catch(error => {
-				console.error('Error al actualizar el elemento:', error);
-			});
-
-	}
 
 	const identificationValue = (type) => {
 		if (type === 'CC') {
@@ -260,16 +268,23 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		return hasErrors;
 	}
 
+	const refresh = () => {
+		setIsFormSubmitted(false);
+		setIcon(false);
+	}
+
 	return (
 		<div className={`form-container ${close ? 'close' : ''}`}>
 			<div className={`form-main-box ${close ? 'close' : ''}`}>
 				<div className='form-title'>
-					<span>{update ? 'Editar Evento' : 'Añadir Evento'}</span>
+					<span>{update ? 'Editar Evento' : subEvent && update ? 'Editar Sub-Evento' : subEvent ? 'Añadir Sub-Evento' : 'Añadir Evento'}</span>
 					<i class="fa-regular fa-circle-xmark" onClick={handleClose}></i>
 				</div>
 				<div className='main-form'>
 					<div className='form-eyeslashes'>
-						<span className={`eyeslashes-box ${section === 'evento' ? 'selected' : ''}`} onClick={() => setSection('evento')}>Evento&nbsp;&nbsp;{icon && validateErrors() ? (<i class="fa-solid fa-triangle-exclamation"></i>) : ''}</span>
+						<span className={`eyeslashes-box ${section === 'evento' ? 'selected' : ''}`} onClick={() => setSection('evento')}>
+							Evento&nbsp;&nbsp;{icon && validateErrors() ? (<i class="fa-solid fa-triangle-exclamation"></i>) : ''}
+						</span>
 						<span className={`eyeslashes-box ${section === 'cliente' ? 'selected' : ''}`} onClick={() => setSection('cliente')}>Cliente</span>
 						<span className={`eyeslashes-box ${section === 'tecnica' ? 'selected' : ''}`} onClick={() => setSection('tecnica')}>Info Técnica</span>
 						<span className={`eyeslashes-box ${section === 'comunicaciones' ? 'selected' : ''}`} onClick={() => setSection('comunicaciones')}>Info Comunicaciones</span>
@@ -391,7 +406,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 											<div className="form-box">
 												<label htmlFor="identificationType">Tipo de Identificación</label>
 												<select name="identificationType" onChange={handleInputChange} value={formData.identificationType}>
-													<option value="CC">Cedula</option>
+													<option value="CC">Cédula</option>
 													<option value="RUT" >RUT</option>
 													<option value="NIT" >NIT</option>
 												</select>
@@ -414,27 +429,28 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 						{
 							section === 'tecnica' && (
 								<div className="form-section">
-									<span className='section-title'>Datos Tecnicos</span>
+									<span className='section-title'>Datos Técnicos</span>
 									<div><span className='form-subtitle'>Fecha y Hora Montaje</span></div>
 									<div className="row two-colums">
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="duration">Duración</label>
-												<input type="text" name='duration' disabled onChange={handleInputChange} value={duration} placeholder='0' />
-											</div>
-											<div className="form-box">
 												<label htmlFor="mountingDate">Fecha Montaje</label>
 												<input type="date" name='mountingDate' onChange={handleInputChange} value={formData.mountingDate} />
 											</div>
-										</div>
-										<div className="row two-colums-small">
 											<div className="form-box">
 												<label htmlFor="mountingStartHour">Hora Inicio </label>
 												<input type="time" name='mountingStartHour' onChange={handleInputChange} value={formData.mountingStartHour} />
 											</div>
+
+										</div>
+										<div className="row two-colums-small">
 											<div className="form-box">
 												<label htmlFor="mountingFinishigHour">Hora Finalización</label>
 												<input type="time" name='mountingFinishingHour' onChange={handleInputChange} value={formData.mountingFinishingHour} />
+											</div>
+											<div className="form-box">
+												<label htmlFor="duration">Duración</label>
+												<input type="text" name='duration' disabled onChange={handleInputChange} value={duration} placeholder='0' />
 											</div>
 										</div>
 									</div>
@@ -459,22 +475,23 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 						}
 						{
 							section === 'comunicaciones' && (
-								<div className="form-section">
+								<div className="form-section event-section">
 									<span className='section-title'>Datos Comunicaciones</span>
 									<div className="row">
 										<div className="form-box">
 											<label htmlFor="communicationContact">Contacto comunicaciones</label>
-											<input type="text" name='communicationContact' onChange={handleInputChange} value={formData.communicationContact} placeholder='Artista, Manager, Comunicador' />
+											<textarea name="communicationContact" cols="30" rows="5" onChange={handleInputChange} value={formData.communicationContact} placeholder='Artista, Manager, Comunicador'></textarea>
 										</div>
 									</div>
 									<div className="row two-colums">
 										<div className="form-box">
-											<label htmlFor="pulep">PULEP</label>
-											<input type="text" name='pulep' onChange={handleInputChange} value={formData.pulep} />
+											<label htmlFor="agreement">Convenio / Alianzas</label>
+											<textarea name="agreement" cols="30" rows="5" onChange={handleInputChange} value={formData.agreement} placeholder='Covenio / Alianzas' ></textarea>
 										</div>
+
 										<div className="form-box">
 											<label htmlFor="accessData">Información de ingreso</label>
-											<input type="text" name='accessData' onChange={handleInputChange} value={formData.accessData} placeholder='Modalidad, Costo, Cuenta Bancaria' />
+											<textarea name="accessData" cols="30" rows="5" onChange={handleInputChange} value={formData.accessData} placeholder='Modalidad, Costo, Cuenta Bancaria' ></textarea>
 										</div>
 									</div>
 									<div className="row two-colums">
@@ -483,14 +500,14 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 											<input type="text" name='ticketCompany' onChange={handleInputChange} value={formData.ticketCompany} placeholder='Nombre Empresa' />
 										</div>
 										<div className="form-box">
-											<label htmlFor="ageRestriction">Restriccion de edad</label>
+											<label htmlFor="ageRestriction">Restricción de edad</label>
 											<input type="text" name="ageRestriction" onChange={handleInputChange} value={formData.ageRestriction} />
 										</div>
 									</div>
-									<div className="row">
+									<div className="row two-colums">
 										<div className="form-box">
-											<label htmlFor="agreement">Convenio / Alianzas</label>
-											<input type="text" name="agreement" onChange={handleInputChange} value={formData.agreement} />
+											<label htmlFor="pulep">PULEP</label>
+											<input type="text" name='pulep' onChange={handleInputChange} value={formData.pulep} />
 										</div>
 									</div>
 									<div className="row">
