@@ -19,12 +19,12 @@ const Events = () => {
 	const [deploy, setDeploy] = useState(false)
 	const [subId, setSubId] = useState(false);
 
-	const { setSubEvent, id, setId, subEvent } = useAppContext();
+	const { setSubEvent, id, setId } = useAppContext();
 
 	useEffect(() => {
-		getEvents();
-		getSubEvents();
+		getFullEvents();
 	}, []);
+
 	const filteredEvents = events.filter(event => event.generalName.toLowerCase().includes(searchTerm.toLowerCase()));
 
 	const closeForm = () => {
@@ -60,14 +60,13 @@ const Events = () => {
 
 	const updateEvent = (id, type) => {
 		if (type === 'subevent') {
-			setSubEvent(!subEvent);
+			setSubEvent(true);
 		}
 		getUnicItem(id, type);
 		setUpdate(true);
 		setOpenForm(true);
 		setOpenMenu(false);
-
-
+		setOpenSubMenu(false);
 	}
 
 	const getUnicItem = async (id, type) => {
@@ -87,20 +86,22 @@ const Events = () => {
 	const handleDelete = (id, type) => {
 		if (type === 'event') {
 			crudService.deleteItem('event', id);
-
 		} else {
 			crudService.deleteItem('subevent', id);
 
 		}
-
+		refresh();
 		toast.success('Elemento eliminado con Exito');
 
 	}
 
 	const addSubEvent = (id) => {
-		setSubEvent(true)
+		setSubEvent(true);
+		setUpdate(false);
 		setId(id);
 		setOpenForm(true);
+		getUnicItem(id, 'event');
+		setOpenMenu(false);
 	}
 
 	const getSubEvents = async () => {
@@ -113,6 +114,28 @@ const Events = () => {
 		setDeploy(!deploy);
 	}
 
+	const getFullEvents = () => {
+		getEvents();
+		getSubEvents();
+	}
+
+	const refresh = () => {
+		setOpenMenu(false);
+		setOpenSubMenu(false);
+		getFullEvents();
+	}
+
+	const subEventsCount = (id) => {
+		let count = 0;
+		subEvents.map((element) => {
+			if (element.eventId === id) {
+				count++;
+			}
+		})
+
+		return count;
+	}
+
 
 	return (
 		<div className='container'>
@@ -122,6 +145,7 @@ const Events = () => {
 				updateItem={updateItem}
 				update={update}
 				onUpdateState={UpdateState}
+				onGetFullEvents={getFullEvents}
 			/>}
 			<div className='section-title'>
 				<h3>Gestión de eventos</h3>
@@ -153,8 +177,8 @@ const Events = () => {
 									<div className="event-text" onClick={() => handleDeploy(element.id)}>
 										{element.generalName}
 									</div>
-									{element.subEventos > 0 && (
-										<span className='sub-events-count'>{element.subEventos}</span>
+									{subEventsCount(element.id) > 0 && (
+										<span className='sub-events-count'>{subEventsCount(element.id)}</span>
 									)}
 									<div className="icon-container">
 										<i className="fa-solid fa-ellipsis-vertical" onClick={() => handleMenu(element.id, 'event')}></i>
@@ -173,7 +197,7 @@ const Events = () => {
 														</ul>
 													</div>}
 													<div className="event-text">
-														{subElem.generalName}
+														{subElem.specificName}
 													</div>
 													<div className="icon-container">
 														<i className="fa-solid fa-ellipsis-vertical" onClick={() => handleMenu(subElem.id, 'subevent')}></i>

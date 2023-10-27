@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useAppContext } from '../../contexts/AppContext';
 
 
-const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateState }) => {
+const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateState, onGetFullEvents }) => {
 
 	const uuid = require('uuid');
 	const [section, setSection] = useState('evento');
@@ -20,6 +20,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 		id: uuid.v4(),
 		eventType: '',
+		eventId: null,
 		state: 'pre-reserva',
 		dateState: '',
 		generalName: '',
@@ -66,6 +67,28 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		if (update) setFormData(updateItem);
 	}, [update, updateItem])
 
+	useEffect(() => {
+
+		if (subEvent && update) {
+			setFormData(updateItem);
+
+		} else if (subEvent) {
+			const updatedFormData = {
+				...formData,
+				eventType: updateItem.eventType,
+				generalName: updateItem.generalName,
+				userName: updateItem.userName,
+				phone: updateItem.phone,
+				identificationType: updateItem.identificationType,
+				identificationValue: updateItem.identificationValue,
+				email: updateItem.email,
+				place: updateItem.place,
+
+			};
+
+			setFormData(updatedFormData);
+		}
+	}, [subEvent, updateItem]);
 
 	const handleInputChange = (e) => {
 
@@ -97,6 +120,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 			onCloseForm();
 		}, 500)
 		onUpdateState();
+		setSubEvent(false);
 	}
 
 	const resetFormData = () => {
@@ -125,7 +149,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					crudService.updateItem('subevent', formData.id, formData);
 					toast.success('¡Sub-Evento Editado con Exito!');
 					onUpdateState();
-					refresh();
 				}
 			} else {
 				if (validateErrors()) {
@@ -136,10 +159,9 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					formData.eventId = id;
 					crudService.createItem('subevent', formData);
 					toast.success('¡Sub-Evento Añadido con Exito!');
-					refresh();
 				}
 			}
-			setSubEvent(!subEvent);
+			setSubEvent(false);
 		} else {
 			if (update) {
 				if (validateErrors()) {
@@ -150,7 +172,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					crudService.updateItem('event', formData.id, formData);
 					toast.success('¡Evento Editado con Exito!');
 					onUpdateState();
-					refresh();
 				}
 			} else {
 				if (validateErrors()) {
@@ -160,13 +181,13 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				} else {
 					crudService.createItem('event', formData);
 					toast.success('¡Evento Añadido con Exito!');
-					refresh();
 				}
 			}
 		}
 
 		resetFormData();
 		onFinishForm();
+		refresh();
 	};
 
 
@@ -271,13 +292,14 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const refresh = () => {
 		setIsFormSubmitted(false);
 		setIcon(false);
+		onGetFullEvents();
 	}
 
 	return (
 		<div className={`form-container ${close ? 'close' : ''}`}>
 			<div className={`form-main-box ${close ? 'close' : ''}`}>
 				<div className='form-title'>
-					<span>{update ? 'Editar Evento' : subEvent && update ? 'Editar Sub-Evento' : subEvent ? 'Añadir Sub-Evento' : 'Añadir Evento'}</span>
+					<span>{subEvent && update ? 'Editar Sub-Evento' : update ? 'Editar Evento' : subEvent ? 'Añadir Sub-Evento' : 'Añadir Evento'}</span>
 					<i class="fa-regular fa-circle-xmark" onClick={handleClose}></i>
 				</div>
 				<div className='main-form'>
@@ -323,7 +345,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<div className="row two-colums">
 										<div className="form-box">
 											<label htmlFor="generalName">Nombre General</label>
-											<input type="text" name='generalName' onChange={handleInputChange} value={formData.generalName} placeholder='Nombre General' required />
+											<input type="text" name='generalName' {...(subEvent ? { disabled: 'disabled' } : {})} onChange={handleInputChange} value={formData.generalName} placeholder='Nombre General' required />
 											{isFormSubmitted && formData.generalName === '' && (
 												<div className="message-error">Este campo es obligatorio</div>
 											)}
@@ -331,7 +353,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										</div>
 										<div className="form-box">
 											<label htmlFor="specificName">Nombre Especifico</label>
-											<input type="text" name='specificName' disabled onChange={handleInputChange} value={formData.specificName} placeholder='Nombre Especifico' />
+											<input type="text" name='specificName' {...(subEvent ? {} : { disabled: 'disabled' })} onChange={handleInputChange} value={formData.specificName} placeholder='Nombre Especifico' />
 										</div>
 									</div>
 

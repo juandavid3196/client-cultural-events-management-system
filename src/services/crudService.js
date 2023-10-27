@@ -32,7 +32,6 @@ const fetchItemById = async (resource, id) => {
 const updateItem = async (resource, id, data) => {
     try {
         const response = await axios.put(`${BASE_URL}/${resource}/${id}`, data);
-        console.log('item updated');
         return response.data;
     } catch (error) {
         throw error;
