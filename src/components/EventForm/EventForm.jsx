@@ -149,6 +149,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					crudService.updateItem('subevent', formData.id, formData);
 					toast.success('¡Sub-Evento Editado con Exito!');
 					onUpdateState();
+					onGetFullEvents();
+					refresh();
 				}
 			} else {
 				if (validateErrors()) {
@@ -159,6 +161,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					formData.eventId = id;
 					crudService.createItem('subevent', formData);
 					toast.success('¡Sub-Evento Añadido con Exito!');
+					refresh();
 				}
 			}
 			setSubEvent(false);
@@ -172,6 +175,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					crudService.updateItem('event', formData.id, formData);
 					toast.success('¡Evento Editado con Exito!');
 					onUpdateState();
+					onGetFullEvents();
+					refresh();
 				}
 			} else {
 				if (validateErrors()) {
@@ -181,13 +186,13 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				} else {
 					crudService.createItem('event', formData);
 					toast.success('¡Evento Añadido con Exito!');
+					refresh();
 				}
 			}
 		}
 
 		resetFormData();
 		onFinishForm();
-		refresh();
 	};
 
 
@@ -434,7 +439,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 												</select>
 											</div>
 											<div className="form-box">
-												<label htmlFor="identificationValue">Numero de Indentificación</label>
+												<label htmlFor="identificationValue">Numero de Identificación</label>
 												<input type="text" name='identificationValue' onChange={handleInputChange} value={formData.identificationValue} placeholder={identificationValue(formData.identificationType)} />
 											</div>
 										</div>

@@ -5,6 +5,7 @@ import crudService from '../../services/crudService';
 import { ToastContainer, toast } from 'react-toastify';
 import { useAppContext } from '../../contexts/AppContext';
 import 'react-toastify/dist/ReactToastify.css'
+import EventData from '../eventData/EventData';
 
 const Events = () => {
 
@@ -15,9 +16,11 @@ const Events = () => {
 	const [updateItem, setUpdateItem] = useState({});
 	const [update, setUpdate] = useState(false);
 	const [searchTerm, setSearchTerm] = useState('');
-	const [subEvents, setSubEvents] = useState({})
+	const [subEvents, setSubEvents] = useState([])
 	const [deploy, setDeploy] = useState(false)
 	const [subId, setSubId] = useState(false);
+	const [openData, setOpenData] = useState(false);
+	const [fullData, setFullData] = useState({});
 
 	const { setSubEvent, id, setId } = useAppContext();
 
@@ -90,8 +93,9 @@ const Events = () => {
 			crudService.deleteItem('subevent', id);
 
 		}
-		refresh();
 		toast.success('Elemento eliminado con Exito');
+		getFullEvents();
+		refresh();
 
 	}
 
@@ -136,6 +140,20 @@ const Events = () => {
 		return count;
 	}
 
+	const handleData = (data) => {
+		setOpenForm(false);
+		setOpenMenu(false);
+		setOpenSubMenu(false);
+		setOpenData(!openData);
+		setFullData(data);
+
+	}
+
+	const closeData = () => {
+		setOpenData(!openData);
+		setOpenSubMenu(false);
+		setOpenMenu(false);
+	}
 
 	return (
 		<div className='container'>
@@ -147,6 +165,7 @@ const Events = () => {
 				onUpdateState={UpdateState}
 				onGetFullEvents={getFullEvents}
 			/>}
+			{openData && <EventData element={fullData} onCloseData={closeData} />}
 			<div className='section-title'>
 				<h3>Gestión de eventos</h3>
 			</div>
@@ -162,11 +181,12 @@ const Events = () => {
 				</div>
 				<div className='events-bottom'>
 					{
-						filteredEvents.map((element, index) => (
+						filteredEvents.length > 0 && filteredEvents.map((element, index) => (
 							<div key={index} className='event-box'>
 								<div className='event-data'>
 									{id === element.id && openMenu && <div className='event-options'>
 										<ul>
+											<li onClick={() => handleData(element)} >Visualizar Datos</li>
 											<li onClick={() => addSubEvent(element.id)}>Añadir Sub-Evento</li>
 											<li>Añadir Responsabilidad</li>
 											<li>Crear Carpetas</li>
@@ -191,6 +211,7 @@ const Events = () => {
 												<div className='event-data subevent-data' key={index}>
 													{subId === subElem.id && openSubMenu && <div className='event-options'>
 														<ul>
+															<li onClick={() => handleData(subElem)}>Visualizar Datos</li>
 															<li>Añadir Responsabilidad</li>
 															<li onClick={() => updateEvent(subElem.id, 'subevent')}>Editar</li>
 															<li onClick={() => handleDelete(subElem.id, 'subevent')}>Eliminar</li>

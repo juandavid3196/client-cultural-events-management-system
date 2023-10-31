@@ -1,0 +1,208 @@
+.data-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    z-index: 1003;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    animation: dataIn 0.5s ease forwards;
+
+    @keyframes dataIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+
+    .data-main-box {
+        background-color: #F2F1F6;
+        border-radius: 5px;
+        z-index: 1004;
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+        max-height: 430px;
+        overflow: hidden;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        animation: dataIn 0.5s ease forwards;
+
+        @keyframes dataIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .form-title {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #1F4E99;
+
+            span {
+                width: 95%;
+                text-align: center;
+                color: white;
+                font-weight: 16px;
+                font-weight: 500;
+            }
+
+            i {
+                color: rgb(218, 33, 33);
+                font-size: 18px;
+                cursor: pointer;
+            }
+        }
+
+        main {
+
+            .form-eyeslashes {
+                width: 100%;
+                height: 35px;
+                display: flex;
+
+                .eyeslashes-box {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 0 10px;
+                    background-color: white;
+                    height: 100%;
+                    border-right: 1.5px solid #979797;
+                    cursor: pointer;
+                    color: #454545;
+                    font-size: 14px;
+                    transition: background-color 0.3s;
+
+                    i {
+                        color: red;
+                    }
+                }
+
+                .selected {
+                    background-color: #3995F8;
+                    color: white;
+                }
+
+                .eyeslashes-box:hover {
+                    background-color: #3995F8;
+                    color: white;
+                }
+
+            }
+
+            .event-section {
+                overflow-y: auto;
+                padding: 10px;
+                max-height: 315px;
+
+                .section-title {
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: cornsilk;
+                    margin-bottom: 15px;
+                    border-radius: 5px;
+                }
+
+                table {
+                    width: 100%;
+                    background-color: white;
+                    font-size: 14px;
+
+                    tbody {
+
+
+                        tr,
+                        th,
+                        td {
+                            border: 1px solid #D3D3D3;
+                        }
+
+                        tr td:nth-child(1) {
+                            background-color: #e6e0ff;
+                            font-weight: 500;
+                        }
+
+                        tr td:nth-child(2) {
+                            color: #515151;
+                        }
+
+                        td {
+                            width: 50%;
+                            height: 40px;
+                            padding: 0px 10px;
+                        }
+
+                    }
+                }
+            }
+
+            .event-section::-webkit-scrollbar {
+                width: 7.5px;
+                background-color: #ececec;
+            }
+
+            .event-section::-webkit-scrollbar-thumb {
+                background-color: #9b9b9b;
+                border-radius: 3px;
+            }
+        }
+
+
+
+
+
+
+    }
+
+    .data-main-box.close {
+        opacity: 1;
+        transition: opacity 0.5s ease-in-out;
+        animation: dataoff 0.5s ease forwards;
+
+        @keyframes dataoff {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+    }
+
+}
+
+.data-container.close {
+
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+    animation: dataoff 0.5s ease forwards;
+
+    @keyframes dataoff {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 0;
+        }
+    }
+}
