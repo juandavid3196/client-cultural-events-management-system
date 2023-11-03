@@ -161,6 +161,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					formData.eventId = id;
 					crudService.createItem('subevent', formData);
 					toast.success('¡Sub-Evento Añadido con Exito!');
+					onGetFullEvents();
 					refresh();
 				}
 			}
@@ -186,6 +187,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				} else {
 					crudService.createItem('event', formData);
 					toast.success('¡Evento Añadido con Exito!');
+					onGetFullEvents();
 					refresh();
 				}
 			}
