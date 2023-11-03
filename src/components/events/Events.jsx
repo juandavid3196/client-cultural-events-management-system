@@ -28,7 +28,7 @@ const Events = () => {
 		getFullEvents();
 	}, []);
 
-	const filteredEvents = events.filter(event => event.generalName.toLowerCase().includes(searchTerm.toLowerCase()));
+	const filteredEvents = events; //events.filter(event => event.generalName.toLowerCase().includes(searchTerm.toLowerCase()));
 
 	const closeForm = () => {
 		setOpenForm(false);
@@ -132,7 +132,7 @@ const Events = () => {
 	const subEventsCount = (id) => {
 		let count = 0;
 		subEvents.map((element) => {
-			if (element.eventId === id) {
+			if (element.event_id === id) {
 				count++;
 			}
 		})
@@ -195,7 +195,7 @@ const Events = () => {
 										</ul>
 									</div>}
 									<div className="event-text" onClick={() => handleDeploy(element.id)}>
-										{element.generalName}
+										{element.general_name}
 									</div>
 									{subEventsCount(element.id) > 0 && (
 										<span className='sub-events-count'>{subEventsCount(element.id)}</span>
@@ -206,7 +206,7 @@ const Events = () => {
 								</div>
 								<div className={`event-box subevent-box ${id === element.id && deploy ? 'expanded' : ''}`}>
 									{subEvents.length > 0 && subEvents.map((subElem, index) => {
-										if (subElem.eventId === element.id) {
+										if (subElem.event_id === element.id) {
 											return (
 												<div className='event-data subevent-data' key={index}>
 													{subId === subElem.id && openSubMenu && <div className='event-options'>
@@ -218,7 +218,7 @@ const Events = () => {
 														</ul>
 													</div>}
 													<div className="event-text">
-														{subElem.specificName}
+														{subElem.specific_name}
 													</div>
 													<div className="icon-container">
 														<i className="fa-solid fa-ellipsis-vertical" onClick={() => handleMenu(subElem.id, 'subevent')}></i>
