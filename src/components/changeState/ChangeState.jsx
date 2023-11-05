@@ -9,6 +9,7 @@ const ChangeState = ({ onCloseState, openState }) => {
         id_state: uuid.v4(),
         type_state: '',
         date_state: '',
+        hour_state: '',
         justification: '',
         user_state: 'default',
         event_id: ''
@@ -41,11 +42,16 @@ const ChangeState = ({ onCloseState, openState }) => {
         let day = date.getDate();
         let month = date.getMonth() + 1;
         let year = date.getFullYear();
+        let hour = date.getHours();
+        let minutes = date.getMinutes();
+
 
         let fullDate = `${day}/${month}/${year}`;
+        let fullHour = `${hour}:${minutes}`;
 
         setFormData({
             ...formData,
+            hour_state: fullHour,
             date_state: fullDate,
         });
     }
@@ -60,15 +66,20 @@ const ChangeState = ({ onCloseState, openState }) => {
                 </div>
                 <div className='main'>
                     <form action="">
-                        <div className="row">
+                        <div className="row two-colums">
                             <div className="form-box">
-                                <div>Fecha: <span>{formData.date_state}</span></div>
+                                <label htmlFor="date_state">Fecha</label>
+                                <input className='blocked' type="text" name='date_state' value={formData.date_state} disabled />
+                            </div>
+                            <div className="form-box">
+                                <label htmlFor="hour_state">Hora</label>
+                                <input className='blocked' type="text" name='hour_state' value={formData.hour_state} disabled />
                             </div>
                         </div>
                         <div className="row two-colums">
                             <div className="form-box">
                                 <label htmlFor="specific_name">Estado Actual</label>
-                                <input type="text" name='specific_name' disabled />
+                                <input className='blocked' type="text" name='specific_name' disabled />
                             </div>
                             <div className="form-box">
                                 <label htmlFor="type_state">Estado Nuevo</label>

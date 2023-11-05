@@ -20,8 +20,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		id: uuid.v4(),
 		event_type: "",
 		event_id: null,
-		state: "pre-reserva",
-		date_state: "",
 		general_name: "",
 		specific_name: "",
 		date_start: "",
@@ -51,6 +49,18 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		agreement: ""
 	}
 	);
+
+	const [stateData, setStateData] = useState({
+		id_state: uuid.v4(),
+		type_state: 'pre-reserva',
+		date_state: '',
+		hour_state: '',
+		justification: '',
+		user_state: 'default',
+		...(subEvent ? { subevent_id: formData.id } : { event_id: formData.id })
+	});
+
+
 
 	useEffect(() => {
 		getDate();
@@ -101,6 +111,11 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				...formData,
 				[name]: f,
 			});
+		} else if (name === 'type_state') {
+			setStateData({
+				...stateData,
+				['type_state']: value
+			})
 		} else {
 
 			setFormData({
@@ -159,6 +174,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				} else {
 					formData.event_id = id;
 					crudService.createItem('subevent', formData);
+					crudService.createItem('subeventstate', stateData);
 					toast.success('¡Sub-Evento Añadido con Exito!');
 					onGetFullEvents();
 					refresh();
@@ -186,6 +202,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				} else {
 					console.log(formData);
 					crudService.createItem('event', formData);
+					crudService.createItem('eventstate', stateData);
 					toast.success('¡Evento Añadido con Exito!');
 					onGetFullEvents();
 					refresh();
@@ -267,13 +284,19 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		let day = date.getDate();
 		let month = date.getMonth() + 1;
 		let year = date.getFullYear();
+		let hour = date.getHours();
+		let minutes = date.getMinutes();
+
 
 		let fullDate = `${day}/${month}/${year}`;
+		let fullHour = `${hour}:${minutes}`;
 
-		setFormData({
-			...formData,
-			date_state: fullDate,
-		});
+
+		setStateData({
+			...stateData,
+			hour_state: fullHour,
+			date_state: fullDate
+		})
 	}
 
 
@@ -341,8 +364,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 										</div>
 										<div className="form-box">
-											<label htmlFor="state">Estado</label>
-											<select name="state" onChange={handleInputChange} value={formData.state}>
+											<label htmlFor="type_state">Estado</label>
+											<select name="type_state" onChange={handleInputChange} value={stateData.type_state}>
 												<option value="pre-reserva">Pre-reserva</option>
 												<option value="confirmado">Confirmado</option>
 												<option value="ejecutar">Listo para Ejecutar</option>
