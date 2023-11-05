@@ -343,9 +343,12 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										<div className="form-box">
 											<label htmlFor="state">Estado</label>
 											<select name="state" onChange={handleInputChange} value={formData.state}>
-												<option value="confirmado">Confirmado</option>
 												<option value="pre-reserva">Pre-reserva</option>
+												<option value="confirmado">Confirmado</option>
+												<option value="ejecutar">Listo para Ejecutar</option>
 												<option value="cancelado">Cancelado</option>
+												<option value="ejecucion">En Ejecución</option>
+												<option value="terminado">Terminado</option>
 											</select>
 										</div>
 									</div>

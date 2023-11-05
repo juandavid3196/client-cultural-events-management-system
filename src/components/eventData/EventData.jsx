@@ -18,7 +18,7 @@ const EventData = ({ element, onCloseData }) => {
         <div className={`data-container ${close ? 'close' : ''}`}>
             <div className={`data-main-box ${close ? 'close' : ''}`}>
                 <div className='form-title'>
-                    <span>{`Datos ${element.eventId ? `${element.specificName}` : `${element.generalName}`}`}</span>
+                    <span>{`Datos ${element.event_id ? `${element.specific_name}` : `${element.general_name}`}`}</span>
                     <i class="fa-regular fa-circle-xmark" onClick={() => handleClose()}></i>
                 </div>
                 <main>
@@ -40,7 +40,7 @@ const EventData = ({ element, onCloseData }) => {
                                     <>
                                         <tr>
                                             <td>Tipo de Evento</td>
-                                            <td>{element.eventType}</td>
+                                            <td>{element.event_type}</td>
                                         </tr>
                                         <tr>
                                             <td>Estado</td>
@@ -48,31 +48,31 @@ const EventData = ({ element, onCloseData }) => {
                                         </tr>
                                         <tr>
                                             <td>Fecha de Estado</td>
-                                            <td>{element.dateState}</td>
+                                            <td>{element.date_state}</td>
                                         </tr>
                                         <tr>
                                             <td>Nombre General</td>
-                                            <td>{element.generalName}</td>
+                                            <td>{element.general_name}</td>
                                         </tr>
                                         <tr>
                                             <td>Nombre Especifico</td>
-                                            <td>{element.specificName}</td>
+                                            <td>{element.specific_name}</td>
                                         </tr>
                                         <tr>
                                             <td>Fecha de Inicio</td>
-                                            <td>{element.dateStart}</td>
+                                            <td>{element.date_start}</td>
                                         </tr>
                                         <tr>
                                             <td>Fecha de Finalizacion</td>
-                                            <td>{element.dateFinishing}</td>
+                                            <td>{element.date_finishing}</td>
                                         </tr>
                                         <tr>
                                             <td>Hora de Inicio</td>
-                                            <td>{element.hourStart}</td>
+                                            <td>{element.hour_start}</td>
                                         </tr>
                                         <tr>
                                             <td>Hora de Finalización</td>
-                                            <td>{element.hourFinishig}</td>
+                                            <td>{element.hour_finishing}</td>
                                         </tr>
                                         <tr>
                                             <td>Lugar</td>
@@ -87,7 +87,7 @@ const EventData = ({ element, onCloseData }) => {
                                         <>
                                             <tr>
                                                 <td>Nombre de Usuario</td>
-                                                <td>{element.userName}</td>
+                                                <td>{element.user_name}</td>
                                             </tr>
                                             <tr>
                                                 <td>Telefono</td>
@@ -95,11 +95,11 @@ const EventData = ({ element, onCloseData }) => {
                                             </tr>
                                             <tr>
                                                 <td>Tipo de Identificación</td>
-                                                <td>{element.identificationType}</td>
+                                                <td>{element.identification_type}</td>
                                             </tr>
                                             <tr>
                                                 <td>Identificación</td>
-                                                <td>{element.identificationValue}</td>
+                                                <td>{element.identification_value}</td>
                                             </tr>
                                             <tr>
                                                 <td>Email</td>
@@ -125,19 +125,19 @@ const EventData = ({ element, onCloseData }) => {
                                             </tr>
                                             <tr>
                                                 <td>Fecha de Montaje</td>
-                                                <td>{element.mountingDate}</td>
+                                                <td>{element.mounting_date}</td>
                                             </tr>
                                             <tr>
                                                 <td>Hora de Inicio</td>
-                                                <td>{element.mountingStarHour}</td>
+                                                <td>{element.mounting_star_hour}</td>
                                             </tr>
                                             <tr>
                                                 <td>Hora de Finalización</td>
-                                                <td>{element.mountingFinishingHour}</td>
+                                                <td>{element.mounting_finishing_hour}</td>
                                             </tr>
                                             <tr>
                                                 <td>Contacto técnico</td>
-                                                <td>{element.technicContact}</td>
+                                                <td>{element.technic_contact}</td>
                                             </tr>
                                             <tr>
                                                 <td>rider</td>
@@ -145,7 +145,7 @@ const EventData = ({ element, onCloseData }) => {
                                             </tr>
                                             <tr>
                                                 <td>Minuto a Minuto</td>
-                                                <td>{element.minTomin}</td>
+                                                <td>{element.min_tomin}</td>
                                             </tr>
                                         </>
                                     )
@@ -155,7 +155,7 @@ const EventData = ({ element, onCloseData }) => {
                                         <>
                                             <tr>
                                                 <td>Contacto Comunicaciones</td>
-                                                <td>{element.communicationContact}</td>
+                                                <td>{element.communication_contact}</td>
                                             </tr>
                                             <tr>
                                                 <td>Pulep</td>
@@ -163,15 +163,15 @@ const EventData = ({ element, onCloseData }) => {
                                             </tr>
                                             <tr>
                                                 <td>Informacion de Acceso</td>
-                                                <td>{element.accessData}</td>
+                                                <td>{element.access_data}</td>
                                             </tr>
                                             <tr>
                                                 <td>Compañia de Tiquetes</td>
-                                                <td>{element.ticketCompany}</td>
+                                                <td>{element.ticket_company}</td>
                                             </tr>
                                             <tr>
                                                 <td>Restriccion de Edad</td>
-                                                <td>{element.ageRestriction}</td>
+                                                <td>{element.age_restriction}</td>
                                             </tr>
                                             <tr>
                                                 <td>Acuerdo</td>

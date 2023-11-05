@@ -46,12 +46,12 @@ const deleteItem = async (resource, id) => {
     if (confirm) {
         try {
             const response = await axios.delete(`${BASE_URL}/${resource}/${id}`);
-            return response.data;
+            return true;
         } catch (error) {
             throw error;
         }
     } else {
-        return;
+        return false;
     }
 };
 

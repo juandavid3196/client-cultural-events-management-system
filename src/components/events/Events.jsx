@@ -6,12 +6,15 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useAppContext } from '../../contexts/AppContext';
 import 'react-toastify/dist/ReactToastify.css'
 import EventData from '../eventData/EventData';
+import ChangeState from '../changeState/ChangeState';
 
 const Events = () => {
 
 	const [openForm, setOpenForm] = useState(false);
 	const [openMenu, setOpenMenu] = useState(false);
 	const [openSubMenu, setOpenSubMenu] = useState(false);
+	const [openData, setOpenData] = useState(false);
+	const [openState, setOpenState] = useState(false);
 	const [events, setEvents] = useState([])
 	const [updateItem, setUpdateItem] = useState({});
 	const [update, setUpdate] = useState(false);
@@ -19,7 +22,6 @@ const Events = () => {
 	const [subEvents, setSubEvents] = useState([])
 	const [deploy, setDeploy] = useState(false)
 	const [subId, setSubId] = useState(false);
-	const [openData, setOpenData] = useState(false);
 	const [fullData, setFullData] = useState({});
 
 	const { setSubEvent, id, setId } = useAppContext();
@@ -87,13 +89,24 @@ const Events = () => {
 	}
 
 	const handleDelete = (id, type) => {
-		if (type === 'event') {
-			crudService.deleteItem('event', id);
-		} else {
-			crudService.deleteItem('subevent', id);
 
+		if (type === 'event') {
+			const response = crudService.deleteItem('event', id);
+			response.then((res) => {
+				if (res) toast.success('Elemento eliminado con Exito');
+			}).catch((error) => {
+				console.error('Error en la solicitud DELETE:', error);
+			});
+
+		} else {
+			const response = crudService.deleteItem('subevent', id);
+			response.then((res) => {
+				if (res) toast.success('Elemento eliminado con Exito');
+			}).catch((error) => {
+				console.error('Error en la solicitud DELETE:', error);
+			});
 		}
-		toast.success('Elemento eliminado con Exito');
+
 		getFullEvents();
 		refresh();
 
@@ -155,6 +168,19 @@ const Events = () => {
 		setOpenMenu(false);
 	}
 
+	const closeState = () => {
+		setOpenState(!openState);
+		setOpenSubMenu(false);
+		setOpenMenu(false);
+	}
+
+
+
+	const handleState = (id) => {
+		setOpenState(!openState);
+		setId(id);
+	}
+
 	return (
 		<div className='container'>
 			{openForm && <EventForm
@@ -166,6 +192,7 @@ const Events = () => {
 				onGetFullEvents={getFullEvents}
 			/>}
 			{openData && <EventData element={fullData} onCloseData={closeData} />}
+			{openState && <ChangeState onCloseState={closeState} openState={openState} />}
 			<div className='section-title'>
 				<h3>Gestión de eventos</h3>
 			</div>
@@ -189,7 +216,7 @@ const Events = () => {
 											<li onClick={() => handleData(element)} >Visualizar Datos</li>
 											<li onClick={() => addSubEvent(element.id)}>Añadir Sub-Evento</li>
 											<li>Añadir Responsabilidad</li>
-											<li>Crear Carpetas</li>
+											<li onClick={() => handleState(element.id)}>Editar Estado</li>
 											<li onClick={() => updateEvent(element.id, 'event')}>Editar</li>
 											<li onClick={() => handleDelete(element.id, 'event')}>Eliminar</li>
 										</ul>
