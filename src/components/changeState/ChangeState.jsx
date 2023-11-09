@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import "../changeState/ChangeState.scss"
+import { toast } from 'react-toastify';
 import crudService from '../../services/crudService';
 
 const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
@@ -16,6 +17,17 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
         user_state: 'default',
         ...(subEvent ? { subevent_id: id } : { event_id: id })
     })
+
+    const [historyData, setHistoryData] = useState({
+        type_state: '',
+        date_state: '',
+        hour_state: '',
+        justification: '',
+        user_state: 'default',
+        eventstate_id: ''
+    })
+
+
 
     useEffect(() => {
         getStateById();
@@ -57,6 +69,12 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
             hour_state: fullHour,
             date_state: fullDate,
         })
+
+        setHistoryData({
+            ...historyData,
+            hour_state: fullHour,
+            date_state: fullDate,
+        })
     }
 
     const getStateById = async () => {
@@ -69,47 +87,63 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
         setStateData(data);
     }
 
+    const setInfo = () => {
+        formData.id_state = stateData.id_state;
+        historyData.justification = formData.justification;
+        historyData.eventstate_id = stateData.id_state;
+        historyData.type_state = formData.type_state;
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        formData.id_state = stateData.id_state;
+        setInfo();
+
         if (subEvent) {
 
             const response = crudService.updateItem('subeventstate', formData.id_state, formData);
             response.then((res) => {
                 if (res) {
-                    resetFormData();
-                    handleClose();
+
                 }
             }).catch((error) => {
                 console.error('Error en la solicitud', error);
                 return;
             });
         } else {
-            const response = crudService.updateItem('eventstate', formData.id_state, formData);
+            const response = crudService.createItem('historyevent', historyData);
             response.then((res) => {
                 if (res) {
-                    resetFormData();
-                    handleClose();
+                    crudService.updateItem('eventstate', formData.id_state, formData);
+                    toast.success('¡Estado Editado con Exito!');
                 }
             }).catch((error) => {
                 console.error('Error en la solicitud', error);
                 return;
             });
         }
+        resetFormData();
+        handleClose();
 
 
     }
 
     const resetFormData = () => {
         const keys = Object.keys(formData);
+        const keys2 = Object.keys(historyData);
+
         const emptyFormData = {};
+        const emptyFormData2 = {};
 
         keys.forEach((key) => {
             emptyFormData[key] = '';
         });
 
+        keys2.forEach((key) => {
+            emptyFormData2[key] = '';
+        });
+
         setFormData(emptyFormData);
+        setHistoryData(emptyFormData2);
     };
 
 
