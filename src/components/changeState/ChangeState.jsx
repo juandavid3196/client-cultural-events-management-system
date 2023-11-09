@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import "../changeState/ChangeState.scss"
 import { toast } from 'react-toastify';
 import crudService from '../../services/crudService';
+import { useAppContext } from '../../contexts/AppContext';
 
 const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
 
 
     const [close, setClose] = useState(false);
     const [stateData, setStateData] = useState({});
+    const { setSubEvent } = useAppContext();
     const [formData, setFormData] = useState({
         id_state: '',
         type_state: 'pre-reserva',
@@ -24,7 +26,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
         hour_state: '',
         justification: '',
         user_state: 'default',
-        eventstate_id: ''
+        ...(subEvent ? { subeventstate_id: '' } : { eventstate_id: '' })
     })
 
 
@@ -90,8 +92,12 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
     const setInfo = () => {
         formData.id_state = stateData.id_state;
         historyData.justification = formData.justification;
-        historyData.eventstate_id = stateData.id_state;
         historyData.type_state = formData.type_state;
+        if (subEvent) {
+            historyData.subeventstate_id = stateData.id_state;
+        } else {
+            historyData.eventstate_id = stateData.id_state;
+        }
     }
 
     const handleSubmit = (e) => {
@@ -100,10 +106,11 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
 
         if (subEvent) {
 
-            const response = crudService.updateItem('subeventstate', formData.id_state, formData);
+            const response = crudService.createItem('historysubevent', historyData);
             response.then((res) => {
                 if (res) {
-
+                    crudService.updateItem('subeventstate', formData.id_state, formData);
+                    toast.success('¡Estado Editado con Exito!');
                 }
             }).catch((error) => {
                 console.error('Error en la solicitud', error);
@@ -123,7 +130,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
         }
         resetFormData();
         handleClose();
-
+        setSubEvent(false);
 
     }
 

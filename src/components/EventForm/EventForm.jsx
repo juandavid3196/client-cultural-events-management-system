@@ -60,6 +60,14 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		...(subEvent ? { subevent_id: formData.id } : { event_id: formData.id })
 	});
 
+	const [historyData, setHistoryData] = useState({
+		type_state: '',
+		date_state: '',
+		hour_state: '',
+		justification: 'default',
+		user_state: 'default',
+		...(subEvent ? { subeventstate_id: '' } : { eventstate_id: '' })
+	})
 
 
 	useEffect(() => {
@@ -188,7 +196,18 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					formData.event_id = id;
 					const response = crudService.createItem('subevent', formData);
 					response.then((res) => {
-						if (res) crudService.createItem('subeventstate', stateData);
+						if (res) {
+							const response = crudService.createItem('subeventstate', stateData);
+							response.then((res) => {
+								if (res) {
+									setInfo();
+									crudService.createItem('historysubevent', historyData);
+								}
+							}).catch((error) => {
+								console.error('Error en la solicitud', error);
+								return;
+							});
+						}
 					}).catch((error) => {
 						console.error('Error en la solicitud', error);
 						return;
@@ -221,7 +240,19 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				} else {
 					const response = crudService.createItem('event', formData);
 					response.then((res) => {
-						if (res) crudService.createItem('eventstate', stateData);
+						if (res) {
+							const response = crudService.createItem('eventstate', stateData);
+							response.then((res) => {
+								if (res) {
+									setInfo();
+									crudService.createItem('historyevent', historyData);
+								}
+							}).catch((error) => {
+								console.error('Error en la solicitud', error);
+								return;
+							});
+
+						}
 					}).catch((error) => {
 						console.error('Error en la solicitud', error);
 						return;
@@ -236,6 +267,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		}
 
 		resetFormData();
+		setSubEvent(false);
 		onFinishForm();
 	};
 
@@ -322,6 +354,12 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 			hour_state: fullHour,
 			date_state: fullDate
 		})
+
+		setHistoryData({
+			...historyData,
+			hour_state: fullHour,
+			date_state: fullDate
+		})
 	}
 
 
@@ -348,6 +386,16 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		setIsFormSubmitted(false);
 		setIcon(false);
 		onGetFullEvents();
+	}
+
+
+	const setInfo = () => {
+		if (subEvent) {
+			historyData.subeventstate_id = stateData.id_state;
+		} else {
+			historyData.eventstate_id = stateData.id_state;
+		}
+		historyData.type_state = stateData.type_state;
 	}
 
 	return (
@@ -390,7 +438,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										</div>
 										<div className="form-box">
 											<label htmlFor="type_state">Estado</label>
-											<select name="type_state" onChange={handleInputChange} value={stateData.type_state}>
+											<select name="type_state" onChange={handleInputChange} value={stateData.type_state} {...(update ? { disabled: 'disabled' } : {})}>
 												<option value="pre-reserva">Pre-reserva</option>
 												<option value="confirmado">Confirmado</option>
 												<option value="ejecutar">Listo para Ejecutar</option>

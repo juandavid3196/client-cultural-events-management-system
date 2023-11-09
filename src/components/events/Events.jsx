@@ -176,7 +176,8 @@ const Events = () => {
 
 
 
-	const handleState = (id) => {
+	const handleState = (id, type) => {
+		if (type === 'subevent') setSubEvent(true);
 		setOpenState(!openState);
 		setId(id);
 	}
@@ -220,7 +221,7 @@ const Events = () => {
 											<li onClick={() => handleData(element)} >Visualizar Datos</li>
 											<li onClick={() => addSubEvent(element.id)}>Añadir Sub-Evento</li>
 											<li>Añadir Responsabilidad</li>
-											<li onClick={() => handleState(element.id)}>Editar Estado</li>
+											<li onClick={() => handleState(element.id, 'event')}>Editar Estado</li>
 											<li onClick={() => updateEvent(element.id, 'event')}>Editar</li>
 											<li onClick={() => handleDelete(element.id, 'event')}>Eliminar</li>
 										</ul>
@@ -244,6 +245,7 @@ const Events = () => {
 														<ul>
 															<li onClick={() => handleData(subElem)}>Visualizar Datos</li>
 															<li>Añadir Responsabilidad</li>
+															<li onClick={() => handleState(subElem.id, 'subevent')}>Editar Estado</li>
 															<li onClick={() => updateEvent(subElem.id, 'subevent')}>Editar</li>
 															<li onClick={() => handleDelete(subElem.id, 'subevent')}>Eliminar</li>
 														</ul>
