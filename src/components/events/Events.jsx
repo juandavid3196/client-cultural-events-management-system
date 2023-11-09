@@ -24,7 +24,7 @@ const Events = () => {
 	const [subId, setSubId] = useState(false);
 	const [fullData, setFullData] = useState({});
 
-	const { setSubEvent, id, setId } = useAppContext();
+	const { setSubEvent, id, setId, subEvent } = useAppContext();
 
 	useEffect(() => {
 		getFullEvents();
@@ -192,7 +192,11 @@ const Events = () => {
 				onGetFullEvents={getFullEvents}
 			/>}
 			{openData && <EventData element={fullData} onCloseData={closeData} />}
-			{openState && <ChangeState onCloseState={closeState} openState={openState} />}
+			{openState && <ChangeState
+				onCloseState={closeState}
+				openState={openState}
+				subEvent={subEvent}
+				id={id} />}
 			<div className='section-title'>
 				<h3>Gestión de eventos</h3>
 			</div>

@@ -148,6 +148,19 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		setFormData(emptyFormData);
 	};
 
+	const resetStateData = () => {
+		const keys = Object.keys(stateData);
+		const emptyFormData = {};
+
+		keys.forEach((key) => {
+			emptyFormData[key] = '';
+		});
+
+		setStateData(emptyFormData);
+	};
+
+
+
 
 	const handleForm = (e) => {
 		e.preventDefault();
@@ -173,10 +186,16 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					return;
 				} else {
 					formData.event_id = id;
-					crudService.createItem('subevent', formData);
-					crudService.createItem('subeventstate', stateData);
+					const response = crudService.createItem('subevent', formData);
+					response.then((res) => {
+						if (res) crudService.createItem('subeventstate', stateData);
+					}).catch((error) => {
+						console.error('Error en la solicitud', error);
+						return;
+					});
 					toast.success('¡Sub-Evento Añadido con Exito!');
 					onGetFullEvents();
+					resetStateData();
 					refresh();
 				}
 			}
@@ -200,11 +219,17 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					setIcon(true);
 					return;
 				} else {
-					console.log(formData);
-					crudService.createItem('event', formData);
-					crudService.createItem('eventstate', stateData);
+					const response = crudService.createItem('event', formData);
+					response.then((res) => {
+						if (res) crudService.createItem('eventstate', stateData);
+					}).catch((error) => {
+						console.error('Error en la solicitud', error);
+						return;
+					});
+
 					toast.success('¡Evento Añadido con Exito!');
 					onGetFullEvents();
+					resetStateData();
 					refresh();
 				}
 			}
@@ -289,7 +314,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 
 		let fullDate = `${day}/${month}/${year}`;
-		let fullHour = `${hour}:${minutes}`;
+		let fullHour = `${hour}:${minutes < 10 ? '0' + minutes : minutes}`;
 
 
 		setStateData({
