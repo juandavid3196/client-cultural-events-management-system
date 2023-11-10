@@ -53,6 +53,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
 
     const handleClose = () => {
         setClose(true);
+        setSubEvent(false);
         setTimeout(() => {
             onCloseState();
         }, 500)
@@ -174,8 +175,8 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
 
 
     return (
-        <div className={`state-big-container ${close ? 'close' : ''}`}>
-            <div className={`state-container ${close ? 'close' : ''}`}>
+        <div className={`change-big-container ${close ? 'close' : ''}`}>
+            <div className={`change-container ${close ? 'close' : ''}`}>
                 <div className='form-title'>
                     <span>{`Estados`}</span>
                     <i class="fa-regular fa-circle-xmark" onClick={handleClose}></i>

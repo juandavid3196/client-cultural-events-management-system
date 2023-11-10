@@ -7,6 +7,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import 'react-toastify/dist/ReactToastify.css'
 import EventData from '../eventData/EventData';
 import ChangeState from '../changeState/ChangeState';
+import StateReport from '../stateReport/StateReport';
 
 const Events = () => {
 
@@ -15,6 +16,7 @@ const Events = () => {
 	const [openSubMenu, setOpenSubMenu] = useState(false);
 	const [openData, setOpenData] = useState(false);
 	const [openState, setOpenState] = useState(false);
+	const [openReport, setOpenReport] = useState(false);
 	const [events, setEvents] = useState([])
 	const [updateItem, setUpdateItem] = useState({});
 	const [update, setUpdate] = useState(false);
@@ -174,11 +176,22 @@ const Events = () => {
 		setOpenMenu(false);
 	}
 
+	const closeReport = () => {
+		setOpenReport(!openReport);
+		setOpenSubMenu(false);
+		setOpenMenu(false);
+		setSubEvent(false);
+	}
 
 
 	const handleState = (id, type) => {
 		if (type === 'subevent') setSubEvent(true);
 		setOpenState(!openState);
+		setId(id);
+	}
+	const handleReport = (id, type) => {
+		if (type === 'subevent') setSubEvent(true);
+		setOpenReport(!openReport);
 		setId(id);
 	}
 
@@ -192,12 +205,20 @@ const Events = () => {
 				onUpdateState={UpdateState}
 				onGetFullEvents={getFullEvents}
 			/>}
-			{openData && <EventData element={fullData} onCloseData={closeData} />}
+			{openData && <EventData
+				element={fullData}
+				onCloseData={closeData} />}
 			{openState && <ChangeState
 				onCloseState={closeState}
 				openState={openState}
 				subEvent={subEvent}
 				id={id} />}
+			{
+				openReport && <StateReport
+					onCloseReport={closeReport}
+					openReport={openReport}
+				/>
+			}
 			<div className='section-title'>
 				<h3>Gestión de eventos</h3>
 			</div>
@@ -221,7 +242,8 @@ const Events = () => {
 											<li onClick={() => handleData(element)} >Visualizar Datos</li>
 											<li onClick={() => addSubEvent(element.id)}>Añadir Sub-Evento</li>
 											<li>Añadir Responsabilidad</li>
-											<li onClick={() => handleState(element.id, 'event')}>Editar Estado</li>
+											<li onClick={() => handleState(element.id, 'event')}>Actualizar Estado</li>
+											<li onClick={() => handleReport(element.id, 'event')}>Reporte de Estados</li>
 											<li onClick={() => updateEvent(element.id, 'event')}>Editar</li>
 											<li onClick={() => handleDelete(element.id, 'event')}>Eliminar</li>
 										</ul>
@@ -245,7 +267,8 @@ const Events = () => {
 														<ul>
 															<li onClick={() => handleData(subElem)}>Visualizar Datos</li>
 															<li>Añadir Responsabilidad</li>
-															<li onClick={() => handleState(subElem.id, 'subevent')}>Editar Estado</li>
+															<li onClick={() => handleState(subElem.id, 'subevent')}>Actualizar Estado</li>
+															<li onClick={() => handleReport(subElem.id, 'subevent')}>Reporte de Estados</li>
 															<li onClick={() => updateEvent(subElem.id, 'subevent')}>Editar</li>
 															<li onClick={() => handleDelete(subElem.id, 'subevent')}>Eliminar</li>
 														</ul>

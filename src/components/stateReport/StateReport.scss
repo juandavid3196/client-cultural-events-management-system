@@ -1,4 +1,4 @@
-.change-big-container {
+.state-report-big-container {
     position: fixed;
     top: 0;
     left: 0;
@@ -25,7 +25,7 @@
     }
 
 
-    .change-container {
+    .state-report-container {
         background-color: #F2F1F6;
         border-radius: 5px;
         z-index: 1004;
@@ -151,103 +151,16 @@
                         }
 
                     }
-                }
 
-
-                form {
-                    .row {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 10px;
-
-                        .form-box {
-                            width: 100%;
-                            display: flex;
-                            flex-direction: column;
-                            margin-top: 7px;
-
-                            label {
-                                font-size: 13px;
-                                color: #373737;
-                            }
-
-                            input {
-                                background-color: white;
-                                height: 30px;
-                                border-style: none;
-                                border: 1px solid #D3D3D3;
-                                border-radius: 5px;
-                                padding-left: 5px;
-                            }
-
-                            .blocked {
-                                background-color: #d1d1d1;
-                                color: black;
-                                border: 1px solid #a3a3a3;
-                            }
-
-                            textarea {
-                                border: 1px solid #D3D3D3;
-                                border-radius: 5px;
-                                resize: none;
-                                font-family: 'Poppins', sans-serif;
-                            }
-
-                            input:focus {
-                                outline: none;
-                                border: 1.5px solid #3995F8;
-                            }
-
-                            textarea:focus {
-                                outline: none;
-                                border: 1.5px solid #3995F8;
-                            }
-
-                            select {
-                                height: 35px;
-                                border-style: none;
-                                border: 1px solid #D3D3D3;
-                                border-radius: 5px;
-                                padding-left: 5px;
-
-                            }
-
-                            select:focus {
-                                outline: none;
-                                border: 1.5px solid #3995F8;
-                            }
-
-                            .btn-send-form {
-                                background-color: #3995F8;
-                                color: white;
-                                font-size: 15px;
-                                font-weight: 400;
-                                border-style: none;
-                                border-radius: 5px;
-                                height: 35px;
-                                width: 200px;
-                                margin-top: 20px;
-                                cursor: pointer;
-                            }
-
-                        }
-
-                        .form-box-btn {
-                            flex-direction: row;
-                            justify-content: flex-end;
-                        }
-                    }
-
-                    .two-colums {
-                        flex-direction: row;
-                        justify-content: space-between;
-                        gap: 25px;
-
-                        .form-box {
-                            width: 50%;
+                    tbody {
+                        tr td:nth-child(5) {
+                            background-color: #e0ffe2;
+                            font-weight: 500;
                         }
                     }
                 }
+
+
             }
 
             .event-section::-webkit-scrollbar {
@@ -263,7 +176,7 @@
         }
     }
 
-    .change-container.close {
+    .state-report-container.close {
         opacity: 1;
         transition: opacity 0.5s ease-in-out;
         animation: fadeoff 0.5s ease forwards;
@@ -281,7 +194,7 @@
 
 }
 
-.change-big-container.close {
+.state-report-big-container.close {
 
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
