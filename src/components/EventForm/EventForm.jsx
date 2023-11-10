@@ -19,7 +19,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const [formData, setFormData] = useState({
 		id: uuid.v4(),
 		event_type: "",
-		event_id: null,
+		...(subEvent ? { event_id: null } : {}),
 		general_name: "",
 		specific_name: "",
 		date_start: "",
