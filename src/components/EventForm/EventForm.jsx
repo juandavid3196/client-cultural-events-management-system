@@ -491,7 +491,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 											<label htmlFor="place">Lugar</label>
 											<select name="place" onChange={handleInputChange} value={formData.place}>
 												<option value="" disabled>Seleccionar</option>
-												<option value="sala">sala</option>
+												<option value="sala">Sala</option>
 												<option value="cafe-teatro">Cafe Teatro</option>
 												<option value="plazoleta">Plazoleta</option>
 												<option value="aula-taller">Aula Taller</option>

@@ -11,10 +11,12 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
     const [stateData, setStateData] = useState({});
     const [historyStateData, setHistoryStateData] = useState([]);
     const [section, setSection] = useState('editar');
-    const { setSubEvent } = useAppContext();
+    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+    const [icon, setIcon] = useState(false);
+    const { setSubEvent, typeStateFilter, colorState } = useAppContext();
     const [formData, setFormData] = useState({
         id_state: '',
-        type_state: 'pre-reserva',
+        type_state: '',
         date_state: '',
         hour_state: '',
         justification: '',
@@ -123,28 +125,41 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
         setInfo();
 
         if (subEvent) {
-
-            const response = crudService.createItem('historysubevent', historyData);
-            response.then((res) => {
-                if (res) {
-                    crudService.updateItem('subeventstate', formData.id_state, formData);
-                    toast.success('¡Estado Editado con Exito!');
-                }
-            }).catch((error) => {
-                console.error('Error en la solicitud', error);
+            if (validateErrors()) {
+                setIsFormSubmitted(true);
+                setIcon(true);
                 return;
-            });
+            } else {
+                const response = crudService.createItem('historysubevent', historyData);
+                response.then((res) => {
+                    if (res) {
+                        crudService.updateItem('subeventstate', formData.id_state, formData);
+                        toast.success('¡Estado Editado con Exito!');
+                        refresh();
+                    }
+                }).catch((error) => {
+                    console.error('Error en la solicitud', error);
+                    return;
+                });
+            }
         } else {
-            const response = crudService.createItem('historyevent', historyData);
-            response.then((res) => {
-                if (res) {
-                    crudService.updateItem('eventstate', formData.id_state, formData);
-                    toast.success('¡Estado Editado con Exito!');
-                }
-            }).catch((error) => {
-                console.error('Error en la solicitud', error);
+            if (validateErrors()) {
+                setIsFormSubmitted(true);
+                setIcon(true);
                 return;
-            });
+            } else {
+                const response = crudService.createItem('historyevent', historyData);
+                response.then((res) => {
+                    if (res) {
+                        crudService.updateItem('eventstate', formData.id_state, formData);
+                        toast.success('¡Estado Editado con Exito!');
+                        refresh();
+                    }
+                }).catch((error) => {
+                    console.error('Error en la solicitud', error);
+                    return;
+                });
+            }
         }
         resetFormData();
         handleClose();
@@ -172,7 +187,25 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
     };
 
 
+    const validateErrors = () => {
 
+        let hasErrors = false;
+
+        if (formData.type_state === '') {
+            hasErrors = true;
+        }
+
+        if (formData.justification === '') {
+            hasErrors = true;
+        }
+
+        return hasErrors;
+    }
+
+    const refresh = () => {
+        setIsFormSubmitted(false);
+        setIcon(false);
+    }
 
     return (
         <div className={`change-big-container ${close ? 'close' : ''}`}>
@@ -183,7 +216,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
                 </div>
                 <main>
                     <div className='form-eyeslashes'>
-                        <span className={`eyeslashes-box ${section === 'editar' ? 'selected' : ''}`} onClick={() => setSection('editar')}>Editar</span>
+                        <span className={`eyeslashes-box ${section === 'editar' ? 'selected' : ''}`} onClick={() => setSection('editar')}>Editar&nbsp;&nbsp;{icon && validateErrors() ? (<i class="fa-solid fa-triangle-exclamation"></i>) : ''} </span>
                         <span className={`eyeslashes-box ${section === 'historial' ? 'selected' : ''}`} onClick={() => setSection('historial')}>Historial</span>
 
                     </div>
@@ -208,11 +241,12 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
                                     <div className="row two-colums">
                                         <div className="form-box">
                                             <label htmlFor="specific_name">Estado Actual</label>
-                                            <input className='blocked' type="text" name='specific_name' disabled value={stateData.type_state} />
+                                            <input className='blocked' type="text" name='specific_name' disabled value={typeStateFilter(stateData.type_state)} />
                                         </div>
                                         <div className="form-box">
                                             <label htmlFor="type_state">Estado Nuevo</label>
                                             <select name="type_state" onChange={handleInputChange} value={formData.type_state}>
+                                                <option value="" disabled>seleccionar</option>
                                                 <option value="pre-reserva">Pre-reserva</option>
                                                 <option value="confirmado">Confirmado</option>
                                                 <option value="ejecutar">Listo para Ejecutar</option>
@@ -220,12 +254,18 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
                                                 <option value="ejecucion">En Ejecución</option>
                                                 <option value="terminado">Terminado</option>
                                             </select>
+                                            {isFormSubmitted && formData.type_state === '' && (
+                                                <div className="message-error">Este campo es obligatorio</div>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="row">
                                         <div className="form-box">
                                             <label htmlFor="justification">Información de ingreso</label>
                                             <textarea name="justification" cols="30" rows="5" onChange={handleInputChange} value={formData.justification} placeholder='Justifique el cambio de estado' ></textarea>
+                                            {isFormSubmitted && formData.justification === '' && (
+                                                <div className="message-error">Este campo es obligatorio</div>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="row">
@@ -252,10 +292,12 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
                                         {
                                             historyStateData.length > 0 && historyStateData.map((elem, index) => (
                                                 <tr key={index}>
-                                                    <td>{elem.hour_state}</td>
                                                     <td>{elem.date_state}</td>
+                                                    <td>{elem.hour_state}</td>
                                                     <td>{elem.justification}</td>
-                                                    <td>{elem.type_state}</td>
+                                                    <td className='state-cell'>{typeStateFilter(elem.type_state)}
+                                                        <span className='state-circle' style={{ backgroundColor: colorState(elem.type_state) }}></span>
+                                                    </td>
                                                     <td>{elem.user_state}</td>
                                                 </tr>
                                             ))

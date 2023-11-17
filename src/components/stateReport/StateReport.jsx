@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import "../stateReport/StateReport.scss";
 import crudService from '../../services/crudService';
+import { useAppContext } from '../../contexts/AppContext';
 
 const StateReport = ({ onCloseReport, openReport }) => {
 
     const [close, setClose] = useState(false);
     const [report, setReport] = useState([]);
+    const { typeEventFilter, typeStateFilter, typePlaceFilter, colorState } = useAppContext();
 
     useEffect(() => {
         getReports();
@@ -43,6 +45,7 @@ const StateReport = ({ onCloseReport, openReport }) => {
                             <thead>
                                 <tr>
                                     <td>Evento</td>
+                                    <td>Tipo de Evento</td>
                                     <td>Fecha Inicio</td>
                                     <td>Fecha Finilazación</td>
                                     <td>Lugar</td>
@@ -54,10 +57,13 @@ const StateReport = ({ onCloseReport, openReport }) => {
                                     arrangedEvents.length > 0 && arrangedEvents.map((elem, index) => (
                                         <tr key={index}>
                                             <td>{elem.general_name}</td>
+                                            <td>{typeEventFilter(elem.event_type)}</td>
                                             <td>{elem.date_start}</td>
                                             <td>{elem.date_finishing}</td>
-                                            <td>{elem.place}</td>
-                                            <td>{elem.type_state}</td>
+                                            <td>{typePlaceFilter(elem.place)}</td>
+                                            <td className='state-cell'>{typeStateFilter(elem.type_state)}
+                                                <span className='state-circle' style={{ backgroundColor: colorState(elem.type_state) }}></span>
+                                            </td>
                                         </tr>
                                     ))
                                 }

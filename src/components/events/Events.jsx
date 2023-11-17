@@ -155,7 +155,10 @@ const Events = () => {
 		return count;
 	}
 
-	const handleData = (data) => {
+	const handleData = (data, type_event) => {
+		if (type_event === 'subevent') {
+			setSubEvent(true);
+		}
 		setOpenForm(false);
 		setOpenMenu(false);
 		setOpenSubMenu(false);
@@ -207,7 +210,9 @@ const Events = () => {
 			/>}
 			{openData && <EventData
 				element={fullData}
-				onCloseData={closeData} />}
+				onCloseData={closeData}
+				openData={openData}
+			/>}
 			{openState && <ChangeState
 				onCloseState={closeState}
 				openState={openState}
@@ -239,7 +244,7 @@ const Events = () => {
 								<div className='event-data'>
 									{id === element.id && openMenu && <div className='event-options'>
 										<ul>
-											<li onClick={() => handleData(element)} >Visualizar Datos</li>
+											<li onClick={() => handleData(element, 'event')} >Visualizar Datos</li>
 											<li onClick={() => addSubEvent(element.id)}>Añadir Sub-Evento</li>
 											<li>Añadir Responsabilidad</li>
 											<li onClick={() => handleState(element.id, 'event')}>Actualizar Estado</li>
@@ -265,7 +270,7 @@ const Events = () => {
 												<div className='event-data subevent-data' key={index}>
 													{subId === subElem.id && openSubMenu && <div className='event-options'>
 														<ul>
-															<li onClick={() => handleData(subElem)}>Visualizar Datos</li>
+															<li onClick={() => handleData(subElem, 'subevent')}>Visualizar Datos</li>
 															<li>Añadir Responsabilidad</li>
 															<li onClick={() => handleState(subElem.id, 'subevent')}>Actualizar Estado</li>
 															<li onClick={() => handleReport(subElem.id, 'subevent')}>Reporte de Estados</li>

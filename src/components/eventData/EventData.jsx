@@ -1,18 +1,41 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import '../eventData/EventData.scss';
 import { useState } from 'react';
+import { useAppContext } from '../../contexts/AppContext';
+import crudService from '../../services/crudService';
 
-const EventData = ({ element, onCloseData }) => {
+const EventData = ({ element, onCloseData, openData }) => {
 
     const [section, setSection] = useState('evento');
     const [close, setClose] = useState(false);
+    const [stateData, setStateData] = useState({});
+    const { typeEventFilter, typeStateFilter, typePlaceFilter, subEvent, setSubEvent, colorState } = useAppContext();
+
+    useEffect(() => {
+        getStateById();
+    }, openData);
+
+    console.log(stateData, element.id);
 
     const handleClose = () => {
         setClose(true);
+        setSubEvent(false);
         setTimeout(() => {
             onCloseData();
         }, 500)
     }
+
+    const getStateById = async () => {
+        let data = null;
+        if (subEvent) {
+            data = await crudService.fetchItemById('subeventstate', element.id);
+        } else {
+            data = await crudService.fetchItemById('eventstate', element.id);
+        }
+        setStateData(data);
+    }
+
+
 
     return (
         <div className={`data-container ${close ? 'close' : ''}`}>
@@ -40,11 +63,13 @@ const EventData = ({ element, onCloseData }) => {
                                     <>
                                         <tr>
                                             <td>Tipo de Evento</td>
-                                            <td>{element.event_type}</td>
+                                            <td>{typeEventFilter(element.event_type)}</td>
                                         </tr>
                                         <tr>
                                             <td>Estado</td>
-                                            <td>{element.state}</td>
+                                            <td className='state-cell'>{typeStateFilter(stateData.type_state)}
+                                                <span className='state-circle' style={{ backgroundColor: colorState(stateData.type_state) }}></span>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <td>Fecha de Estado</td>
@@ -76,7 +101,7 @@ const EventData = ({ element, onCloseData }) => {
                                         </tr>
                                         <tr>
                                             <td>Lugar</td>
-                                            <td>{element.place}</td>
+                                            <td>{typePlaceFilter(element.place)}</td>
                                         </tr>
                                     </>
                                 )
