@@ -217,7 +217,9 @@ const Events = () => {
 				onCloseState={closeState}
 				openState={openState}
 				subEvent={subEvent}
-				id={id} />}
+				id={id}
+				element={fullData}
+			/>}
 			{
 				openReport && <StateReport
 					onCloseReport={closeReport}

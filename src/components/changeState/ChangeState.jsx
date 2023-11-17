@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import crudService from '../../services/crudService';
 import { useAppContext } from '../../contexts/AppContext';
 
-const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
+const ChangeState = ({ onCloseState, openState, subEvent, id, element }) => {
 
 
     const [close, setClose] = useState(false);
@@ -14,6 +14,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const [icon, setIcon] = useState(false);
     const { setSubEvent, typeStateFilter, colorState } = useAppContext();
+
     const [formData, setFormData] = useState({
         id_state: '',
         type_state: '',
@@ -211,7 +212,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
         <div className={`change-big-container ${close ? 'close' : ''}`}>
             <div className={`change-container ${close ? 'close' : ''}`}>
                 <div className='form-title'>
-                    <span>{`Estados`}</span>
+                    <span>{`Actualizar Estado`}</span>
                     <i class="fa-regular fa-circle-xmark" onClick={handleClose}></i>
                 </div>
                 <main>
@@ -223,7 +224,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
 
                     <div className="event-section">
                         <div className="section-title">
-                            <span>{section === 'editar' ? 'Editar Estado' : 'Historial de Estados'}</span>
+                            <span>{section === 'editar' ? `Editar estado para ${subEvent ? element.specific_name : element.general_name}` : `Historial para ${subEvent ? element.specific_name : element.general_name}`}</span>
                         </div>
                         {
                             section === 'editar' && (
@@ -261,7 +262,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id }) => {
                                     </div>
                                     <div className="row">
                                         <div className="form-box">
-                                            <label htmlFor="justification">Información de ingreso</label>
+                                            <label htmlFor="justification">Justificación</label>
                                             <textarea name="justification" cols="30" rows="5" onChange={handleInputChange} value={formData.justification} placeholder='Justifique el cambio de estado' ></textarea>
                                             {isFormSubmitted && formData.justification === '' && (
                                                 <div className="message-error">Este campo es obligatorio</div>
