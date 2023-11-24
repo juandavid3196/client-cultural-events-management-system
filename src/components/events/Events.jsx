@@ -31,9 +31,8 @@ const Events = () => {
 		getFullEvents();
 	}, []);
 
-	console.log(fullData);
 
-	const filteredEvents = events; //events.filter(event => event.generalName.toLowerCase().includes(searchTerm.toLowerCase()));
+	const filteredEvents = events.filter(event => event.general_name.toLowerCase().includes(searchTerm.toLowerCase()));
 
 	const closeForm = () => {
 		setOpenForm(false);
@@ -189,10 +188,11 @@ const Events = () => {
 	}
 
 
-	const handleState = (id, type) => {
+	const handleState = (data, id, type) => {
 		if (type === 'subevent') setSubEvent(true);
 		setOpenState(!openState);
 		setId(id);
+		setFullData(data);
 	}
 	const handleReport = (id, type) => {
 		if (type === 'subevent') setSubEvent(true);
@@ -253,7 +253,7 @@ const Events = () => {
 											<li onClick={() => handleData(element, 'event')} >Visualizar Datos</li>
 											<li onClick={() => addSubEvent(element.id)}>Añadir Sub-Evento</li>
 											<li>Añadir Responsabilidad</li>
-											<li onClick={() => handleState(element.id, 'event')}>Actualizar Estado</li>
+											<li onClick={() => handleState(element, element.id, 'event')}>Actualizar Estado</li>
 											<li onClick={() => handleReport(element.id, 'event')}>Reporte de Estados</li>
 											<li onClick={() => updateEvent(element.id, 'event')}>Editar</li>
 											<li onClick={() => handleDelete(element.id, 'event')}>Eliminar</li>
@@ -278,7 +278,7 @@ const Events = () => {
 														<ul>
 															<li onClick={() => handleData(subElem, 'subevent')}>Visualizar Datos</li>
 															<li>Añadir Responsabilidad</li>
-															<li onClick={() => handleState(subElem.id, 'subevent')}>Actualizar Estado</li>
+															<li onClick={() => handleState(subElem, subElem.id, 'subevent')}>Actualizar Estado</li>
 															<li onClick={() => handleReport(subElem.id, 'subevent')}>Reporte de Estados</li>
 															<li onClick={() => updateEvent(subElem.id, 'subevent')}>Editar</li>
 															<li onClick={() => handleDelete(subElem.id, 'subevent')}>Eliminar</li>

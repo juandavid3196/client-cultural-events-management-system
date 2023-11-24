@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import crudService from '../../services/crudService';
 import { useAppContext } from '../../contexts/AppContext';
 
-const ChangeState = ({ onCloseState, subEvent, id, element, update }) => {
+const ChangeState = ({ onCloseState, id, element, update }) => {
 
 
     const [close, setClose] = useState(false);
@@ -13,7 +13,7 @@ const ChangeState = ({ onCloseState, subEvent, id, element, update }) => {
     const [section, setSection] = useState('editar');
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const [icon, setIcon] = useState(false);
-    const { setSubEvent, typeStateFilter, colorState, openState, setUpdateState } = useAppContext();
+    const { setSubEvent, typeStateFilter, colorState, openState, setUpdateState, subEvent } = useAppContext();
 
     const [formData, setFormData] = useState({
         id_state: '',
@@ -43,7 +43,6 @@ const ChangeState = ({ onCloseState, subEvent, id, element, update }) => {
     useEffect(() => {
         getHistoryById();
     }, [section]);
-
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

@@ -15,8 +15,6 @@ const EventData = ({ element, onCloseData, openData }) => {
         getStateById();
     }, openData);
 
-    console.log(stateData, element.id);
-
     const handleClose = () => {
         setClose(true);
         setSubEvent(false);

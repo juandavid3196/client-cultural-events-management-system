@@ -151,8 +151,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		setSubEvent(false);
 	}
 
-	console.log(update, updateState);
-
 	const resetFormData = () => {
 		const keys = Object.keys(formData);
 		const emptyFormData = {};
