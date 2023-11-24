@@ -10,6 +10,8 @@ export function AppContextProvider({ children }) {
 
     const [subEvent, setSubEvent] = useState(false);
     const [id, setId] = useState('');
+    const [openState, setOpenState] = useState(false);
+    const [updateState, setUpdateState] = useState(false);
 
     const typeEventFilter = (event_type) => {
         switch (event_type) {
@@ -84,7 +86,15 @@ export function AppContextProvider({ children }) {
     }
 
     return (
-        <AppContext.Provider value={{ subEvent, setSubEvent, id, setId, typeEventFilter, typeStateFilter, typePlaceFilter, colorState }}>
+        <AppContext.Provider value={{
+            subEvent, setSubEvent,
+            id, setId,
+            typeEventFilter, typeStateFilter,
+            typePlaceFilter, colorState,
+            openState, setOpenState,
+            updateState, setUpdateState
+
+        }}>
             {children}
         </AppContext.Provider>
     );

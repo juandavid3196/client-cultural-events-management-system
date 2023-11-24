@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import crudService from '../../services/crudService';
 import { useAppContext } from '../../contexts/AppContext';
 
-const ChangeState = ({ onCloseState, openState, subEvent, id, element }) => {
+const ChangeState = ({ onCloseState, subEvent, id, element, update }) => {
 
 
     const [close, setClose] = useState(false);
@@ -13,7 +13,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id, element }) => {
     const [section, setSection] = useState('editar');
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const [icon, setIcon] = useState(false);
-    const { setSubEvent, typeStateFilter, colorState } = useAppContext();
+    const { setSubEvent, typeStateFilter, colorState, openState, setUpdateState } = useAppContext();
 
     const [formData, setFormData] = useState({
         id_state: '',
@@ -33,6 +33,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id, element }) => {
         user_state: 'default',
         ...(subEvent ? { subeventstate_id: '' } : { eventstate_id: '' })
     })
+
 
     useEffect(() => {
         getStateById();
@@ -56,7 +57,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id, element }) => {
 
     const handleClose = () => {
         setClose(true);
-        setSubEvent(false);
+        if (!update) setSubEvent(false);
         setTimeout(() => {
             onCloseState();
         }, 500)
@@ -136,6 +137,8 @@ const ChangeState = ({ onCloseState, openState, subEvent, id, element }) => {
                     if (res) {
                         crudService.updateItem('subeventstate', formData.id_state, formData);
                         toast.success('¡Estado Editado con Exito!');
+                        if (update) setSubEvent(true);
+                        setUpdateState(true);
                         refresh();
                     }
                 }).catch((error) => {
@@ -154,6 +157,7 @@ const ChangeState = ({ onCloseState, openState, subEvent, id, element }) => {
                     if (res) {
                         crudService.updateItem('eventstate', formData.id_state, formData);
                         toast.success('¡Estado Editado con Exito!');
+                        setUpdateState(true);
                         refresh();
                     }
                 }).catch((error) => {

@@ -15,7 +15,6 @@ const Events = () => {
 	const [openMenu, setOpenMenu] = useState(false);
 	const [openSubMenu, setOpenSubMenu] = useState(false);
 	const [openData, setOpenData] = useState(false);
-	const [openState, setOpenState] = useState(false);
 	const [openReport, setOpenReport] = useState(false);
 	const [events, setEvents] = useState([])
 	const [updateItem, setUpdateItem] = useState({});
@@ -26,11 +25,13 @@ const Events = () => {
 	const [subId, setSubId] = useState(false);
 	const [fullData, setFullData] = useState({});
 
-	const { setSubEvent, id, setId, subEvent } = useAppContext();
+	const { setSubEvent, id, setId, subEvent, openState, setOpenState } = useAppContext();
 
 	useEffect(() => {
 		getFullEvents();
 	}, []);
+
+	console.log(fullData);
 
 	const filteredEvents = events; //events.filter(event => event.generalName.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -70,6 +71,7 @@ const Events = () => {
 			setSubEvent(true);
 		}
 		getUnicItem(id, type);
+		setId(id);
 		setUpdate(true);
 		setOpenForm(true);
 		setOpenMenu(false);
@@ -207,6 +209,7 @@ const Events = () => {
 				update={update}
 				onUpdateState={UpdateState}
 				onGetFullEvents={getFullEvents}
+				setUpdate={setUpdate}
 			/>}
 			{openData && <EventData
 				element={fullData}
@@ -219,6 +222,7 @@ const Events = () => {
 				subEvent={subEvent}
 				id={id}
 				element={fullData}
+				update={update}
 			/>}
 			{
 				openReport && <StateReport
@@ -256,7 +260,7 @@ const Events = () => {
 										</ul>
 									</div>}
 									<div className="event-text" onClick={() => handleDeploy(element.id)}>
-										{element.general_name}
+										{`(Evento) ${element.general_name}`}
 									</div>
 									{subEventsCount(element.id) > 0 && (
 										<span className='sub-events-count'>{subEventsCount(element.id)}</span>
@@ -281,7 +285,7 @@ const Events = () => {
 														</ul>
 													</div>}
 													<div className="event-text">
-														{subElem.specific_name}
+														{`(Sub-Evento - ${index + 1}) ${subElem.specific_name}`}
 													</div>
 													<div className="icon-container">
 														<i className="fa-solid fa-ellipsis-vertical" onClick={() => handleMenu(subElem.id, 'subevent')}></i>

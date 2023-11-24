@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useAppContext } from '../../contexts/AppContext';
 
 
-const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateState, onGetFullEvents }) => {
+const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateState, onGetFullEvents, setUpdate }) => {
 
 	const uuid = require('uuid');
 	const [section, setSection] = useState('evento');
@@ -14,7 +14,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const [duration, setDuration] = useState('');
 	const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 	const [icon, setIcon] = useState(false);
-	const { setSubEvent, subEvent, id } = useAppContext();
+	const [currentState, setCurrentState] = useState('');
+	const { setSubEvent, subEvent, id, setOpenState, openState, typeStateFilter, updateState, setUpdateState } = useAppContext();
 
 	const [formData, setFormData] = useState({
 		id: uuid.v4(),
@@ -74,6 +75,9 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		getDate();
 	}, []);
 
+	useEffect(() => {
+		if (update) getStateById();
+	}, [update, updateState]);
 
 	useEffect(() => {
 		calculateDuration();
@@ -142,8 +146,12 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 			onCloseForm();
 		}, 500)
 		onUpdateState();
+		setUpdateState(false);
+		setUpdate(false);
 		setSubEvent(false);
 	}
+
+	console.log(update, updateState);
 
 	const resetFormData = () => {
 		const keys = Object.keys(formData);
@@ -398,6 +406,20 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		historyData.type_state = stateData.type_state;
 	}
 
+	const openStateWindow = () => {
+		setOpenState(true);
+	}
+
+	const getStateById = async () => {
+		let data = null;
+		if (subEvent) {
+			data = await crudService.fetchItemById('subeventstate', id);
+		} else {
+			data = await crudService.fetchItemById('eventstate', id);
+		}
+		setCurrentState(data.type_state);
+	}
+
 	return (
 		<div className={`form-container ${close ? 'close' : ''}`}>
 			<div className={`form-main-box ${close ? 'close' : ''}`}>
@@ -436,17 +458,39 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 											)}
 
 										</div>
-										<div className="form-box">
-											<label htmlFor="type_state">Estado</label>
-											<select name="type_state" onChange={handleInputChange} value={stateData.type_state} {...(update ? { disabled: 'disabled' } : {})}>
-												<option value="pre-reserva">Pre-reserva</option>
-												<option value="confirmado">Confirmado</option>
-												<option value="ejecutar">Listo para Ejecutar</option>
-												<option value="cancelado">Cancelado</option>
-												<option value="ejecucion">En Ejecución</option>
-												<option value="terminado">Terminado</option>
-											</select>
-										</div>
+
+
+										{
+											!update ? (
+												<>
+													<div className="form-box">
+														<label htmlFor="type_state">Estado</label>
+														<select name="type_state" onChange={handleInputChange} value={stateData.type_state} {...(update ? { disabled: 'disabled' } : {})}>
+															<option value="pre-reserva">Pre-reserva</option>
+															<option value="confirmado">Confirmado</option>
+															<option value="ejecutar">Listo para Ejecutar</option>
+															<option value="cancelado">Cancelado</option>
+															<option value="ejecucion">En Ejecución</option>
+															<option value="terminado">Terminado</option>
+														</select>
+													</div>
+												</>
+
+											) : (
+
+												<>
+													<div className="row two-colums-small">
+														<div className="form-box">
+															<label htmlFor="type_state">Estado Actual</label>
+															<input type="text" name='general_name' disabled value={typeStateFilter(currentState)} />
+														</div>
+														<div className="form-box">
+															<input type='button' className='btn-send-form' onClick={openStateWindow} value={'Actualizar Estado'} />
+														</div>
+													</div>
+												</>
+											)
+										}
 									</div>
 									<div className="row two-colums">
 										<div className="form-box">
