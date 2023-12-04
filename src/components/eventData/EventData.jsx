@@ -52,7 +52,7 @@ const EventData = ({ element, onCloseData, openData }) => {
 
                     <div className="event-section">
                         <div className="section-title">
-                            <span>Datos {section}</span>
+                            <span>Datos {section === 'tecnica' ? 'Técnica' : section.charAt(0).toUpperCase() + section.slice(1)}</span>
                         </div>
                         <table>
                             <tbody>
@@ -71,7 +71,7 @@ const EventData = ({ element, onCloseData, openData }) => {
                                         </tr>
                                         <tr>
                                             <td>Fecha de Estado</td>
-                                            <td>{element.date_state}</td>
+                                            <td>{stateData.date_state}</td>
                                         </tr>
                                         <tr>
                                             <td>Nombre General</td>

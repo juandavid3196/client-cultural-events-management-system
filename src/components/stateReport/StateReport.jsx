@@ -113,7 +113,7 @@ const StateReport = ({ onCloseReport, openReport }) => {
                                     <td>Evento</td>
                                     <td>Tipo de Evento</td>
                                     <td>Fecha Inicio</td>
-                                    <td>Fecha Finilazación</td>
+                                    <td>Fecha Finalización</td>
                                     <td>Lugar</td>
                                     <td>Estado</td>
                                 </tr>
