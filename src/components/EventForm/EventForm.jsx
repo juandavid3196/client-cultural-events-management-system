@@ -51,6 +51,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	}
 	);
 
+	console.log(formData);
+
 	const [stateData, setStateData] = useState({
 		id_state: uuid.v4(),
 		type_state: 'pre-reserva',
@@ -615,8 +617,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										</div>
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="mounting_finishig_hour">Hora Finalización</label>
-												<input type="time" name='mounting_finishig_hour' onChange={handleInputChange} value={formData.mounting_finishing_hour} />
+												<label htmlFor="mounting_finishing_hour">Hora Finalización</label>
+												<input type="time" name='mounting_finishing_hour' onChange={handleInputChange} value={formData.mounting_finishing_hour} />
 											</div>
 											<div className="form-box">
 												<label htmlFor="duration">Duración</label>
