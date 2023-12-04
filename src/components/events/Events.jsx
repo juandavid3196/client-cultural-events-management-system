@@ -201,7 +201,7 @@ const Events = () => {
 	}
 
 	return (
-		<div className='container'>
+		<div className='event-container'>
 			{openForm && <EventForm
 				onCloseForm={closeForm}
 				onFinishForm={finishForm}

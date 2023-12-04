@@ -1,0 +1,32 @@
+.container {
+    width: 20%;
+
+    .aside-top {
+        height: 15%;
+        background-color: #1F4E99;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            width: 70%;
+        }
+    }
+
+    .aside-bottom {
+        height: 85%;
+        background-color: #1B222A;
+
+        .section-button {
+            display: flex;
+            justify-content: space-around;
+            font-size: 17px;
+            align-items: center;
+            height: 70px;
+            border-bottom: 1.5px solid #5b5b5b;
+            color: white;
+            cursor: pointer;
+        }
+
+    }
+}
