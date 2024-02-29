@@ -26,6 +26,11 @@
             border-bottom: 1.5px solid #5b5b5b;
             color: white;
             cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .section-button:hover {
+            background-color: #3995F8;
         }
 
     }
