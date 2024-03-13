@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useAppContext } from '../../contexts/AppContext';
 
 
-const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateState, onGetFullEvents }) => {
+const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateState, onGetFullEvents, setUpdate }) => {
 
 	const uuid = require('uuid');
 	const [section, setSection] = useState('evento');
@@ -14,49 +14,72 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const [duration, setDuration] = useState('');
 	const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 	const [icon, setIcon] = useState(false);
-	const { setSubEvent, subEvent, id } = useAppContext();
+	const [currentState, setCurrentState] = useState('');
+	const { setSubEvent, subEvent, id, setOpenState, openState, typeStateFilter, updateState, setUpdateState } = useAppContext();
 
 	const [formData, setFormData] = useState({
-
 		id: uuid.v4(),
-		eventType: '',
-		eventId: null,
-		state: 'pre-reserva',
-		dateState: '',
-		generalName: '',
-		specificName: '',
-		dateStart: '',
-		dateFinishing: '',
-		hourStart: '',
-		hourFinishing: '',
-		place: '',
-		userName: '',
-		phone: '',
-		identificationType: 'CC',
-		identificationValue: '',
-		email: '',
-		description: '',
-		observation: '',
+		event_type: "",
+		...(subEvent ? { event_id: null } : {}),
+		general_name: "",
+		specific_name: "",
+		date_start: "",
+		date_finishing: "",
+		hour_start: "",
+		hour_finishing: "",
+		place: "",
+		user_name: "",
+		phone: "",
+		identification_type: "CC",
+		identification_value: "",
+		email: "",
+		description: "",
+		observation: "",
 		duration: duration,
-		mountingDate: '',
-		mountingStartHour: '',
-		mountingFinishingHour: '',
-		technicContact: '',
+		mounting_date: "",
+		mounting_start_hour: "",
+		mounting_finishing_hour: "",
+		technic_contact: "",
 		rider: null,
-		minTomin: null,
-		communicationContact: '',
-		pulep: '',
-		accessData: '',
-		ticketCompany: '',
-		ageRestriction: '',
-		agreement: '',
+		min_tomin: null,
+		communication_contact: "",
+		pulep: "",
+		access_data: "",
+		ticket_company: "",
+		age_restriction: "",
+		agreement: ""
+	}
+	);
 
+	console.log(formData);
+
+	const [stateData, setStateData] = useState({
+		id_state: uuid.v4(),
+		type_state: 'pre-reserva',
+		date_state: '',
+		hour_state: '',
+		justification: '',
+		user_state: 'default',
+		...(subEvent ? { subevent_id: formData.id } : { event_id: formData.id })
 	});
+
+	const [historyData, setHistoryData] = useState({
+		type_state: '',
+		date_state: '',
+		hour_state: '',
+		justification: 'default',
+		user_state: 'default',
+		...(subEvent ? { subeventstate_id: '' } : { eventstate_id: '' })
+	})
+
 
 	useEffect(() => {
 		getDate();
 	}, []);
 
+	useEffect(() => {
+		if (update) getStateById();
+	}, [update, updateState]);
 
 	useEffect(() => {
 		calculateDuration();
@@ -75,12 +98,12 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		} else if (subEvent) {
 			const updatedFormData = {
 				...formData,
-				eventType: updateItem.eventType,
-				generalName: updateItem.generalName,
-				userName: updateItem.userName,
+				event_type: updateItem.event_type,
+				general_name: updateItem.general_name,
+				user_name: updateItem.user_name,
 				phone: updateItem.phone,
-				identificationType: updateItem.identificationType,
-				identificationValue: updateItem.identificationValue,
+				identification_type: updateItem.identification_type,
+				identification_value: updateItem.identification_value,
 				email: updateItem.email,
 				place: updateItem.place,
 
@@ -102,6 +125,11 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				...formData,
 				[name]: f,
 			});
+		} else if (name === 'type_state') {
+			setStateData({
+				...stateData,
+				['type_state']: value
+			})
 		} else {
 
 			setFormData({
@@ -120,6 +148,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 			onCloseForm();
 		}, 500)
 		onUpdateState();
+		setUpdateState(false);
+		setUpdate(false);
 		setSubEvent(false);
 	}
 
@@ -133,6 +163,19 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 		setFormData(emptyFormData);
 	};
+
+	const resetStateData = () => {
+		const keys = Object.keys(stateData);
+		const emptyFormData = {};
+
+		keys.forEach((key) => {
+			emptyFormData[key] = '';
+		});
+
+		setStateData(emptyFormData);
+	};
+
+
 
 
 	const handleForm = (e) => {
@@ -158,10 +201,28 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					setIcon(true);
 					return;
 				} else {
-					formData.eventId = id;
-					crudService.createItem('subevent', formData);
+					formData.event_id = id;
+					const response = crudService.createItem('subevent', formData);
+					response.then((res) => {
+						if (res) {
+							const response = crudService.createItem('subeventstate', stateData);
+							response.then((res) => {
+								if (res) {
+									setInfo();
+									crudService.createItem('historysubevent', historyData);
+								}
+							}).catch((error) => {
+								console.error('Error en la solicitud', error);
+								return;
+							});
+						}
+					}).catch((error) => {
+						console.error('Error en la solicitud', error);
+						return;
+					});
 					toast.success('¡Sub-Evento Añadido con Exito!');
 					onGetFullEvents();
+					resetStateData();
 					refresh();
 				}
 			}
@@ -185,15 +246,36 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					setIcon(true);
 					return;
 				} else {
-					crudService.createItem('event', formData);
+					const response = crudService.createItem('event', formData);
+					response.then((res) => {
+						if (res) {
+							const response = crudService.createItem('eventstate', stateData);
+							response.then((res) => {
+								if (res) {
+									setInfo();
+									crudService.createItem('historyevent', historyData);
+								}
+							}).catch((error) => {
+								console.error('Error en la solicitud', error);
+								return;
+							});
+
+						}
+					}).catch((error) => {
+						console.error('Error en la solicitud', error);
+						return;
+					});
+
 					toast.success('¡Evento Añadido con Exito!');
 					onGetFullEvents();
+					resetStateData();
 					refresh();
 				}
 			}
 		}
 
 		resetFormData();
+		setSubEvent(false);
 		onFinishForm();
 	};
 
@@ -211,15 +293,15 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const calculateDuration = () => {
 
 
-		if (formData.mountingStartHour && formData.mountingFinishingHour) {
+		if (formData.mounting_start_hour && formData.mounting_finishing_hour) {
 
 			let hours = 0;
 			let totalHours = 0;
 			let minutes = 0;
-			const StartHour = parseInt(`${formData.mountingStartHour[0]}${formData.mountingStartHour[1]}`);
-			const StartMinutes = parseInt(`${formData.mountingStartHour[3]}${formData.mountingStartHour[4]}`);
-			const finishingHour = parseInt(`${formData.mountingFinishingHour[0]}${formData.mountingFinishingHour[1]}`);
-			const finishingMinutes = parseInt(`${formData.mountingFinishingHour[3]}${formData.mountingFinishingHour[4]}`);
+			const StartHour = parseInt(`${formData.mounting_start_hour[0]}${formData.mounting_start_hour[1]}`);
+			const StartMinutes = parseInt(`${formData.mounting_start_hour[3]}${formData.mounting_start_hour[4]}`);
+			const finishingHour = parseInt(`${formData.mounting_finishing_hour[0]}${formData.mounting_finishing_hour[1]}`);
+			const finishingMinutes = parseInt(`${formData.mounting_finishing_hour[3]}${formData.mounting_finishing_hour[4]}`);
 
 
 
@@ -267,13 +349,25 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		let day = date.getDate();
 		let month = date.getMonth() + 1;
 		let year = date.getFullYear();
+		let hour = date.getHours();
+		let minutes = date.getMinutes();
+
 
 		let fullDate = `${day}/${month}/${year}`;
+		let fullHour = `${hour}:${minutes < 10 ? '0' + minutes : minutes}`;
 
-		setFormData({
-			...formData,
-			dateState: fullDate,
-		});
+
+		setStateData({
+			...stateData,
+			hour_state: fullHour,
+			date_state: fullDate
+		})
+
+		setHistoryData({
+			...historyData,
+			hour_state: fullHour,
+			date_state: fullDate
+		})
 	}
 
 
@@ -281,15 +375,23 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 		let hasErrors = false;
 
-		if (formData.generalName === '') {
+		if (formData.general_name === '') {
 			hasErrors = true;
 		}
 
-		if (formData.eventType === '') {
+		if (formData.event_type === '') {
 			hasErrors = true;
 		}
 
 		if (formData.place === '') {
+			hasErrors = true;
+		}
+
+		if (formData.date_start === '') {
+			hasErrors = true;
+		}
+
+		if (formData.date_finishing === '') {
 			hasErrors = true;
 		}
 
@@ -300,6 +402,30 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		setIsFormSubmitted(false);
 		setIcon(false);
 		onGetFullEvents();
+	}
+
+
+	const setInfo = () => {
+		if (subEvent) {
+			historyData.subeventstate_id = stateData.id_state;
+		} else {
+			historyData.eventstate_id = stateData.id_state;
+		}
+		historyData.type_state = stateData.type_state;
+	}
+
+	const openStateWindow = () => {
+		setOpenState(true);
+	}
+
+	const getStateById = async () => {
+		let data = null;
+		if (subEvent) {
+			data = await crudService.fetchItemById('subeventstate', id);
+		} else {
+			data = await crudService.fetchItemById('eventstate', id);
+		}
+		setCurrentState(data.type_state);
 	}
 
 	return (
@@ -326,8 +452,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<span className='section-title'>Datos del Evento</span>
 									<div className="row two-colums">
 										<div className="form-box">
-											<label htmlFor="eventType">Tipo de Evento</label>
-											<select name="eventType" onChange={handleInputChange} value={formData.eventType}>
+											<label htmlFor="event_type">Tipo de Evento</label>
+											<select name="event_type" onChange={handleInputChange} value={formData.event_type}>
 												<option value="" disabled>seleccionar</option>
 												<option value="propio">Propio</option>
 												<option value="copro">Co-Producción</option>
@@ -335,32 +461,57 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 												<option value="apoyo">Apoyo</option>
 												<option value="alquiler">Alquiler</option>
 											</select>
-											{isFormSubmitted && formData.eventType === '' && (
+											{isFormSubmitted && formData.event_type === '' && (
 												<div className="message-error">Este campo es obligatorio</div>
 											)}
 
 										</div>
-										<div className="form-box">
-											<label htmlFor="state">Estado</label>
-											<select name="state" onChange={handleInputChange} value={formData.state}>
-												<option value="confirmado">Confirmado</option>
-												<option value="pre-reserva">Pre-reserva</option>
-												<option value="cancelado">Cancelado</option>
-											</select>
-										</div>
+
+
+										{
+											!update ? (
+												<>
+													<div className="form-box">
+														<label htmlFor="type_state">Estado</label>
+														<select name="type_state" onChange={handleInputChange} value={stateData.type_state} {...(update ? { disabled: 'disabled' } : {})}>
+															<option value="pre-reserva">Pre-reserva</option>
+															<option value="confirmado">Confirmado</option>
+															<option value="ejecutar">Listo para Ejecutar</option>
+															<option value="cancelado">Cancelado</option>
+															<option value="ejecucion">En Ejecución</option>
+															<option value="terminado">Terminado</option>
+														</select>
+													</div>
+												</>
+
+											) : (
+
+												<>
+													<div className="row two-colums-small">
+														<div className="form-box">
+															<label htmlFor="type_state">Estado Actual</label>
+															<input type="text" name='general_name' disabled value={typeStateFilter(currentState)} />
+														</div>
+														<div className="form-box">
+															<input type='button' className='btn-send-form' onClick={openStateWindow} value={'Actualizar Estado'} />
+														</div>
+													</div>
+												</>
+											)
+										}
 									</div>
 									<div className="row two-colums">
 										<div className="form-box">
-											<label htmlFor="generalName">Nombre General</label>
-											<input type="text" name='generalName' {...(subEvent ? { disabled: 'disabled' } : {})} onChange={handleInputChange} value={formData.generalName} placeholder='Nombre General' required />
-											{isFormSubmitted && formData.generalName === '' && (
+											<label htmlFor="general_name">Nombre General</label>
+											<input type="text" name='general_name' {...(subEvent ? { disabled: 'disabled' } : {})} onChange={handleInputChange} value={formData.general_name} placeholder='Nombre General' required />
+											{isFormSubmitted && formData.general_name === '' && (
 												<div className="message-error">Este campo es obligatorio</div>
 											)}
 
 										</div>
 										<div className="form-box">
-											<label htmlFor="specificName">Nombre Especifico</label>
-											<input type="text" name='specificName' {...(subEvent ? {} : { disabled: 'disabled' })} onChange={handleInputChange} value={formData.specificName} placeholder='Nombre Especifico' />
+											<label htmlFor="specific_name">Nombre Especifico</label>
+											<input type="text" name='specific_name' {...(subEvent ? {} : { disabled: 'disabled' })} onChange={handleInputChange} value={formData.specific_name} placeholder='Nombre Especifico' />
 										</div>
 									</div>
 
@@ -368,22 +519,28 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<div className="row two-colums">
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="dateStart">Inicio</label>
-												<input type="date" name='dateStart' onChange={handleInputChange} value={formData.dateStart} />
+												<label htmlFor="date_start">Inicio</label>
+												<input type="date" name='date_start' onChange={handleInputChange} value={formData.date_start} />
+												{isFormSubmitted && formData.date_start === '' && (
+													<div className="message-error">Este campo es obligatorio</div>
+												)}
 											</div>
 											<div className="form-box">
-												<label htmlFor="dateFinishing">Finalización</label>
-												<input type="date" name='dateFinishing' onChange={handleInputChange} value={formData.dateFinishing} />
+												<label htmlFor="date_finishing">Finalización</label>
+												<input type="date" name='date_finishing' onChange={handleInputChange} value={formData.date_finishing} />
+												{isFormSubmitted && formData.date_finishing === '' && (
+													<div className="message-error">Este campo es obligatorio</div>
+												)}
 											</div>
 										</div>
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="hourStart">Inicio</label>
-												<input type="time" name='hourStart' onChange={handleInputChange} value={formData.hourStart} />
+												<label htmlFor="hour_start">Inicio</label>
+												<input type="time" name='hour_start' onChange={handleInputChange} value={formData.hour_start} />
 											</div>
 											<div className="form-box">
-												<label htmlFor="hourFinishing">Finalización</label>
-												<input type="time" name='hourFinishing' onChange={handleInputChange} value={formData.hourFinishing} />
+												<label htmlFor="hour_finishing">Finalización</label>
+												<input type="time" name='hour_finishing' onChange={handleInputChange} value={formData.hour_finishing} />
 											</div>
 										</div>
 									</div>
@@ -392,7 +549,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 											<label htmlFor="place">Lugar</label>
 											<select name="place" onChange={handleInputChange} value={formData.place}>
 												<option value="" disabled>Seleccionar</option>
-												<option value="sala">sala</option>
+												<option value="sala">Sala</option>
 												<option value="cafe-teatro">Cafe Teatro</option>
 												<option value="plazoleta">Plazoleta</option>
 												<option value="aula-taller">Aula Taller</option>
@@ -422,8 +579,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<span className='section-title'>Datos del Solicitante</span>
 									<div className="row">
 										<div className="form-box">
-											<label htmlFor="userName">Nombre</label>
-											<input type="text" name='userName' onChange={handleInputChange} value={formData.userName} placeholder='Nombre' />
+											<label htmlFor="user_name">Nombre</label>
+											<input type="text" name='user_name' onChange={handleInputChange} value={formData.user_name} placeholder='Nombre' />
 										</div>
 									</div>
 									<div className="row two-colums">
@@ -433,16 +590,16 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										</div>
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="identificationType">Tipo de Identificación</label>
-												<select name="identificationType" onChange={handleInputChange} value={formData.identificationType}>
+												<label htmlFor="identification_type">Tipo de Identificación</label>
+												<select name="identification_type" onChange={handleInputChange} value={formData.identification_type}>
 													<option value="CC">Cédula</option>
 													<option value="RUT" >RUT</option>
 													<option value="NIT" >NIT</option>
 												</select>
 											</div>
 											<div className="form-box">
-												<label htmlFor="identificationValue">Numero de Identificación</label>
-												<input type="text" name='identificationValue' onChange={handleInputChange} value={formData.identificationValue} placeholder={identificationValue(formData.identificationType)} />
+												<label htmlFor="identification_value">Numero de Identificación</label>
+												<input type="text" name='identification_value' onChange={handleInputChange} value={formData.identification_value} placeholder={identificationValue(formData.identification_type)} />
 											</div>
 										</div>
 									</div>
@@ -463,19 +620,19 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<div className="row two-colums">
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="mountingDate">Fecha Montaje</label>
-												<input type="date" name='mountingDate' onChange={handleInputChange} value={formData.mountingDate} />
+												<label htmlFor="mounting_date">Fecha Montaje</label>
+												<input type="date" name='mounting_date' onChange={handleInputChange} value={formData.mounting_date} />
 											</div>
 											<div className="form-box">
-												<label htmlFor="mountingStartHour">Hora Inicio </label>
-												<input type="time" name='mountingStartHour' onChange={handleInputChange} value={formData.mountingStartHour} />
+												<label htmlFor="mounting_start_hour">Hora Inicio </label>
+												<input type="time" name='mounting_start_hour' onChange={handleInputChange} value={formData.mounting_start_hour} />
 											</div>
 
 										</div>
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="mountingFinishigHour">Hora Finalización</label>
-												<input type="time" name='mountingFinishingHour' onChange={handleInputChange} value={formData.mountingFinishingHour} />
+												<label htmlFor="mounting_finishing_hour">Hora Finalización</label>
+												<input type="time" name='mounting_finishing_hour' onChange={handleInputChange} value={formData.mounting_finishing_hour} />
 											</div>
 											<div className="form-box">
 												<label htmlFor="duration">Duración</label>
@@ -485,8 +642,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									</div>
 									<div className="row">
 										<div className="form-box">
-											<label htmlFor="technicContact">Contacto Montaje Tecnico</label>
-											<textarea name="technicContact" onChange={handleInputChange} value={formData.technicContact} placeholder='Nombre / Celular' cols="30" rows="5"></textarea>
+											<label htmlFor="technic_contact">Contacto Montaje Tecnico</label>
+											<textarea name="technic_contact" onChange={handleInputChange} value={formData.technic_contact} placeholder='Nombre / Celular' cols="30" rows="5"></textarea>
 										</div>
 									</div>
 									<div className="row two-colums">
@@ -495,7 +652,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 											<input type="file" name='rider' onChange={handleInputChange} />
 										</div>
 										<div className="form-box">
-											<label htmlFor="minTomin">Minuto a Minuto</label>
+											<label htmlFor="min_tomin">Minuto a Minuto</label>
 											<input type="file" name='minTomin' onChange={handleInputChange} />
 										</div>
 									</div>
@@ -508,8 +665,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<span className='section-title'>Datos Comunicaciones</span>
 									<div className="row">
 										<div className="form-box">
-											<label htmlFor="communicationContact">Contacto comunicaciones</label>
-											<textarea name="communicationContact" cols="30" rows="5" onChange={handleInputChange} value={formData.communicationContact} placeholder='Artista, Manager, Comunicador'></textarea>
+											<label htmlFor="communication_contact">Contacto comunicaciones</label>
+											<textarea name="communication_contact" cols="30" rows="5" onChange={handleInputChange} value={formData.communication_contact} placeholder='Artista, Manager, Comunicador'></textarea>
 										</div>
 									</div>
 									<div className="row two-colums">
@@ -519,18 +676,18 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										</div>
 
 										<div className="form-box">
-											<label htmlFor="accessData">Información de ingreso</label>
-											<textarea name="accessData" cols="30" rows="5" onChange={handleInputChange} value={formData.accessData} placeholder='Modalidad, Costo, Cuenta Bancaria' ></textarea>
+											<label htmlFor="access_data">Información de ingreso</label>
+											<textarea name="access_data" cols="30" rows="5" onChange={handleInputChange} value={formData.access_data} placeholder='Modalidad, Costo, Cuenta Bancaria' ></textarea>
 										</div>
 									</div>
 									<div className="row two-colums">
 										<div className="form-box">
-											<label htmlFor="ticketCompany">Empresa de boleteria</label>
-											<input type="text" name='ticketCompany' onChange={handleInputChange} value={formData.ticketCompany} placeholder='Nombre Empresa' />
+											<label htmlFor="ticket_company">Empresa de boleteria</label>
+											<input type="text" name='ticket_company' onChange={handleInputChange} value={formData.ticket_company} placeholder='Nombre Empresa' />
 										</div>
 										<div className="form-box">
-											<label htmlFor="ageRestriction">Restricción de edad</label>
-											<input type="text" name="ageRestriction" onChange={handleInputChange} value={formData.ageRestriction} />
+											<label htmlFor="age_restriction">Restricción de edad</label>
+											<input type="text" name="age_restriction" onChange={handleInputChange} value={formData.age_restriction} />
 										</div>
 									</div>
 									<div className="row two-colums">

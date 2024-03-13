@@ -6,12 +6,16 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useAppContext } from '../../contexts/AppContext';
 import 'react-toastify/dist/ReactToastify.css'
 import EventData from '../eventData/EventData';
+import ChangeState from '../changeState/ChangeState';
+import StateReport from '../stateReport/StateReport';
 
 const Events = () => {
 
 	const [openForm, setOpenForm] = useState(false);
 	const [openMenu, setOpenMenu] = useState(false);
 	const [openSubMenu, setOpenSubMenu] = useState(false);
+	const [openData, setOpenData] = useState(false);
+	const [openReport, setOpenReport] = useState(false);
 	const [events, setEvents] = useState([])
 	const [updateItem, setUpdateItem] = useState({});
 	const [update, setUpdate] = useState(false);
@@ -19,16 +23,16 @@ const Events = () => {
 	const [subEvents, setSubEvents] = useState([])
 	const [deploy, setDeploy] = useState(false)
 	const [subId, setSubId] = useState(false);
-	const [openData, setOpenData] = useState(false);
 	const [fullData, setFullData] = useState({});
 
-	const { setSubEvent, id, setId } = useAppContext();
+	const { setSubEvent, id, setId, subEvent, openState, setOpenState } = useAppContext();
 
 	useEffect(() => {
 		getFullEvents();
 	}, []);
 
-	const filteredEvents = events.filter(event => event.generalName.toLowerCase().includes(searchTerm.toLowerCase()));
+
+	const filteredEvents = events.filter(event => event.general_name.toLowerCase().includes(searchTerm.toLowerCase()));
 
 	const closeForm = () => {
 		setOpenForm(false);
@@ -66,6 +70,7 @@ const Events = () => {
 			setSubEvent(true);
 		}
 		getUnicItem(id, type);
+		setId(id);
 		setUpdate(true);
 		setOpenForm(true);
 		setOpenMenu(false);
@@ -87,13 +92,24 @@ const Events = () => {
 	}
 
 	const handleDelete = (id, type) => {
-		if (type === 'event') {
-			crudService.deleteItem('event', id);
-		} else {
-			crudService.deleteItem('subevent', id);
 
+		if (type === 'event') {
+			const response = crudService.deleteItem('event', id);
+			response.then((res) => {
+				if (res) toast.success('Elemento eliminado con Exito');
+			}).catch((error) => {
+				console.error('Error en la solicitud DELETE:', error);
+			});
+
+		} else {
+			const response = crudService.deleteItem('subevent', id);
+			response.then((res) => {
+				if (res) toast.success('Elemento eliminado con Exito');
+			}).catch((error) => {
+				console.error('Error en la solicitud DELETE:', error);
+			});
 		}
-		toast.success('Elemento eliminado con Exito');
+
 		getFullEvents();
 		refresh();
 
@@ -132,7 +148,7 @@ const Events = () => {
 	const subEventsCount = (id) => {
 		let count = 0;
 		subEvents.map((element) => {
-			if (element.eventId === id) {
+			if (element.event_id === id) {
 				count++;
 			}
 		})
@@ -140,7 +156,10 @@ const Events = () => {
 		return count;
 	}
 
-	const handleData = (data) => {
+	const handleData = (data, type_event) => {
+		if (type_event === 'subevent') {
+			setSubEvent(true);
+		}
 		setOpenForm(false);
 		setOpenMenu(false);
 		setOpenSubMenu(false);
@@ -155,8 +174,34 @@ const Events = () => {
 		setOpenMenu(false);
 	}
 
+	const closeState = () => {
+		setOpenState(!openState);
+		setOpenSubMenu(false);
+		setOpenMenu(false);
+	}
+
+	const closeReport = () => {
+		setOpenReport(!openReport);
+		setOpenSubMenu(false);
+		setOpenMenu(false);
+		setSubEvent(false);
+	}
+
+
+	const handleState = (data, id, type) => {
+		if (type === 'subevent') setSubEvent(true);
+		setOpenState(!openState);
+		setId(id);
+		setFullData(data);
+	}
+	const handleReport = (id, type) => {
+		if (type === 'subevent') setSubEvent(true);
+		setOpenReport(!openReport);
+		setId(id);
+	}
+
 	return (
-		<div className='container'>
+		<div className='event-container'>
 			{openForm && <EventForm
 				onCloseForm={closeForm}
 				onFinishForm={finishForm}
@@ -164,8 +209,27 @@ const Events = () => {
 				update={update}
 				onUpdateState={UpdateState}
 				onGetFullEvents={getFullEvents}
+				setUpdate={setUpdate}
 			/>}
-			{openData && <EventData element={fullData} onCloseData={closeData} />}
+			{openData && <EventData
+				element={fullData}
+				onCloseData={closeData}
+				openData={openData}
+			/>}
+			{openState && <ChangeState
+				onCloseState={closeState}
+				openState={openState}
+				subEvent={subEvent}
+				id={id}
+				element={fullData}
+				update={update}
+			/>}
+			{
+				openReport && <StateReport
+					onCloseReport={closeReport}
+					openReport={openReport}
+				/>
+			}
 			<div className='section-title'>
 				<h3>Gestión de eventos</h3>
 			</div>
@@ -186,16 +250,17 @@ const Events = () => {
 								<div className='event-data'>
 									{id === element.id && openMenu && <div className='event-options'>
 										<ul>
-											<li onClick={() => handleData(element)} >Visualizar Datos</li>
+											<li onClick={() => handleData(element, 'event')} >Visualizar Datos</li>
 											<li onClick={() => addSubEvent(element.id)}>Añadir Sub-Evento</li>
 											<li>Añadir Responsabilidad</li>
-											<li>Crear Carpetas</li>
+											<li onClick={() => handleState(element, element.id, 'event')}>Actualizar Estado</li>
+											<li onClick={() => handleReport(element.id, 'event')}>Reporte de Estados</li>
 											<li onClick={() => updateEvent(element.id, 'event')}>Editar</li>
 											<li onClick={() => handleDelete(element.id, 'event')}>Eliminar</li>
 										</ul>
 									</div>}
 									<div className="event-text" onClick={() => handleDeploy(element.id)}>
-										{element.generalName}
+										{`(Evento) ${element.general_name}`}
 									</div>
 									{subEventsCount(element.id) > 0 && (
 										<span className='sub-events-count'>{subEventsCount(element.id)}</span>
@@ -206,19 +271,21 @@ const Events = () => {
 								</div>
 								<div className={`event-box subevent-box ${id === element.id && deploy ? 'expanded' : ''}`}>
 									{subEvents.length > 0 && subEvents.map((subElem, index) => {
-										if (subElem.eventId === element.id) {
+										if (subElem.event_id === element.id) {
 											return (
 												<div className='event-data subevent-data' key={index}>
 													{subId === subElem.id && openSubMenu && <div className='event-options'>
 														<ul>
-															<li onClick={() => handleData(subElem)}>Visualizar Datos</li>
+															<li onClick={() => handleData(subElem, 'subevent')}>Visualizar Datos</li>
 															<li>Añadir Responsabilidad</li>
+															<li onClick={() => handleState(subElem, subElem.id, 'subevent')}>Actualizar Estado</li>
+															<li onClick={() => handleReport(subElem.id, 'subevent')}>Reporte de Estados</li>
 															<li onClick={() => updateEvent(subElem.id, 'subevent')}>Editar</li>
 															<li onClick={() => handleDelete(subElem.id, 'subevent')}>Eliminar</li>
 														</ul>
 													</div>}
 													<div className="event-text">
-														{subElem.specificName}
+														{`(Sub-Evento - ${index + 1}) ${subElem.specific_name}`}
 													</div>
 													<div className="icon-container">
 														<i className="fa-solid fa-ellipsis-vertical" onClick={() => handleMenu(subElem.id, 'subevent')}></i>

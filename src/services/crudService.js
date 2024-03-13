@@ -5,7 +5,8 @@ const BASE_URL = 'http://localhost:5000';
 const createItem = async (resource, data) => {
     try {
         const response = await axios.post(`${BASE_URL}/${resource}`, data);
-        return response.data;
+        console.log(response);
+        return response;
     } catch (error) {
         throw error;
     }
@@ -45,12 +46,12 @@ const deleteItem = async (resource, id) => {
     if (confirm) {
         try {
             const response = await axios.delete(`${BASE_URL}/${resource}/${id}`);
-            return response.data;
+            return true;
         } catch (error) {
             throw error;
         }
     } else {
-        return;
+        return false;
     }
 };
 
