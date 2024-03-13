@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 body {
   margin: 0;
@@ -13,4 +13,107 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.debug {
+  border: 1px solid red;
+}
+
+.dark-card {
+  background-color: #4b5563;
+  /* Cambiar por el color correcto de bg-event-gray */
+  border-radius: 0.375rem;
+  /* Cambiar por el valor correcto de rounded-lg */
+  padding: 1rem;
+  /* Cambiar por el valor correcto de p-4 */
+}
+
+.cls-1 {
+  fill: white;
+  /* Cambiar por el valor correcto de fill-white */
+}
+
+.menu-text {
+  color: white;
+  /* Cambiar por el valor correcto de text-white */
+  letter-spacing: 0.125em;
+  /* Cambiar por el valor correcto de tracking-widest */
+  font-weight: normal;
+  /* Cambiar por el valor correcto de font-semibold */
+  cursor: pointer;
+  /* Cambiar por el valor correcto de hover:cursor-pointer */
+}
+
+.menu-text:hover {
+  font-weight: bold;
+  /* Cambiar por el valor correcto de hover:font-semibold */
+}
+
+.vertical-separator {
+  border: 1px solid white;
+  /* Cambiar por el valor correcto de border */
+  height: 2rem;
+  /* Cambiar por el valor correcto de h-8 */
+  margin: 0 0.75rem;
+  /* Cambiar por el valor correcto de mx-3 */
+}
+
+.custom-table {
+  border-collapse: separate;
+  border-spacing: 8px;
+  /* Cambiar por el valor correcto */
+}
+
+.custom-table th,
+.custom-table td {
+  padding: 8px;
+  /* Cambiar por el valor correcto */
+  border: 1px solid #ccc;
+  /* Cambiar por el valor correcto */
+}
+
+.checkbox-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.first-cell {
+  color: #000;
+  /* Cambiar por el valor correcto */
+}
+
+.circular-checkbox {
+  width: 20px;
+  /* Cambiar por el valor correcto */
+  height: 20px;
+  /* Cambiar por el valor correcto */
+  border-radius: 50%;
+  /* Cambiar por el valor correcto */
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  border: 2px solid #0075FF;
+  background-color: transparent;
+  margin: 2px;
+  transition: background-color 0.2s ease;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.circular-checkbox:checked {
+  background-color: #0075FF;
+}
+
+.card-options:hover {
+  font-weight: bold;
+  /* Cambiar por el valor correcto de hover:font-semibold */
+  cursor: pointer;
+  /* Cambiar por el valor correcto de hover:cursor-pointer */
+}
+
+.separator {
+  width: 90%;
+  height: 1px;
+  background-color: gray;
 }
