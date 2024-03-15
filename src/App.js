@@ -9,6 +9,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import EventosEnEspera from './pages/eventosEnEspera';
 import Responsibility from './pages/responsabily_compliance';
 import Home from './pages/TablaPermisos'
+import Schedule from './components/schedule/Schedule';
 
 const App = () => {
 	return (
@@ -22,6 +23,7 @@ const App = () => {
 						<Route path="/tablapermisos" element={<Home />} />
 						<Route path="/eventosEspera" element={<EventosEnEspera />} />
 						<Route path="/responsabilidades" element={<Responsibility />} />
+						<Route path="/calendar" element={<Schedule />} />
 						<Route path="*" element={<NotFoundPage />} />
 
 					</Routes>
