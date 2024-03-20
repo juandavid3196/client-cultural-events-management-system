@@ -128,15 +128,16 @@
 					.row {
 						display: flex;
 						flex-direction: column;
-						gap: 10px;
+						gap: 15px;
 
 						.form-box {
 							width: 100%;
 							display: flex;
 							flex-direction: column;
+							font-size: 13px;
+							gap: 3px;
 
 							label {
-								font-size: 13px;
 								color: #373737;
 							}
 
