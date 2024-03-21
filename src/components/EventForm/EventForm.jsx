@@ -526,7 +526,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 											</div>
 											<div className="form-box">
 												<label htmlFor="date_finishing">Finalización</label>
-												<input type="date" name='date_finishing' onChange={handleInputChange} value={formData.date_finishing} />
+												<input type="date" name='date_finishing' onChange={handleInputChange} value={formData.date_finishing} min={formData.date_start} />
 												{isFormSubmitted && formData.date_finishing === '' && (
 													<div className="message-error">Este campo es obligatorio</div>
 												)}

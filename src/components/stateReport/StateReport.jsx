@@ -102,7 +102,7 @@ const StateReport = ({ onCloseReport, openReport }) => {
                                 </div>
                                 <div className="filter-second-box">
                                     <label htmlFor=""> Hasta </label>
-                                    <input type="date" name='date_finish' onChange={handleInputChange} value={reportData.date_finish} />
+                                    <input type="date" name='date_finish' onChange={handleInputChange} value={reportData.date_finish} min={reportData.date_start} />
                                 </div>
                             </div>
                         </div>

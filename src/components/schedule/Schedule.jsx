@@ -16,11 +16,12 @@ const Schedule = () => {
     const uuid = require('uuid');
     const [events, setEvents] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(null);
     const [close, setClose] = useState(false);
     const { subEvent } = useAppContext();
     const [update, setUpdate] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+
 
     useEffect(() => {
         getEvents();
@@ -30,7 +31,6 @@ const Schedule = () => {
         setLoading(true);
         try {
             const data = await crudService.fetchItems('event');
-            console.log(data);
             const eventsCalendar = [];
 
             if (data.length > 0)
@@ -54,8 +54,6 @@ const Schedule = () => {
 
         }
     }
-
-    console.log(events);
 
     const [formData, setFormData] = useState({
         id: uuid.v4(),
@@ -127,6 +125,34 @@ const Schedule = () => {
         setFormData(emptyFormData);
     };
 
+    const validateErrors = () => {
+
+        let hasErrors = false;
+
+        if (formData.general_name === '') {
+            hasErrors = true;
+        }
+
+        if (formData.event_type === '') {
+            hasErrors = true;
+        }
+
+        if (formData.place === '') {
+            hasErrors = true;
+        }
+
+        if (formData.date_start === '') {
+            hasErrors = true;
+        }
+
+        if (formData.date_finishing === '') {
+            hasErrors = true;
+        }
+
+        return hasErrors;
+    }
+
+
     const handleForm = (e) => {
         e.preventDefault();
         saveEvent();
@@ -137,6 +163,7 @@ const Schedule = () => {
         setClose(true);
         setShowModal(false);
         setUpdate(false);
+        setIsFormSubmitted(false);
         resetFormData();
         getEvents();
     }
@@ -161,25 +188,43 @@ const Schedule = () => {
 
 
     const saveEvent = async () => {
-        if (update) {
-            await crudService.updateItem('event', formData.id, formData);
-            setUpdate(false);
-            toast.success('¡Evento Editado con Exito!');
-        } else {
-            await crudService.createItem('event', formData);
-            toast.success('¡Evento Editado con Exito!');
+        try {
+            if (update) {
+                if (validateErrors()) {
+                    setIsFormSubmitted(true);
+                    return;
+                } else {
+                    await crudService.updateItem('event', formData.id, formData);
+                    setUpdate(false);
+                    toast.success('¡Evento Editado con Exito!');
+                }
+            } else {
+                if (validateErrors()) {
+                    setIsFormSubmitted(true);
+                    return;
+                } else {
+                    await crudService.createItem('event', formData);
+                    toast.success('¡Evento Creado con Exito!');
+                }
+
+            }
+        } catch (error) {
+            console.error('Error al guardar el evento:', error);
+            toast.error('Error al guardar el evento');
         }
-        setUpdate(false);
         setShowModal(false);
-        handleClose(true);
+        handleClose();
     }
+
+
 
 
     const deleteEvents = async () => {
         await crudService.deleteItem('event', formData.id);
+        toast.success('¡Evento Eliminado con Exito!');
         setUpdate(false);
         setShowModal(false);
-        handleClose(true);
+        handleClose();
     }
 
 
@@ -189,7 +234,7 @@ const Schedule = () => {
             {loading ? (
                 <Spinner />
             ) : (
-                <div style={{ height: "500px", width: "100%" }}>
+                <div className='calendar-container'>
                     <Calendar
                         localizer={localizer}
                         events={events}
@@ -217,11 +262,15 @@ const Schedule = () => {
                                             <div className="row">
                                                 <div className="form-box">
                                                     <label htmlFor="general_name">Nombre General</label>
-                                                    <input type="text" name='general_name' onChange={handleInputChange} value={formData.general_name} placeholder='Nombre General' required />
+                                                    <input type="text" name='general_name' onChange={handleInputChange} value={formData.general_name} placeholder='Nombre General' />
+                                                    {isFormSubmitted && formData.general_name === '' && (
+                                                        <div className="message-error">Este campo es obligatorio</div>
+                                                    )}
+
                                                 </div>
                                                 <div className="form-box">
                                                     <label htmlFor="event_type">Modalidad Contractual</label>
-                                                    <select name="event_type" onChange={handleInputChange} value={formData.event_type}>
+                                                    <select name="event_type" onChange={handleInputChange} value={formData.event_type} >
                                                         <option value="" disabled>seleccionar</option>
                                                         <option value="propio">Propio</option>
                                                         <option value="copro">Co-Producción</option>
@@ -229,17 +278,25 @@ const Schedule = () => {
                                                         <option value="apoyo">Apoyo</option>
                                                         <option value="alquiler">Alquiler</option>
                                                     </select>
+                                                    {isFormSubmitted && formData.event_type === '' && (
+                                                        <div className="message-error">Este campo es obligatorio</div>
+                                                    )}
                                                 </div>
                                                 <div><span className='form-subtitle'>Fecha y Hora</span></div>
                                                 <div className="row two-colums">
                                                     <div className="form-box">
                                                         <label htmlFor="date_start">Inicio</label>
                                                         <input type="date" name='date_start' onChange={handleInputChange} value={formData.date_start} />
-
+                                                        {isFormSubmitted && formData.date_start === '' && (
+                                                            <div className="message-error">Este campo es obligatorio</div>
+                                                        )}
                                                     </div>
                                                     <div className="form-box">
                                                         <label htmlFor="date_finishing">Finalización</label>
-                                                        <input type="date" name='date_finishing' onChange={handleInputChange} value={formData.date_finishing} />
+                                                        <input type="date" name='date_finishing' onChange={handleInputChange} value={formData.date_finishing} min={formData.date_start} />
+                                                        {isFormSubmitted && formData.date_finishing === '' && (
+                                                            <div className="message-error">Este campo es obligatorio</div>
+                                                        )}
                                                     </div>
                                                 </div>
                                                 <div className="row two-colums">
@@ -253,6 +310,9 @@ const Schedule = () => {
                                                             <option value="aula-taller">Aula Taller</option>
                                                             <option value="otros">Otros</option>
                                                         </select>
+                                                        {isFormSubmitted && formData.place === '' && (
+                                                            <div className="message-error">Este campo es obligatorio</div>
+                                                        )}
                                                     </div>
                                                     <div className="form-box">
                                                         <label htmlFor="type_state">Estado</label>
@@ -293,20 +353,20 @@ const Schedule = () => {
                                     </form>
                                 </div>
                             </div>
-                            <ToastContainer
-                                position="top-right"
-                                autoClose={800}
-                                hideProgressBar={false}
-                                newestOnTop={false}
-                                closeOnClick
-                                rtl={false}
-                                pauseOnFocusLoss
-                                draggable
-                                pauseOnHover
-                                theme="light"
-                            />
                         </div>
                     )}
+                    <ToastContainer
+                        position="top-left"
+                        autoClose={800}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                        theme="light"
+                    />
                 </div>
             )}
         </>
