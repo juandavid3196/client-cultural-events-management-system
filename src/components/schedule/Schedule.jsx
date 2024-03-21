@@ -6,6 +6,8 @@ import { useAppContext } from '../../contexts/AppContext';
 import moment from 'moment'
 import crudService from '../../services/crudService';
 import Spinner from '../spinner/Spinner';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
 
 const localizer = momentLocalizer(moment)
 
@@ -28,6 +30,7 @@ const Schedule = () => {
         setLoading(true);
         try {
             const data = await crudService.fetchItems('event');
+            console.log(data);
             const eventsCalendar = [];
 
             if (data.length > 0)
@@ -52,13 +55,15 @@ const Schedule = () => {
         }
     }
 
+    console.log(events);
+
     const [formData, setFormData] = useState({
         id: uuid.v4(),
         event_type: "",
         ...(subEvent ? { event_id: null } : {}),
         general_name: "",
         ...(subEvent ? { specific_name: "" } : {}),
-        date_start: selectedDate,
+        date_start: "",
         date_finishing: "",
         place: "",
         description: "",
@@ -103,9 +108,24 @@ const Schedule = () => {
         let year = date.getFullYear();
 
         setFormData({
-            ...formData, date_start: `${day + "-" + month + "-" + year}`,
+            ...formData, date_start: `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`,
         })
     }
+
+    const resetFormData = () => {
+        const keys = Object.keys(formData);
+        const emptyFormData = {};
+
+        keys.forEach((key) => {
+            if (key == "id") {
+                emptyFormData[key] = uuid.v4();
+            } else {
+                emptyFormData[key] = '';
+            }
+        });
+
+        setFormData(emptyFormData);
+    };
 
     const handleForm = (e) => {
         e.preventDefault();
@@ -116,6 +136,9 @@ const Schedule = () => {
     const handleClose = () => {
         setClose(true);
         setShowModal(false);
+        setUpdate(false);
+        resetFormData();
+        getEvents();
     }
 
     const handleSelectSlot = (slotInfo) => {
@@ -137,22 +160,24 @@ const Schedule = () => {
     }
 
 
-    const saveEvent = () => {
+    const saveEvent = async () => {
         if (update) {
-            crudService.updateItem('event', formData.id, formData);
+            await crudService.updateItem('event', formData.id, formData);
             setUpdate(false);
-            console.log("editado");
+            toast.success('¡Evento Editado con Exito!');
         } else {
-            crudService.createItem('event', formData);
-            console.log("creado");
+            await crudService.createItem('event', formData);
+            toast.success('¡Evento Editado con Exito!');
         }
+        setUpdate(false);
         setShowModal(false);
         handleClose(true);
     }
 
 
     const deleteEvents = async () => {
-        const data = await crudService.deleteItem('event', formData.id);
+        await crudService.deleteItem('event', formData.id);
+        setUpdate(false);
         setShowModal(false);
         handleClose(true);
     }
@@ -268,6 +293,18 @@ const Schedule = () => {
                                     </form>
                                 </div>
                             </div>
+                            <ToastContainer
+                                position="top-right"
+                                autoClose={800}
+                                hideProgressBar={false}
+                                newestOnTop={false}
+                                closeOnClick
+                                rtl={false}
+                                pauseOnFocusLoss
+                                draggable
+                                pauseOnHover
+                                theme="light"
+                            />
                         </div>
                     )}
                 </div>

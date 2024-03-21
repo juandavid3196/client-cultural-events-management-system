@@ -51,7 +51,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	}
 	);
 
-	console.log(formData);
 
 	const [stateData, setStateData] = useState({
 		id_state: uuid.v4(),
