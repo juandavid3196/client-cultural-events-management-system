@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import "./Schedule.scss";
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import { Calendar, momentLocalizer } from 'react-big-calendar'
-import { useAppContext } from '../../contexts/AppContext';
 import moment from 'moment'
 import crudService from '../../services/crudService';
 import Spinner from '../spinner/Spinner';
@@ -17,15 +16,50 @@ const Schedule = () => {
     const [events, setEvents] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [close, setClose] = useState(false);
-    const { subEvent } = useAppContext();
+    const [subEvent, setSubEvent] = useState(false);
     const [update, setUpdate] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
 
+
+    const [formData, setFormData] = useState({
+        id: uuid.v4(),
+        event_type: "",
+        ...(subEvent ? { event_id: null } : {}),
+        general_name: "",
+        ...(subEvent ? { specific_name: "" } : {}),
+        date_start: "",
+        date_finishing: "",
+        place: "",
+        description: "",
+        observation: "",
+    }
+    );
+
+    const [stateData, setStateData] = useState({
+        id_state: uuid.v4(),
+        type_state: 'pre-reserva',
+        date_state: '',
+        hour_state: '',
+        justification: '',
+        user_state: 'default',
+        ...(subEvent ? { subevent_id: formData.id } : { event_id: formData.id })
+    });
+
+    const [historyData, setHistoryData] = useState({
+        type_state: '',
+        date_state: '',
+        hour_state: '',
+        justification: 'default',
+        user_state: 'default',
+        ...(subEvent ? { subeventstate_id: '' } : { eventstate_id: '' })
+    })
+
     useEffect(() => {
         getEvents();
     }, []);
+
 
     const getEvents = async () => {
         setLoading(true);
@@ -55,33 +89,9 @@ const Schedule = () => {
         }
     }
 
-    const [formData, setFormData] = useState({
-        id: uuid.v4(),
-        event_type: "",
-        ...(subEvent ? { event_id: null } : {}),
-        general_name: "",
-        ...(subEvent ? { specific_name: "" } : {}),
-        date_start: "",
-        date_finishing: "",
-        place: "",
-        description: "",
-        observation: "",
-    }
-    );
-
-    const [stateData, setStateData] = useState({
-        id_state: uuid.v4(),
-        type_state: 'pre-reserva',
-        date_state: '',
-        hour_state: '',
-        justification: '',
-        user_state: 'default',
-        ...(subEvent ? { subevent_id: formData.id } : { event_id: formData.id })
-    });
-
     const handleInputChange = (e) => {
 
-        const { name, value, type } = e.target;
+        const { name, value } = e.target;
 
         if (name === 'type_state') {
             setStateData({
@@ -101,13 +111,45 @@ const Schedule = () => {
 
     const generateDate = (currentDate) => {
         let date = new Date(currentDate);
+        let dateHour = new Date();
         let day = date.getDate();
         let month = date.getMonth() + 1;
         let year = date.getFullYear();
 
-        setFormData({
-            ...formData, date_start: `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`,
+        let hour = dateHour.getHours();
+        let minutes = dateHour.getMinutes();
+
+
+        let fullDate = `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`;
+        let fullHour = `${hour}:${minutes < 10 ? '0' + minutes : minutes}`;
+
+
+        setStateData({
+            ...stateData,
+            hour_state: fullHour,
+            date_state: fullDate,
         })
+
+        setHistoryData({
+            ...historyData,
+            hour_state: fullHour,
+            date_state: fullDate,
+        })
+
+        setFormData({
+            ...formData, date_start: fullDate,
+        })
+
+    }
+
+    const setInfo = () => {
+        if (subEvent) {
+            historyData.subeventstate_id = stateData.id_state;
+        } else {
+            stateData.event_id = formData.id;
+            historyData.eventstate_id = stateData.id_state;
+        }
+        historyData.type_state = stateData.type_state;
     }
 
     const resetFormData = () => {
@@ -115,7 +157,7 @@ const Schedule = () => {
         const emptyFormData = {};
 
         keys.forEach((key) => {
-            if (key == "id") {
+            if (key === "id") {
                 emptyFormData[key] = uuid.v4();
             } else {
                 emptyFormData[key] = '';
@@ -124,6 +166,22 @@ const Schedule = () => {
 
         setFormData(emptyFormData);
     };
+
+
+    const resetStateData = () => {
+        const keys = Object.keys(stateData);
+        const emptyFormData = {};
+
+        keys.forEach((key) => {
+            if (key === "id_state") {
+                emptyFormData[key] = uuid.v4();
+            } else {
+                emptyFormData[key] = '';
+            }
+        });
+        setStateData(emptyFormData);
+    };
+
 
     const validateErrors = () => {
 
@@ -155,6 +213,7 @@ const Schedule = () => {
 
     const handleForm = (e) => {
         e.preventDefault();
+        setInfo();
         saveEvent();
     }
 
@@ -165,6 +224,7 @@ const Schedule = () => {
         setUpdate(false);
         setIsFormSubmitted(false);
         resetFormData();
+        resetStateData();
         getEvents();
     }
 
@@ -203,8 +263,18 @@ const Schedule = () => {
                     setIsFormSubmitted(true);
                     return;
                 } else {
-                    await crudService.createItem('event', formData);
-                    toast.success('¡Evento Creado con Exito!');
+                    const response = await crudService.createItem('event', formData);
+
+                    if (response.request.status === 201) {
+                        const response = await crudService.createItem('eventstate', stateData);
+
+                        if (response.request.status === 201) {
+                            crudService.createItem('historyevent', historyData);
+                        }
+
+                    }
+
+                    toast.success('¡Evento Añadido con Exito!');
                 }
 
             }
@@ -215,7 +285,6 @@ const Schedule = () => {
         setShowModal(false);
         handleClose();
     }
-
 
 
 
@@ -299,7 +368,7 @@ const Schedule = () => {
                                                         )}
                                                     </div>
                                                 </div>
-                                                <div className="row two-colums">
+                                                <div className={`row  ${update ? '' : 'two-colums'}`}>
                                                     <div className="form-box">
                                                         <label htmlFor="place">Lugar</label>
                                                         <select name="place" onChange={handleInputChange} value={formData.place} >
@@ -314,17 +383,22 @@ const Schedule = () => {
                                                             <div className="message-error">Este campo es obligatorio</div>
                                                         )}
                                                     </div>
-                                                    <div className="form-box">
-                                                        <label htmlFor="type_state">Estado</label>
-                                                        <select name="type_state" onChange={handleInputChange} value={stateData.type_state}>
-                                                            <option value="pre-reserva">Pre-reserva</option>
-                                                            <option value="confirmado">Confirmado</option>
-                                                            <option value="ejecutar">Listo para Ejecutar</option>
-                                                            <option value="cancelado">Cancelado</option>
-                                                            <option value="ejecucion">En Ejecución</option>
-                                                            <option value="terminado">Terminado</option>
-                                                        </select>
-                                                    </div>
+                                                    {!update && (
+                                                        <div className="form-box">
+                                                            <label htmlFor="type_state">Estado</label>
+                                                            <select name="type_state" onChange={handleInputChange} value={stateData.type_state}>
+                                                                <option value="pre-reserva" selected>Pre-reserva</option>
+                                                                <option value="confirmado">Confirmado</option>
+                                                                <option value="ejecutar">Listo para Ejecutar</option>
+                                                                <option value="cancelado">Cancelado</option>
+                                                                <option value="ejecucion">En Ejecución</option>
+                                                                <option value="terminado">Terminado</option>
+                                                            </select>
+                                                        </div>
+                                                    )
+
+                                                    }
+
                                                 </div>
                                                 <div className="row">
                                                     <div className="form-box">
