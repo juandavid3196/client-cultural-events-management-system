@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FileInput } from '../UserActions/FileInput';
 
+
+
 const ResponsibilityTable = () => {
   // Eliminamos la definición de tipo del estado
   const [data, setData] = useState([]);

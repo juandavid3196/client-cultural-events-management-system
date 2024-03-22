@@ -100,12 +100,12 @@ const Home = () => {
   }, [modeId]);
 
   return (
-    <div className="bg-black h-full w-full flex text-white">
+    <div className="bg-white h-full w-full flex text-white">
       <main className="w-full p-2 bg-main">
         <div className="flex flex-col items-center px-6">
           <div className="py-6 flex flex-col items-center">
-            <h1 className="text-gray-title font-bold text-4xl">Gestión de Responsabilidades</h1>
-            <h1 className="capitalize text-gray-title font-bold text-4xl">{modeName}</h1>
+            <h1 className="text-gray-400 font-bold text-4xl">Gestión de Responsabilidades</h1>
+            <h1 className="capitalize text-gray-400 font-bold text-4xl">{modeName}</h1>
           </div>
           <InterceptionTable
             title="Responsabilidad"

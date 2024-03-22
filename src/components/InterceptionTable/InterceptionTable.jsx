@@ -19,14 +19,14 @@ const InterceptionTable = ({ rows, columns, initialCheckedCells, keyId, title, o
         <tr>
           <th className='text-black'>{title}</th>
           {columns.map((column) => (
-            <th className='capitalize text-gray-title' key={column}>{column}</th>
+            <th className='capitalize text-gray-400' key={column}>{column}</th>
           ))}
         </tr>
       </thead>
       <tbody>
         {rows.map((row) => (
           <tr key={row}>
-            <td className='capitalize text-gray-title'>{row}</td>
+            <td className='capitalize text-gray-400'>{row}</td>
             {columns.map((column, columnIndex) => (
               <td key={keyId[columnIndex]}>
                 <div className='checkbox-container'>
