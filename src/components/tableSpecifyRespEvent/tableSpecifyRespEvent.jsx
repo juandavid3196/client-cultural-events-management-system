@@ -25,7 +25,7 @@ function TableSpecifyRespEvent({ eventId }) {
           <thead>
             <tr>
               <th style={{ border: '1px solid #ddd', padding: '8px' }}>ID</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>Responsabilidad por Modo ID</th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>Responsabilidad por Modo ID2</th>
               <th style={{ border: '1px solid #ddd', padding: '8px' }}>Accomplishment ID</th>
               <th style={{ border: '1px solid #ddd', padding: '8px' }}>Subir entregable</th>
             </tr>
