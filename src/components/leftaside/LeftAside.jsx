@@ -1,6 +1,7 @@
 import React from 'react'
 import './LeftAside.scss';
 import { MdCalendarMonth, MdShield } from 'react-icons/md';
+import { IoCalendarNumberSharp } from "react-icons/io5";
 import { TbReportSearch } from "react-icons/tb";
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
@@ -42,6 +43,14 @@ const LeftAside = () => {
                         ]}
                         text="Reportes"
                         icon={<TbReportSearch />}
+                    />
+
+                    <Card
+                        options={[
+                            <Link to="/calendar">Calendario</Link>
+                        ]}
+                        text="Calendario"
+                        icon={<IoCalendarNumberSharp />}
                     />
                 </div>
             </div>

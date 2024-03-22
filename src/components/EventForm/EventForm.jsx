@@ -352,7 +352,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		let minutes = date.getMinutes();
 
 
-		let fullDate = `${day}/${month}/${year}`;
+		let fullDate = `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`;
 		let fullHour = `${hour}:${minutes < 10 ? '0' + minutes : minutes}`;
 
 

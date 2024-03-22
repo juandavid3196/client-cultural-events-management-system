@@ -71,13 +71,15 @@ const Schedule = () => {
                 for (let i = 0; i < data.length; i++) {
 
                     const [year, month, day] = data[i].date_start.split("-").map(Number);
-                    const [yearf, monthf, dayf] = data[i].date_finishing.split("-").map(Number);
+                    // const [yearf, monthf, dayf] = data[i].date_finishing.split("-").map(Number);
 
                     eventsCalendar.push({
                         id: data[i].id,
                         title: data[i].general_name,
                         start: new Date(year, month - 1, day, 10, 0),
-                        end: new Date(yearf, monthf - 1, dayf, 12, 0),
+                        end: moment(data[i].date_start)
+                            .add(1, "hours")
+                            .toDate(),
                     });
                 }
             setEvents(eventsCalendar)
