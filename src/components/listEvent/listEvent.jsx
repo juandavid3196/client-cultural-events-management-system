@@ -8,7 +8,7 @@ const ListEvent = () => {
   const [selectedEvent, setSelectedEvent] = useState('');
   const [idEvent, setIdEvent] = useState();
 
-
+  //Pasar esto al funcionamiento de services
   useEffect(() => {
     axios.get('http://localhost:8007/api/events/?skip=0&limit=0')
       .then(response => {
