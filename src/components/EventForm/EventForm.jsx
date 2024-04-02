@@ -51,7 +51,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	}
 	);
 
-	console.log(formData);
 
 	const [stateData, setStateData] = useState({
 		id_state: uuid.v4(),
@@ -353,7 +352,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		let minutes = date.getMinutes();
 
 
-		let fullDate = `${day}/${month}/${year}`;
+		let fullDate = `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`;
 		let fullHour = `${hour}:${minutes < 10 ? '0' + minutes : minutes}`;
 
 
@@ -527,7 +526,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 											</div>
 											<div className="form-box">
 												<label htmlFor="date_finishing">Finalización</label>
-												<input type="date" name='date_finishing' onChange={handleInputChange} value={formData.date_finishing} />
+												<input type="date" name='date_finishing' onChange={handleInputChange} value={formData.date_finishing} min={formData.date_start} />
 												{isFormSubmitted && formData.date_finishing === '' && (
 													<div className="message-error">Este campo es obligatorio</div>
 												)}
