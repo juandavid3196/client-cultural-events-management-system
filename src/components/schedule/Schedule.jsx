@@ -71,7 +71,6 @@ const Schedule = () => {
                 for (let i = 0; i < data.length; i++) {
 
                     const [year, month, day] = data[i].date_start.split("-").map(Number);
-                    // const [yearf, monthf, dayf] = data[i].date_finishing.split("-").map(Number);
 
                     eventsCalendar.push({
                         id: data[i].id,
@@ -177,6 +176,8 @@ const Schedule = () => {
         keys.forEach((key) => {
             if (key === "id_state") {
                 emptyFormData[key] = uuid.v4();
+            } else if (key === "type_state") {
+                emptyFormData[key] = 'pre-reserva';
             } else {
                 emptyFormData[key] = '';
             }
