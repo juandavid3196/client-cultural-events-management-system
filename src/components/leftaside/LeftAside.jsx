@@ -3,6 +3,7 @@ import './LeftAside.scss';
 import { MdCalendarMonth, MdShield } from 'react-icons/md';
 import { IoCalendarNumberSharp } from "react-icons/io5";
 import { TbReportSearch } from "react-icons/tb";
+import { MdOutlineRealEstateAgent } from "react-icons/md";
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
 
@@ -51,6 +52,14 @@ const LeftAside = () => {
                         ]}
                         text="Calendario"
                         icon={<IoCalendarNumberSharp />}
+                    />
+
+                    <Card
+                        options={[
+                            <Link to="/states"> Gestor de Estados</Link>
+                        ]}
+                        text="Estados"
+                        icon={<MdOutlineRealEstateAgent />}
                     />
                 </div>
             </div>
