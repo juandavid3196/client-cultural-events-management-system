@@ -12,6 +12,7 @@ import Home from './pages/TablaPermisos'
 import Schedule from './components/schedule/Schedule';
 import StatesManager from './components/statesManager/StatesManager';
 import PlacesManager from './components/placesManager/PlacesManager';
+import ModalityManager from './components/modalityManager/ModalityManager';
 
 const App = () => {
 	return (
@@ -28,6 +29,7 @@ const App = () => {
 						<Route path="/calendar" element={<Schedule />} />
 						<Route path="/states" element={<StatesManager />} />
 						<Route path="/places" element={<PlacesManager />} />
+						<Route path="/modalities" element={<ModalityManager />} />
 						<Route path="*" element={<NotFoundPage />} />
 
 					</Routes>

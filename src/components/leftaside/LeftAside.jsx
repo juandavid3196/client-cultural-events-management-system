@@ -5,6 +5,7 @@ import { IoCalendarNumberSharp } from "react-icons/io5";
 import { TbReportSearch } from "react-icons/tb";
 import { MdOutlineRealEstateAgent } from "react-icons/md";
 import { FaBuildingUser } from "react-icons/fa6";
+import { FaUserFriends } from "react-icons/fa";
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
 
@@ -68,6 +69,13 @@ const LeftAside = () => {
                         ]}
                         text="Espacios"
                         icon={<FaBuildingUser />}
+                    />
+                    <Card
+                        options={[
+                            <Link to="/modalities"> Gestor de Modalidades</Link>
+                        ]}
+                        text="Modalidades"
+                        icon={<FaUserFriends />}
                     />
                 </div>
             </div>
