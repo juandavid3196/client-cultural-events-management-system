@@ -11,6 +11,7 @@ import Responsibility from './pages/responsabily_compliance';
 import Home from './pages/TablaPermisos'
 import Schedule from './components/schedule/Schedule';
 import StatesManager from './components/statesManager/StatesManager';
+import PlacesManager from './components/placesManager/PlacesManager';
 
 const App = () => {
 	return (
@@ -26,6 +27,7 @@ const App = () => {
 						<Route path="/responsabilidades" element={<Responsibility />} />
 						<Route path="/calendar" element={<Schedule />} />
 						<Route path="/states" element={<StatesManager />} />
+						<Route path="/places" element={<PlacesManager />} />
 						<Route path="*" element={<NotFoundPage />} />
 
 					</Routes>
