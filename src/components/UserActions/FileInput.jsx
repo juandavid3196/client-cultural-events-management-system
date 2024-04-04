@@ -5,7 +5,7 @@ import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { saveAs } from 'file-saver';
 
-const FileInput = () => {
+const FileInput = ({ id }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleProgileDialogClick = () => {
@@ -28,7 +28,8 @@ const FileInput = () => {
       const data = {
         fecha: 'Medellin, 14 de agosto de 2023',
         contenido: 'Official show of Clown PLIM PLIM on August 27, 2023 from 4:00 pm',
-        asunto: 'Event of August 27, 2023'
+        asunto: 'Event of August 27, 2023',
+        id: id // Aquí se pasa el ID como parte de los datos
       };
 
       // Fill the template with data
@@ -50,7 +51,7 @@ const FileInput = () => {
       <MdUpload className="text-gray-900 hover:text-yellow-600 hover:cursor-pointer" onClick={handleProgileDialogClick} />
       <MdModeEditOutline className="text-gray-900 hover:text-red-600 hover:cursor-pointer" />
       <MdDownload className="text-gray-900 hover:text-green-600 hover:cursor-pointer" onClick={generateDocument} />
-      <DeliverablesDialog open={dialogOpen} setDialogOpen={setDialogOpen} />
+      <DeliverablesDialog open={dialogOpen} setDialogOpen={setDialogOpen} id={id} />
     </div>
   );
 };
