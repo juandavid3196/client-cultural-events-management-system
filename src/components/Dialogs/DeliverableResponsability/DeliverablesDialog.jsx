@@ -2,7 +2,7 @@ import { AiFillCloseCircle } from 'react-icons/ai';
 import { Button, Checkbox, Dialog, DialogContent, DialogTitle, List, ListItem, ListItemText, TextareaAutosize } from "@mui/material"
 import React, { useState } from 'react';
 
-const DeliverablesDialog = ({ open, setDialogOpen }) => {
+const DeliverablesDialog = ({ open, setDialogOpen, id }) => {
     const [observations, setObservations] = useState('');
     const [deliverables, setDeliverables] = useState([]);
     const [responsibilityCompleted, setResponsibilityCompleted] = useState(false);
@@ -15,20 +15,39 @@ const DeliverablesDialog = ({ open, setDialogOpen }) => {
     };
 
     const handleUpload = async () => {
-        if (!file) {
+        /* if (!file) {
             console.error('No file selected');
             return;
-        }
-
+        } */
+       
         const formData = new FormData();
         formData.append('file', file);
-
         try {
+            const response = await fetch(`http://localhost:8007/api/accomplishments/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    text: observations
+                })
+            });
+    
+            if (response.ok) {
+                console.log('Accomplishment updated successfully!');
+            } else {
+                console.error('Failed to update accomplishment');
+            }
+        } catch (error) {
+            console.error('Error updating accomplishment:', error);
+        }
+    
+        /* try {
             const response = await fetch('http://localhost:8007/api/backend/upload-file/?event_id=1', {
                 method: 'POST',
                 body: formData,
             });
-
+    
             if (response.ok) {
                 console.log('File uploaded successfully!');
             } else {
@@ -36,9 +55,8 @@ const DeliverablesDialog = ({ open, setDialogOpen }) => {
             }
         } catch (error) {
             console.error('Error uploading file:', error);
-        }
+        } */
     };
-
     return (
         <Dialog open={open}>
 

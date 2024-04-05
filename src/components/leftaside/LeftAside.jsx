@@ -31,7 +31,7 @@ const LeftAside = () => {
                     />
                     <Card
                         options={[
-                            <Link to="/responsabilidades">Pendientes por cumplimiento</Link>,
+                            <Link to="/responsabilidades">Responsabilidades</Link>,
                             <Link to="/eventosEspera">Eventos en espera</Link>,
                             <Link to="/">Gestor de Eventos</Link>
 
