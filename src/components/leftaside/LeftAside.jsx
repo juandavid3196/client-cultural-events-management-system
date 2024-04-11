@@ -1,11 +1,29 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './LeftAside.scss';
 import { MdCalendarMonth, MdShield } from 'react-icons/md';
 import { TbReportSearch } from "react-icons/tb";
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
 
+
+
 const LeftAside = () => {
+
+    const [modes, setModes] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:8007/api/contractual-modes/?skip=0&limit=10');
+                const data = await response.json();
+                setModes(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <div className='container'>
             <div className="aside-top">
@@ -14,15 +32,10 @@ const LeftAside = () => {
             <div className="aside-bottom">
                 <div className='text-white'>
                     <Card
-                        options={[
-                            <Link to="/tablapermisos?modeId=1">Alquiler</Link>,
-                            <Link to="/tablapermisos?modeId=2">Propio</Link>,
-                            <Link to="/tablapermisos?modeId=3">Proyecto</Link>,
-                            <Link to="/tablapermisos?modeId=4">Co-producción</Link>,
-                            <Link to="/tablapermisos?modeId=5">Apoyo</Link>,
-                            <Link to="/tablapermisos?modeId=6">Canje</Link>,
-                        ]}
-                        text="Modalidades"
+                        options={
+                            modes.map(mode => <Link to={`/tablapermisos?modeId=${mode.id}`}>{mode.name}</Link>)
+                        }
+                        text="Modos de contratación"
                         icon={<MdShield />}
                     />
                     <Card

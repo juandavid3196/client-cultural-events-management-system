@@ -7,9 +7,9 @@ import { useLocation } from 'react-router-dom';
 const Home = () => {
   const [checkedCells, setCheckedCells] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [rows, setRows] = useState([]);
+  const [responsabilidad, setResponsabilidad] = useState([]);
   const [keyId, setkeyID] = useState([]);
-  const [columns, setColumns] = useState([]);
+  const [espacio, setEspacio] = useState([]);
   const [modeId, setModeId] = useState(null);
   const [modeName, setmodeName] = useState("");
   const [selectedCellKey, setSelectedCellKey] = useState("");
@@ -79,8 +79,8 @@ const Home = () => {
         if (response.status === 200) {
           const responseData = response.data;
           setResponseData(responseData);
-          const rows = Array.from(new Set(responseData.map((item) => item.responsability_name.toString())));
-          const columns = Array.from(new Set(responseData.map((item) => item.space_name.toString())));
+          const responsabilidad = Array.from(new Set(responseData.map((item) => item.responsability_name.toString())));
+          const espacio = Array.from(new Set(responseData.map((item) => item.space_name.toString())));
           const keyId = Array.from(new Set(responseData.map((item) => item.id.toString())));
           const modeName = responseData.length > 0 ? responseData[0].mode_name : "Modo Desconocido";
           setmodeName(modeName);
@@ -90,14 +90,14 @@ const Home = () => {
               initialCheckedCells[`${item.responsability_name}-${item.space_name}`] = true;
             }
           });
-          setRows(rows);
-          setColumns(columns);
+          setResponsabilidad(responsabilidad);
+          setEspacio(espacio);
           setCheckedCells(initialCheckedCells);
           setkeyID(keyId);
         }
       });
     }
-  }, [modeId]);
+  }, [modeId]);   
 
   return (
     <div className="bg-white h-full w-full flex text-white">
@@ -110,8 +110,8 @@ const Home = () => {
           <InterceptionTable
             title="Responsabilidad"
             keyId={keyId}
-            rows={rows}
-            columns={columns}
+            responsabilidad={responsabilidad}
+            espacio={espacio}
             initialCheckedCells={checkedCells}
             onCheckboxChange={handleCheckboxChange}
             onCellClick={handleCellClick}

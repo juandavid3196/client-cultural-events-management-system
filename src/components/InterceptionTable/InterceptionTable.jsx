@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const InterceptionTable = ({ rows, columns, initialCheckedCells, keyId, title, onCheckboxChange, onCellClick }) => {
+const InterceptionTable = ({ responsabilidad, espacio, initialCheckedCells, keyId, title, onCheckboxChange, onCellClick }) => {
   const [checkedCells, setCheckedCells] = useState({});
 
   // Establecer el estado inicial de las casillas cuando initialCheckedCells cambie
@@ -18,18 +18,18 @@ const InterceptionTable = ({ rows, columns, initialCheckedCells, keyId, title, o
       <thead>
         <tr>
           <th className='text-black'>{title}</th>
-          {columns.map((column) => (
+          {espacio.map((column) => (
             <th className='capitalize text-gray-400' key={column}>{column}</th>
           ))}
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) => (
+        {responsabilidad.map((row) => (
           <tr key={row}>
             <td className='capitalize text-gray-400'>{row}</td>
-            {columns.map((column, columnIndex) => (
+            {espacio.map((column, columnIndex) => (
               <td key={keyId[columnIndex]}>
-                <div className='checkbox-container'>
+                <div className='checkbox-container'> 
                   <input className='circular-checkbox'
                     type="checkbox"
                     checked={checkedCells[generateCellKey(row, column)] || false}
