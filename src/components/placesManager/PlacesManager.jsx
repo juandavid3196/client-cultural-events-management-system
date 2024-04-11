@@ -7,7 +7,6 @@ import crudService from '../../services/crudService';
 
 const PlacesManager = () => {
 
-    const uuid = require('uuid');
     const [openForm, setOpenForm] = useState(false);
     const [openMenu, setOpenMenu] = useState(false);
     const [update, setUpdate] = useState(false);
@@ -19,43 +18,24 @@ const PlacesManager = () => {
 
 
     const [formData, setFormData] = useState({
-        id: uuid.v4(),
-        place_name: "",
-        creation_date: "",
-        update_date: "",
+        name: "",
     });
 
-    const filteredEvents = places.filter(place => place.place_name.toLowerCase().includes(searchTerm.toLowerCase()));
+    const filteredEvents = places.filter(place => place.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     useEffect(() => {
         getPlaces();
-        getDate();
     }, [])
 
-    const handleUpdate = () => {
+    const handleUpdate = (id) => {
+        setId(id);
         setClose(false);
         setOpenMenu(false);
         setUpdate(true);
         getDataById();
         setOpenForm(true);
-        getDate();
     }
 
-
-    const getDate = () => {
-        const date = new Date();
-
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
-
-        let fullDate = `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`;
-
-        setFormData({
-            ...formData,
-            ...(update ? { update_date: fullDate } : { creation_date: fullDate, update_date: fullDate })
-        })
-    }
 
     const handleMenu = (id) => {
         setId(id);
@@ -77,11 +57,7 @@ const PlacesManager = () => {
         const emptyFormData = {};
 
         keys.forEach((key) => {
-            if (key === "id") {
-                emptyFormData[key] = uuid.v4();
-            } else {
-                emptyFormData[key] = '';
-            }
+            emptyFormData[key] = '';
         });
 
         setFormData(emptyFormData);
@@ -91,7 +67,7 @@ const PlacesManager = () => {
 
         let hasErrors = false;
 
-        if (formData.name_state === '') {
+        if (formData.name === '') {
             hasErrors = true;
         }
 
@@ -112,7 +88,6 @@ const PlacesManager = () => {
         setClose(false);
         setOpenForm(!openForm);
         setOpenMenu(false);
-        getDate();
     }
 
     const handleForm = (e) => {
@@ -123,7 +98,7 @@ const PlacesManager = () => {
     //// CRUD OPERATIONS
 
     const getPlaces = async () => {
-        const data = await crudService.fetchItems('place');
+        const data = await crudService.fetchItems('spaces');
         setPlaces(data);
 
     }
@@ -135,7 +110,7 @@ const PlacesManager = () => {
                     setIsFormSubmitted(true);
                     return;
                 } else {
-                    await crudService.updateItem('place', formData.id, formData);
+                    await crudService.updateItem('spaces', id, formData);
                     setUpdate(false);
                     toast.success('¡Espacio Editado con Exito!');
                 }
@@ -144,7 +119,7 @@ const PlacesManager = () => {
                     setIsFormSubmitted(true);
                     return;
                 } else {
-                    await crudService.createItem('place', formData);
+                    await crudService.createItem('spaces', formData);
                     toast.success('¡Espacio Añadido con Exito!');
                 }
 
@@ -158,12 +133,12 @@ const PlacesManager = () => {
     }
 
     const getDataById = async () => {
-        const data = await crudService.fetchItemById('place', id);
+        const data = await crudService.fetchItemById('spaces', id);
         setFormData(data);
     }
 
     const handleDelete = async (id) => {
-        await crudService.deleteItem('place', id);
+        await crudService.deleteItem('spaces', id);
         toast.success('¡Espacio Eliminado con Exito!');
         handleClose();
     }
@@ -197,7 +172,7 @@ const PlacesManager = () => {
                                             </ul>
                                         </div>}
                                         <div className="event-text">
-                                            {element.place_name}
+                                            {element.name}
                                         </div>
                                         <div className="icon-container">
                                             <i className="fa-solid fa-ellipsis-vertical" onClick={() => handleMenu(element.id)}></i>
@@ -238,9 +213,9 @@ const PlacesManager = () => {
                                         <span className='section-title'>Datos del Espacio</span>
                                         <div className="row">
                                             <div className="form-box">
-                                                <label htmlFor="place_name">Nombre del Espacio</label>
-                                                <input type="text" name='place_name' onChange={handleInputChange} value={formData.place_name} placeholder='Nombre del Espacio' />
-                                                {isFormSubmitted && formData.place_name === '' && (
+                                                <label htmlFor="name">Nombre del Espacio</label>
+                                                <input type="text" name='name' onChange={handleInputChange} value={formData.name} placeholder='Nombre del Espacio' />
+                                                {isFormSubmitted && formData.name === '' && (
                                                     <div className="message-error">Este campo es obligatorio</div>
                                                 )}
 

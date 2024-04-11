@@ -7,7 +7,6 @@ import crudService from '../../services/crudService';
 
 const StatesManager = () => {
 
-    const uuid = require('uuid');
     const [openForm, setOpenForm] = useState(false);
     const [openMenu, setOpenMenu] = useState(false);
     const [update, setUpdate] = useState(false);
@@ -19,43 +18,24 @@ const StatesManager = () => {
 
 
     const [formData, setFormData] = useState({
-        id: uuid.v4(),
-        name_state: "",
-        creation_date: "",
-        update_date: "",
+        name: "",
     });
 
-    const filteredEvents = states.filter(state => state.name_state.toLowerCase().includes(searchTerm.toLowerCase()));
+    const filteredEvents = states.filter(state => state.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     useEffect(() => {
         getStates();
-        getDate();
     }, [])
 
-    const handleUpdate = () => {
+    const handleUpdate = (id) => {
+        setId(id);
         setClose(false);
         setOpenMenu(false);
         setUpdate(true);
         getDataById();
         setOpenForm(true);
-        getDate();
     }
 
-
-    const getDate = () => {
-        const date = new Date();
-
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
-
-        let fullDate = `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`;
-
-        setFormData({
-            ...formData,
-            ...(update ? { update_date: fullDate } : { creation_date: fullDate, update_date: fullDate })
-        })
-    }
 
     const handleMenu = (id) => {
         setId(id);
@@ -77,11 +57,7 @@ const StatesManager = () => {
         const emptyFormData = {};
 
         keys.forEach((key) => {
-            if (key === "id") {
-                emptyFormData[key] = uuid.v4();
-            } else {
-                emptyFormData[key] = '';
-            }
+            emptyFormData[key] = '';
         });
 
         setFormData(emptyFormData);
@@ -91,7 +67,7 @@ const StatesManager = () => {
 
         let hasErrors = false;
 
-        if (formData.name_state === '') {
+        if (formData.name === '') {
             hasErrors = true;
         }
 
@@ -112,7 +88,6 @@ const StatesManager = () => {
         setClose(false);
         setOpenForm(!openForm);
         setOpenMenu(false);
-        getDate();
     }
 
     const handleForm = (e) => {
@@ -123,7 +98,7 @@ const StatesManager = () => {
     //// CRUD OPERATIONS
 
     const getStates = async () => {
-        const data = await crudService.fetchItems('state');
+        const data = await crudService.fetchItems('states');
         setStates(data);
 
     }
@@ -135,7 +110,7 @@ const StatesManager = () => {
                     setIsFormSubmitted(true);
                     return;
                 } else {
-                    await crudService.updateItem('state', formData.id, formData);
+                    await crudService.updateItem('states', id, formData);
                     setUpdate(false);
                     toast.success('¡Estado Editado con Exito!');
                 }
@@ -144,7 +119,7 @@ const StatesManager = () => {
                     setIsFormSubmitted(true);
                     return;
                 } else {
-                    await crudService.createItem('state', formData);
+                    await crudService.createItem('states', formData);
                     toast.success('¡Estado Añadido con Exito!');
                 }
 
@@ -158,12 +133,12 @@ const StatesManager = () => {
     }
 
     const getDataById = async () => {
-        const data = await crudService.fetchItemById('state', id);
+        const data = await crudService.fetchItemById('states', id);
         setFormData(data);
     }
 
     const handleDelete = async (id) => {
-        await crudService.deleteItem('state', id);
+        await crudService.deleteItem('states', id);
         toast.success('¡Estado Eliminado con Exito!');
         handleClose();
     }
@@ -197,7 +172,7 @@ const StatesManager = () => {
                                             </ul>
                                         </div>}
                                         <div className="event-text">
-                                            {element.name_state}
+                                            {element.name}
                                         </div>
                                         <div className="icon-container">
                                             <i className="fa-solid fa-ellipsis-vertical" onClick={() => handleMenu(element.id)}></i>
@@ -238,9 +213,9 @@ const StatesManager = () => {
                                         <span className='section-title'>Datos del Estado</span>
                                         <div className="row">
                                             <div className="form-box">
-                                                <label htmlFor="name_state">Nombre del Estado</label>
-                                                <input type="text" name='name_state' onChange={handleInputChange} value={formData.name_state} placeholder='Nombre del estado' />
-                                                {isFormSubmitted && formData.name_state === '' && (
+                                                <label htmlFor="name">Nombre del Estado</label>
+                                                <input type="text" name='name' onChange={handleInputChange} value={formData.name} placeholder='Nombre del estado' />
+                                                {isFormSubmitted && formData.name === '' && (
                                                     <div className="message-error">Este campo es obligatorio</div>
                                                 )}
 

@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'http://localhost:8007/api';
 
 const createItem = async (resource, data) => {
     try {
         const response = await axios.post(`${BASE_URL}/${resource}`, data);
+        console.log(response);
         return response;
     } catch (error) {
         throw error;
@@ -31,7 +32,7 @@ const fetchItemById = async (resource, id) => {
 
 const updateItem = async (resource, id, data) => {
     try {
-        const response = await axios.put(`${BASE_URL}/${resource}/${id}`, data);
+        const response = await axios.patch(`${BASE_URL}/${resource}/${id}`, data);
         return response.data;
     } catch (error) {
         throw error;
