@@ -3,10 +3,7 @@ import './LeftAside.scss';
 import { MdCalendarMonth, MdShield } from 'react-icons/md';
 import { IoCalendarNumberSharp } from "react-icons/io5";
 import { TbReportSearch } from "react-icons/tb";
-import { MdOutlineRealEstateAgent } from "react-icons/md";
 import { IoSettingsOutline } from "react-icons/io5";
-import { FaBuildingUser } from "react-icons/fa6";
-import { FaUserFriends } from "react-icons/fa";
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
 

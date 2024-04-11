@@ -9,7 +9,7 @@ const EventData = ({ element, onCloseData, openData }) => {
     const [section, setSection] = useState('evento');
     const [close, setClose] = useState(false);
     const [stateData, setStateData] = useState({});
-    const { typeEventFilter, typeStateFilter, typePlaceFilter, subEvent, setSubEvent, colorState } = useAppContext();
+    const { typeModalityFilter, typeStateFilter, typePlaceFilter, subEvent, setSubEvent, colorState } = useAppContext();
 
     useEffect(() => {
         getStateById();
@@ -24,12 +24,7 @@ const EventData = ({ element, onCloseData, openData }) => {
     }
 
     const getStateById = async () => {
-        let data = null;
-        if (subEvent) {
-            data = await crudService.fetchItemById('subeventstate', element.id);
-        } else {
-            data = await crudService.fetchItemById('eventstate', element.id);
-        }
+        let data = await crudService.fetchItemById('eventstates', element.id);
         setStateData(data);
     }
 
@@ -39,7 +34,7 @@ const EventData = ({ element, onCloseData, openData }) => {
         <div className={`data-container ${close ? 'close' : ''}`}>
             <div className={`data-main-box ${close ? 'close' : ''}`}>
                 <div className='form-title'>
-                    <span>{`Datos ${element.event_id ? `${element.specific_name}` : `${element.general_name}`}`}</span>
+                    <span>{`Datos ${element.parent_event_id ? `${element.specific_name}` : `${element.general_name}`}`}</span>
                     <i class="fa-regular fa-circle-xmark" onClick={() => handleClose()}></i>
                 </div>
                 <main>
@@ -61,17 +56,17 @@ const EventData = ({ element, onCloseData, openData }) => {
                                     <>
                                         <tr>
                                             <td>Tipo de Evento</td>
-                                            <td>{typeEventFilter(element.event_type)}</td>
+                                            <td>{typeModalityFilter(element.event_type_id)}</td>
                                         </tr>
                                         <tr>
                                             <td>Estado</td>
-                                            <td className='state-cell'>{typeStateFilter(stateData.type_state)}
-                                                <span className='state-circle' style={{ backgroundColor: colorState(stateData.type_state) }}></span>
+                                            <td className='state-cell'>{typeStateFilter(stateData.state_id)}
+                                                <span className='state-circle' style={{ backgroundColor: colorState(stateData.state_id) }}></span>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Fecha de Estado</td>
-                                            <td>{stateData.date_state}</td>
+                                            <td>{stateData.create_at}</td>
                                         </tr>
                                         <tr>
                                             <td>Nombre General</td>
@@ -99,7 +94,7 @@ const EventData = ({ element, onCloseData, openData }) => {
                                         </tr>
                                         <tr>
                                             <td>Lugar</td>
-                                            <td>{typePlaceFilter(element.place)}</td>
+                                            <td>{typePlaceFilter(element.place_id)}</td>
                                         </tr>
                                     </>
                                 )

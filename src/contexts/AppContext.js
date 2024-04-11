@@ -13,18 +13,20 @@ export function AppContextProvider({ children }) {
     const [openState, setOpenState] = useState(false);
     const [updateState, setUpdateState] = useState(false);
 
-    const typeEventFilter = (event_type) => {
+    const typeModalityFilter = (event_type) => {
         switch (event_type) {
-            case 'propio':
-                return 'Propio';
-            case 'copro':
-                return 'Co-Producción';
-            case 'canje':
-                return 'Canje';
-            case 'apoyo':
-                return 'Apoyo';
-            case 'alquiler':
+            case 1:
                 return 'Alquiler';
+            case 2:
+                return 'Propio';
+            case 3:
+                return 'Poryecto';
+            case 4:
+                return 'Coproducción';
+            case 5:
+                return 'Apoyo';
+            case 6:
+                return 'Canje';
             default:
                 return event_type;
         }
@@ -32,17 +34,17 @@ export function AppContextProvider({ children }) {
 
     const typeStateFilter = (state_type) => {
         switch (state_type) {
-            case 'pre-reserva':
+            case 1:
                 return 'Pre-Reserva';
-            case 'confirmado':
+            case 2:
                 return 'Confirmado';
-            case 'ejecutar':
+            case 3:
                 return 'Listo para Ejecutar';
-            case 'cancelado':
+            case 4:
                 return 'Cancelado';
-            case 'ejecucion':
+            case 5:
                 return 'En Ejecución';
-            case 'terminado':
+            case 6:
                 return 'Terminado';
             default:
                 return state_type;
@@ -51,15 +53,15 @@ export function AppContextProvider({ children }) {
 
     const typePlaceFilter = (place_type) => {
         switch (place_type) {
-            case 'sala':
+            case 1:
                 return 'Sala';
-            case 'cafe-teatro':
+            case 2:
                 return 'Cafe-Teatro';
-            case 'plazoleta':
+            case 3:
                 return 'Plazoleta';
-            case 'aula-taller':
+            case 4:
                 return 'Aula-Taller';
-            case 'otros':
+            case 5:
                 return 'Otros';
             default:
                 return place_type;
@@ -68,17 +70,17 @@ export function AppContextProvider({ children }) {
 
     const colorState = (state_type) => {
         switch (state_type) {
-            case 'pre-reserva':
+            case 1:
                 return '#56caff';
-            case 'confirmado':
+            case 2:
                 return '#4646ff';
-            case 'ejecutar':
+            case 3:
                 return '#ffd167';
-            case 'cancelado':
+            case 4:
                 return '#f66969';
-            case 'ejecucion':
+            case 5:
                 return '#56ff56';
-            case 'terminado':
+            case 6:
                 return '#cbcaca';
             default:
                 return 'white';
@@ -89,7 +91,7 @@ export function AppContextProvider({ children }) {
         <AppContext.Provider value={{
             subEvent, setSubEvent,
             id, setId,
-            typeEventFilter, typeStateFilter,
+            typeStateFilter, typeModalityFilter,
             typePlaceFilter, colorState,
             openState, setOpenState,
             updateState, setUpdateState

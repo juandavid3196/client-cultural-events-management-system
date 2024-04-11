@@ -8,14 +8,19 @@ const StateReport = ({ onCloseReport, openReport }) => {
     const [close, setClose] = useState(false);
     const [originalReport, setOriginalReport] = useState([]);
     const [filteredReport, setFilteredReport] = useState([]);
-    const { typeEventFilter, typeStateFilter, typePlaceFilter, colorState } = useAppContext();
+    const [states, setStates] = useState([]);
+    const { typeModalityFilter, typeStateFilter, typePlaceFilter, colorState } = useAppContext();
 
     const [reportData, setReportData] = useState({
         name: '',
-        type_state: '',
+        state_id: '',
         date_start: '',
         date_finish: ''
     })
+
+    useEffect(() => {
+        getStates();
+    }, [])
 
     useEffect(() => {
         if (openReport) {
@@ -68,6 +73,12 @@ const StateReport = ({ onCloseReport, openReport }) => {
     };
 
 
+    const getStates = async () => {
+        const data = await crudService.fetchItems('states');
+        setStates(data);
+    }
+
+
     return (
         <div className={`state-report-big-container ${close ? 'close' : ''}`}>
             <div className={`state-report-container ${close ? 'close' : ''}`}>
@@ -84,15 +95,13 @@ const StateReport = ({ onCloseReport, openReport }) => {
                                 <input className='name-input' name='name' type="text" placeholder='Nombre del Evento' onChange={handleInputChange} value={reportData.name} />
                             </div>
                             <div className="filter-box">
-                                <label htmlFor="">Estado</label>
-                                <select name="type_state" onChange={handleInputChange} value={reportData.type_state}>
-                                    <option value="" selected>Todos</option>
-                                    <option value="pre-reserva">Pre-reserva</option>
-                                    <option value="confirmado">Confirmado</option>
-                                    <option value="ejecutar">Listo para Ejecutar</option>
-                                    <option value="cancelado">Cancelado</option>
-                                    <option value="ejecucion">En Ejecución</option>
-                                    <option value="terminado">Terminado</option>
+                                <label htmlFor="state_id">Estado</label>
+                                <select name="state_id" onChange={handleInputChange} value={reportData.state_id}>
+                                    {
+                                        states.map((element, index) => (
+                                            <option key={index} value={`${element.id}`}>{`${element.name}`}</option>
+                                        ))
+                                    }
                                 </select>
                             </div>
                             <div className="filter-box date-filter">
@@ -123,7 +132,7 @@ const StateReport = ({ onCloseReport, openReport }) => {
                                     arrangedEvents.length > 0 && arrangedEvents.map((elem, index) => (
                                         <tr key={index}>
                                             <td>{elem.general_name}</td>
-                                            <td>{typeEventFilter(elem.event_type)}</td>
+                                            <td>{typeModalityFilter(elem.event_type)}</td>
                                             <td>{elem.date_start}</td>
                                             <td>{elem.date_finishing}</td>
                                             <td>{typePlaceFilter(elem.place)}</td>
