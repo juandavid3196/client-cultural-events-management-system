@@ -32,7 +32,7 @@
         display: flex;
         flex-direction: column;
         width: 90%;
-        max-height: 430px;
+        height: 470px;
         overflow: hidden;
         opacity: 0;
         transition: opacity 0.5s ease-in-out;
@@ -109,7 +109,7 @@
             .event-section {
                 overflow-y: auto;
                 padding: 10px;
-                max-height: 315px;
+                max-height: 400px;
 
                 .section-title {
                     height: 40px;

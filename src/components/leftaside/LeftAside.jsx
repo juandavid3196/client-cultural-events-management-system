@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import './LeftAside.scss';
 import { MdCalendarMonth, MdShield } from 'react-icons/md';
+import { IoCalendarNumberSharp } from "react-icons/io5";
 import { TbReportSearch } from "react-icons/tb";
+import { MdOutlineRealEstateAgent } from "react-icons/md";
+import { FaBuildingUser } from "react-icons/fa6";
+import { FaUserFriends } from "react-icons/fa";
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
 
@@ -55,6 +59,36 @@ const LeftAside = () => {
                         ]}
                         text="Reportes"
                         icon={<TbReportSearch />}
+                    />
+
+                    <Card
+                        options={[
+                            <Link to="/calendar">Calendario</Link>
+                        ]}
+                        text="Calendario"
+                        icon={<IoCalendarNumberSharp />}
+                    />
+
+                    <Card
+                        options={[
+                            <Link to="/states"> Gestor de Estados</Link>
+                        ]}
+                        text="Estados"
+                        icon={<MdOutlineRealEstateAgent />}
+                    />
+                    <Card
+                        options={[
+                            <Link to="/places"> Gestor de Espacios</Link>
+                        ]}
+                        text="Espacios"
+                        icon={<FaBuildingUser />}
+                    />
+                    <Card
+                        options={[
+                            <Link to="/modalities"> Gestor de Modalidades</Link>
+                        ]}
+                        text="Modalidades"
+                        icon={<FaUserFriends />}
                     />
                 </div>
             </div>
