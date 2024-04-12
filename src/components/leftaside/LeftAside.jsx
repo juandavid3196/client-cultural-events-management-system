@@ -4,7 +4,7 @@ import { MdCalendarMonth, MdShield } from 'react-icons/md';
 import { IoCalendarNumberSharp } from "react-icons/io5";
 import { TbReportSearch } from "react-icons/tb";
 import { MdOutlineRealEstateAgent } from "react-icons/md";
-import { FaBuildingUser } from "react-icons/fa6";
+import { FaBuildingUser, FaTrowelBricks } from "react-icons/fa6";
 import { FaUserFriends } from "react-icons/fa";
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
@@ -89,6 +89,13 @@ const LeftAside = () => {
                         ]}
                         text="Modalidades"
                         icon={<FaUserFriends />}
+                    />
+                    <Card
+                        options={[
+                            <Link to="/responsabilities"> Gestor de Responsabilidades</Link>
+                        ]}
+                        text="Responsabilidades"
+                        icon={<FaTrowelBricks />}
                     />
                 </div>
             </div>

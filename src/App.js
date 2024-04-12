@@ -13,6 +13,7 @@ import Schedule from './components/schedule/Schedule';
 import StatesManager from './components/statesManager/StatesManager';
 import PlacesManager from './components/placesManager/PlacesManager';
 import ModalityManager from './components/modalityManager/ModalityManager';
+import ResponsabilitiesManager from './components/responsabilitiesManager/ResponsabilitiesManager';
 
 const App = () => {
 	return (
@@ -30,6 +31,7 @@ const App = () => {
 						<Route path="/states" element={<StatesManager />} />
 						<Route path="/places" element={<PlacesManager />} />
 						<Route path="/modalities" element={<ModalityManager />} />
+						<Route path="/responsabilities" element={<ResponsabilitiesManager/>} />
 						<Route path="*" element={<NotFoundPage />} />
 
 					</Routes>
