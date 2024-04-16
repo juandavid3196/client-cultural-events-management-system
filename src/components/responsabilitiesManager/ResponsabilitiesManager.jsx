@@ -14,6 +14,8 @@ const ResponsabilitiesManager = () => {
     const [close, setClose] = useState(false);
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const [responsabilidades, setResponsabilidades] = useState([]);
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
     const [id, setId] = useState('');
 
     useEffect(() => {
@@ -26,6 +28,29 @@ const ResponsabilitiesManager = () => {
         setOpenMenu(false);
         setUpdate(true);
         setOpenForm(true);
+    }
+
+    const handleCreate = async () => {
+        try {
+            const response = await fetch('http://localhost:8007/api/responsability', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ name, description }),
+            });
+      
+            if (response.ok) {
+              console.log('El recurso fue creado exitosamente.');
+              // Aquí podrías realizar alguna acción adicional, como redirigir a otra página
+            } else {
+              console.error('Hubo un problema al crear el recurso:', response.statusText);
+              // Manejar el error según sea necesario
+            }
+          } catch (error) {
+            console.error('Hubo un error al realizar la solicitud:', error.message);
+            // Manejar el error según sea necesario
+          }
     }
 
     const handleDelete = () => {
@@ -47,9 +72,16 @@ const ResponsabilitiesManager = () => {
         setId('');
     }
 
-    const handleInputChange = (e) => {
+    const handleInputChangeName = (e) => {
 
-        console.log("algo cambió")
+        const { name, value } = e.target;
+        setName(value)
+    }
+
+    const handleInputChangeDescription = (e) => {
+
+        const { description, value } = e.target;
+        setDescription(value)
     }
 
     const handleFormWindow = () => {
@@ -140,18 +172,20 @@ const ResponsabilitiesManager = () => {
                                         <span className='section-title'>Datos de la Responsabilidad</span>
                                         <div className="row">
                                             <div className="form-box">
-                                                <label htmlFor="place_name">Nombre de la responsabilidad</label>
-                                                <input type="text" name='place_name' onChange={handleInputChange} placeholder='Nombre de la responsabilidad' />
+                                                <label htmlFor="responsability_name">Nombre de la responsabilidad</label>
+                                                <input type="text" name='responsability_name' onChange={handleInputChangeName} placeholder='Nombre de la responsabilidad' />
+                                            </div>
+                                            <div className="form-box">
+                                                <label htmlFor="responsability_descriptión">Descripción de la responsabilidad</label>
+                                                <input type="text" name='responsability_descriptión' onChange={handleInputChangeDescription} placeholder='Nombre de la responsabilidad' />
                                             </div>
                                         </div>
-                                        <div className={`row ${update ? "two-colums" : ""}`}>
-                                            {update && (
+                                        <div className={`row ${update ? "two-colums" : ""}`}>  
                                                 <div className="form-box form-box-btn">
                                                     <button type="button" className="btn-delete" onClick={() => handleDelete(id)} > Eliminar </button>
                                                 </div>
-                                            )}
                                             <div className="form-box form-box-btn">
-                                                <button type="submit" className='btn-send-form' > {update ? "Editar" : "Guardar"} </button>
+                                                <button type="submit" className='btn-send-form' onClick={() => handleCreate()}> {update ? "Editar" : "Guardar"} </button>
                                             </div>
                                         </div>
                                     </div>

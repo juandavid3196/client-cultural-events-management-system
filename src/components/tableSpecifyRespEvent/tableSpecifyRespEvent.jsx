@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FileInput } from '../UserActions/FileInput';
-import { Center } from 'devextreme-react/cjs/map';
 
 function TableSpecifyRespEvent({ eventId }) {
   const [eventData, setEventData] = useState(null);
