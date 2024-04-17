@@ -19,8 +19,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const { setSubEvent, subEvent, id, setOpenState, openState, unicState, typeStateFilter, updateState, setUpdateState } = useAppContext();
 
 	const [formData, setFormData] = useState({
+		parent_event_id: null,
 		event_type_id: "",
-		...(subEvent ? { parent_event_id: '' } : {}),
 		general_name: "",
 		specific_name: "",
 		date_start: "",
@@ -128,7 +128,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		} else if (name === 'state_id') {
 			setStateData({
 				...stateData,
-				['state_id']: value
+				['state_id']: parseInt(value),
 			})
 		} else {
 
@@ -142,17 +142,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	};
 
 
-	const handleClose = () => {
-		setClose(true);
-		setTimeout(() => {
-			onCloseForm();
-		}, 500)
-		onUpdateState();
-		setUpdateState(false);
-		setUpdate(false);
-		setSubEvent(false);
-	}
-
 	const resetFormData = () => {
 		const keys = Object.keys(formData);
 		const emptyFormData = {};
@@ -160,7 +149,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		keys.forEach((key) => {
 			emptyFormData[key] = '';
 		});
-
+		emptyFormData.parent_event_id = null;
 		setFormData(emptyFormData);
 	};
 
@@ -183,44 +172,15 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		saveEvent();
 	};
 
-
-	const saveEvent = async () => {
-		try {
-			if (update) {
-				if (validateErrors()) {
-					setIsFormSubmitted(true);
-					setIcon(true);
-					return;
-				} else {
-					crudService.updateItem('events', id, formData);
-					toast.success('¡Evento Editado con Exito!');
-					setUpdate(false);
-				}
-			} else {
-				if (validateErrors()) {
-					setIsFormSubmitted(true);
-					setIcon(true);
-					return;
-				} else {
-					const response = await crudService.createItem('events', formData);
-					setInfo(response.data.id);
-					if (response.request.status === 201) {
-						await crudService.createItem('eventstate', stateData);
-					}
-				}
-				toast.success('¡Evento Añadido con Exito!');
-			}
-		} catch (error) {
-			console.error('Error al guardar el evento:', error);
-			toast.error('Error al guardar el evento');
-		}
-
+	const handleClose = () => {
+		setClose(true);
+		setTimeout(() => {
+			onCloseForm();
+		}, 500)
 		onUpdateState();
-		resetFormData();
-		resetStateData();
-		onFinishForm();
-		refresh();
-		onGetFullEvents();
+		setUpdateState(false);
+		setUpdate(false);
+		setSubEvent(false);
 	}
 
 
@@ -328,12 +288,17 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 			hasErrors = true;
 		}
 
+		if (stateData.state_id === '' && !update) {
+			hasErrors = true;
+		}
+
 		return hasErrors;
 	}
 
 	const refresh = () => {
 		setIsFormSubmitted(false);
 		setIcon(false);
+		setSubEvent(false);
 	}
 
 
@@ -350,6 +315,46 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 
 	// CRUD Operations
+
+	const saveEvent = async () => {
+		try {
+			if (update) {
+				if (validateErrors()) {
+					setIsFormSubmitted(true);
+					setIcon(true);
+					return;
+				} else {
+					await crudService.updateItem('events', id, formData);
+					toast.success('¡Evento Editado con Exito!');
+					setUpdate(false);
+				}
+			} else {
+				if (validateErrors()) {
+					setIsFormSubmitted(true);
+					setIcon(true);
+					return;
+				} else {
+					const response = await crudService.createItem('events', formData);
+					setInfo(response.data.id);
+					if (response.request.status === 201) {
+						await crudService.createItem('eventstate', stateData);
+					}
+				}
+				toast.success('¡Evento Añadido con Exito!');
+			}
+		} catch (error) {
+			console.error('Error al guardar el evento:', error);
+			toast.error('Error al guardar el evento');
+		}
+
+		onUpdateState();
+		resetFormData();
+		resetStateData();
+		onFinishForm();
+		refresh();
+		onGetFullEvents();
+	}
+
 
 	const getModalities = async () => {
 		const data = await crudService.fetchItems('contractual-modes');
@@ -423,12 +428,17 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 													<div className="form-box">
 														<label htmlFor="state_id">Estado</label>
 														<select name="state_id" onChange={handleInputChange} value={stateData.state_id} {...(update ? { disabled: 'disabled' } : {})}>
+															<option value="" disabled>seleccionar</option>
 															{
 																states.map((element, index) => (
 																	<option key={index} value={`${element.id}`}>{`${element.name}`}</option>
 																))
 															}
 														</select>
+														{isFormSubmitted && stateData.state_id === '' && (
+															<div className="message-error">Este campo es obligatorio</div>
+														)}
+
 													</div>
 												</>
 

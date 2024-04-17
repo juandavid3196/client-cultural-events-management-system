@@ -77,8 +77,6 @@ const Schedule = () => {
         generateDate();
     }, []);
 
-    console.log(update, id, formData, stateData);
-
     const getEvents = async () => {
         setLoading(true);
         try {
