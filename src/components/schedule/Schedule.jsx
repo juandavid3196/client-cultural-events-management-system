@@ -22,12 +22,9 @@ const Schedule = () => {
     const [spaces, setSpaces] = useState([]);
     const [states, setStates] = useState([]);
     const [id, setId] = useState('');
-    const [subEvent, setSubEvent] = useState(false);
-
-
 
     const [formData, setFormData] = useState({
-        ...(subEvent ? { parent_event_id: "" } : {}),
+        parent_event_id: null,
         event_type_id: "",
         general_name: "",
         specific_name: "",
@@ -40,7 +37,7 @@ const Schedule = () => {
         phone: "",
         identification_type: "",
         identification_value: "",
-        email: "user@example.com",
+        email: "",
         description: "",
         observation: "",
         duration: "",
@@ -62,7 +59,6 @@ const Schedule = () => {
     const [stateData, setStateData] = useState({
         event_id: '',
         state_id: '',
-        create_at: '',
         justification: '',
     });
 
@@ -71,7 +67,6 @@ const Schedule = () => {
         old_state_id: '',
         new_state_id: '',
         justification: 'default',
-        create_at: '',
     })
 
     useEffect(() => {
@@ -81,6 +76,8 @@ const Schedule = () => {
         getStates();
         generateDate();
     }, []);
+
+    console.log(update, id, formData, stateData);
 
     const getEvents = async () => {
         setLoading(true);
@@ -139,16 +136,6 @@ const Schedule = () => {
 
         let fullDate = `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`;
 
-        setStateData({
-            ...stateData,
-            create_at: currentDate,
-        })
-
-        setHistoryData({
-            ...historyData,
-            create_at: currentDate,
-        })
-
         setFormData({
             ...formData, date_start: fullDate,
         })
@@ -169,7 +156,7 @@ const Schedule = () => {
         keys.forEach((key) => {
             emptyFormData[key] = '';
         });
-
+        emptyFormData.parent_event_id = null;
         setFormData(emptyFormData);
     };
 
@@ -220,14 +207,14 @@ const Schedule = () => {
 
 
     const handleClose = () => {
-        setClose(true);
-        setShowModal(false);
-        setUpdate(false);
-        setIsFormSubmitted(false);
         resetFormData();
         resetStateData();
-        getEvents();
+        setUpdate(false);
         setId('');
+        setIsFormSubmitted(false);
+        setClose(true);
+        setShowModal(false);
+        getEvents();
     }
 
     const handleSelectSlot = (slotInfo) => {
@@ -275,8 +262,7 @@ const Schedule = () => {
                     setIsFormSubmitted(true);
                     return;
                 } else {
-                    const response = await crudService.updateItem('events', id, formData);
-                    setUpdate(false);
+                    await crudService.updateItem('events', id, formData);
                     toast.success('¡Evento Editado con Exito!');
                 }
             } else {
@@ -285,18 +271,11 @@ const Schedule = () => {
                     return;
                 } else {
                     const response = await crudService.createItem('events', formData);
-
-                    if (response.request.status === 204) {
-                        setInfo();
-                        const response = await crudService.createItem('eventstate', stateData);
-
-                        if (response.request.status === 204) {
-                            crudService.createItem('historyevent', historyData);
-                        }
-
+                    setInfo(response.data.id);
+                    if (response.request.status === 201) {
+                        await crudService.createItem('eventstate', stateData);
+                        toast.success('¡Evento Añadido con Exito!');
                     }
-
-                    toast.success('¡Evento Añadido con Exito!');
                 }
 
             }
@@ -304,7 +283,6 @@ const Schedule = () => {
             console.error('Error al guardar el evento:', error);
             toast.error('Error al guardar el evento');
         }
-        setShowModal(false);
         handleClose();
     }
 
@@ -313,8 +291,6 @@ const Schedule = () => {
     const deleteEvents = async (id) => {
         await crudService.deleteItem('events', id);
         toast.success('¡Evento Eliminado con Exito!');
-        setUpdate(false);
-        setShowModal(false);
         handleClose();
     }
 

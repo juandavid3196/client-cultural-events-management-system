@@ -8,26 +8,26 @@ import { useAppContext } from '../../contexts/AppContext';
 
 const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateState, onGetFullEvents, setUpdate }) => {
 
-	const uuid = require('uuid');
 	const [section, setSection] = useState('evento');
 	const [close, setClose] = useState(false);
 	const [duration, setDuration] = useState('');
 	const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 	const [icon, setIcon] = useState(false);
-	const [currentState, setCurrentState] = useState('');
-	const { setSubEvent, subEvent, id, setOpenState, openState, typeStateFilter, updateState, setUpdateState } = useAppContext();
+	const [modalities, setModalities] = useState([]);
+	const [spaces, setSpaces] = useState([]);
+	const [states, setStates] = useState([]);
+	const { setSubEvent, subEvent, id, setOpenState, openState, unicState, typeStateFilter, updateState, setUpdateState } = useAppContext();
 
 	const [formData, setFormData] = useState({
-		id: uuid.v4(),
-		event_type: "",
-		...(subEvent ? { event_id: null } : {}),
+		event_type_id: "",
+		...(subEvent ? { parent_event_id: '' } : {}),
 		general_name: "",
 		specific_name: "",
 		date_start: "",
 		date_finishing: "",
 		hour_start: "",
 		hour_finishing: "",
-		place: "",
+		place_id: "",
 		user_name: "",
 		phone: "",
 		identification_type: "CC",
@@ -53,27 +53,24 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 
 	const [stateData, setStateData] = useState({
-		id_state: uuid.v4(),
-		type_state: 'pre-reserva',
-		date_state: '',
-		hour_state: '',
+		event_id: '',
+		state_id: '',
 		justification: '',
-		user_state: 'default',
-		...(subEvent ? { subevent_id: formData.id } : { event_id: formData.id })
 	});
 
 	const [historyData, setHistoryData] = useState({
-		type_state: '',
-		date_state: '',
-		hour_state: '',
+		event_id: '',
+		old_state_id: '',
+		new_state_id: '',
 		justification: 'default',
-		user_state: 'default',
-		...(subEvent ? { subeventstate_id: '' } : { eventstate_id: '' })
 	})
 
 
 	useEffect(() => {
 		getDate();
+		getModalities();
+		getSpaces();
+		getStates();
 	}, []);
 
 	useEffect(() => {
@@ -87,7 +84,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 	useEffect(() => {
 		if (update) setFormData(updateItem);
-	}, [update, updateItem])
+	}, [update, updateItem]);
 
 	useEffect(() => {
 
@@ -97,20 +94,24 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		} else if (subEvent) {
 			const updatedFormData = {
 				...formData,
-				event_type: updateItem.event_type,
+				parent_event_id: id,
+				event_type_id: updateItem.event_type_id,
 				general_name: updateItem.general_name,
+				date_start: updateItem.date_start,
+				date_finishing: updateItem.date_finishing,
 				user_name: updateItem.user_name,
 				phone: updateItem.phone,
 				identification_type: updateItem.identification_type,
 				identification_value: updateItem.identification_value,
 				email: updateItem.email,
-				place: updateItem.place,
+				place_id: updateItem.place_id,
 
 			};
 
 			setFormData(updatedFormData);
 		}
 	}, [subEvent, updateItem]);
+
 
 	const handleInputChange = (e) => {
 
@@ -124,10 +125,10 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 				...formData,
 				[name]: f,
 			});
-		} else if (name === 'type_state') {
+		} else if (name === 'state_id') {
 			setStateData({
 				...stateData,
-				['type_state']: value
+				['state_id']: value
 			})
 		} else {
 
@@ -179,65 +180,21 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 	const handleForm = (e) => {
 		e.preventDefault();
+		saveEvent();
+	};
 
-		if (subEvent) {
 
+	const saveEvent = async () => {
+		try {
 			if (update) {
 				if (validateErrors()) {
 					setIsFormSubmitted(true);
 					setIcon(true);
 					return;
 				} else {
-					crudService.updateItem('subevent', formData.id, formData);
-					toast.success('¡Sub-Evento Editado con Exito!');
-					onUpdateState();
-					onGetFullEvents();
-					refresh();
-				}
-			} else {
-				if (validateErrors()) {
-					setIsFormSubmitted(true);
-					setIcon(true);
-					return;
-				} else {
-					formData.event_id = id;
-					const response = crudService.createItem('subevent', formData);
-					response.then((res) => {
-						if (res) {
-							const response = crudService.createItem('subeventstate', stateData);
-							response.then((res) => {
-								if (res) {
-									setInfo();
-									crudService.createItem('historysubevent', historyData);
-								}
-							}).catch((error) => {
-								console.error('Error en la solicitud', error);
-								return;
-							});
-						}
-					}).catch((error) => {
-						console.error('Error en la solicitud', error);
-						return;
-					});
-					toast.success('¡Sub-Evento Añadido con Exito!');
-					onGetFullEvents();
-					resetStateData();
-					refresh();
-				}
-			}
-			setSubEvent(false);
-		} else {
-			if (update) {
-				if (validateErrors()) {
-					setIsFormSubmitted(true);
-					setIcon(true);
-					return;
-				} else {
-					crudService.updateItem('event', formData.id, formData);
+					crudService.updateItem('events', id, formData);
 					toast.success('¡Evento Editado con Exito!');
-					onUpdateState();
-					onGetFullEvents();
-					refresh();
+					setUpdate(false);
 				}
 			} else {
 				if (validateErrors()) {
@@ -245,38 +202,26 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					setIcon(true);
 					return;
 				} else {
-					const response = crudService.createItem('event', formData);
-					response.then((res) => {
-						if (res) {
-							const response = crudService.createItem('eventstate', stateData);
-							response.then((res) => {
-								if (res) {
-									setInfo();
-									crudService.createItem('historyevent', historyData);
-								}
-							}).catch((error) => {
-								console.error('Error en la solicitud', error);
-								return;
-							});
-
-						}
-					}).catch((error) => {
-						console.error('Error en la solicitud', error);
-						return;
-					});
-
-					toast.success('¡Evento Añadido con Exito!');
-					onGetFullEvents();
-					resetStateData();
-					refresh();
+					const response = await crudService.createItem('events', formData);
+					setInfo(response.data.id);
+					if (response.request.status === 201) {
+						await crudService.createItem('eventstate', stateData);
+					}
 				}
+				toast.success('¡Evento Añadido con Exito!');
 			}
+		} catch (error) {
+			console.error('Error al guardar el evento:', error);
+			toast.error('Error al guardar el evento');
 		}
 
+		onUpdateState();
 		resetFormData();
-		setSubEvent(false);
+		resetStateData();
 		onFinishForm();
-	};
+		refresh();
+		onGetFullEvents();
+	}
 
 
 	const identificationValue = (type) => {
@@ -342,31 +287,16 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		}
 	}
 
+	// sin uso
+
 	const getDate = () => {
 		const date = new Date();
 
 		let day = date.getDate();
 		let month = date.getMonth() + 1;
 		let year = date.getFullYear();
-		let hour = date.getHours();
-		let minutes = date.getMinutes();
-
 
 		let fullDate = `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`;
-		let fullHour = `${hour}:${minutes < 10 ? '0' + minutes : minutes}`;
-
-
-		setStateData({
-			...stateData,
-			hour_state: fullHour,
-			date_state: fullDate
-		})
-
-		setHistoryData({
-			...historyData,
-			hour_state: fullHour,
-			date_state: fullDate
-		})
 	}
 
 
@@ -378,11 +308,11 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 			hasErrors = true;
 		}
 
-		if (formData.event_type === '') {
+		if (formData.event_type_id === '') {
 			hasErrors = true;
 		}
 
-		if (formData.place === '') {
+		if (formData.place_id === '') {
 			hasErrors = true;
 		}
 
@@ -394,37 +324,57 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 			hasErrors = true;
 		}
 
+		if (formData.specific_name === '' && subEvent) {
+			hasErrors = true;
+		}
+
 		return hasErrors;
 	}
 
 	const refresh = () => {
 		setIsFormSubmitted(false);
 		setIcon(false);
-		onGetFullEvents();
 	}
 
 
-	const setInfo = () => {
-		if (subEvent) {
-			historyData.subeventstate_id = stateData.id_state;
-		} else {
-			historyData.eventstate_id = stateData.id_state;
-		}
-		historyData.type_state = stateData.type_state;
+	const setInfo = (id) => {
+		stateData.event_id = id;
+		historyData.event_id = id;
+		historyData.new_state_id = stateData.state_id;
+		historyData.old_state_id = stateData.state_id;
 	}
 
 	const openStateWindow = () => {
 		setOpenState(true);
 	}
 
+
+	// CRUD Operations
+
+	const getModalities = async () => {
+		const data = await crudService.fetchItems('contractual-modes');
+		setModalities(data);
+	}
+
+	const getSpaces = async () => {
+		const data = await crudService.fetchItems('spaces');
+		setSpaces(data);
+	}
+
+	const getStates = async () => {
+		const data = await crudService.fetchItems('states');
+		setStates(data);
+	}
+
 	const getStateById = async () => {
-		let data = null;
-		if (subEvent) {
-			data = await crudService.fetchItemById('subeventstate', id);
-		} else {
-			data = await crudService.fetchItemById('eventstate', id);
-		}
-		setCurrentState(data.type_state);
+		let data = await crudService.fetchItems('eventstate');
+
+		data.map((element) => {
+			if (element.event_id == id) {
+				typeStateFilter(element.state_id);
+			}
+		})
+
 	}
 
 	return (
@@ -451,16 +401,16 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<span className='section-title'>Datos del Evento</span>
 									<div className="row two-colums">
 										<div className="form-box">
-											<label htmlFor="event_type">Tipo de Evento</label>
-											<select name="event_type" onChange={handleInputChange} value={formData.event_type}>
+											<label htmlFor="event_type_id">Tipo de Evento</label>
+											<select name="event_type_id" onChange={handleInputChange} value={formData.event_type_id}>
 												<option value="" disabled>seleccionar</option>
-												<option value="propio">Propio</option>
-												<option value="copro">Co-Producción</option>
-												<option value="canje">Canje</option>
-												<option value="apoyo">Apoyo</option>
-												<option value="alquiler">Alquiler</option>
+												{
+													modalities.map((element, index) => (
+														<option key={index} value={`${element.id}`}>{`${element.name}`}</option>
+													))
+												}
 											</select>
-											{isFormSubmitted && formData.event_type === '' && (
+											{isFormSubmitted && formData.event_type_id === '' && (
 												<div className="message-error">Este campo es obligatorio</div>
 											)}
 
@@ -471,14 +421,13 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 											!update ? (
 												<>
 													<div className="form-box">
-														<label htmlFor="type_state">Estado</label>
-														<select name="type_state" onChange={handleInputChange} value={stateData.type_state} {...(update ? { disabled: 'disabled' } : {})}>
-															<option value="pre-reserva">Pre-reserva</option>
-															<option value="confirmado">Confirmado</option>
-															<option value="ejecutar">Listo para Ejecutar</option>
-															<option value="cancelado">Cancelado</option>
-															<option value="ejecucion">En Ejecución</option>
-															<option value="terminado">Terminado</option>
+														<label htmlFor="state_id">Estado</label>
+														<select name="state_id" onChange={handleInputChange} value={stateData.state_id} {...(update ? { disabled: 'disabled' } : {})}>
+															{
+																states.map((element, index) => (
+																	<option key={index} value={`${element.id}`}>{`${element.name}`}</option>
+																))
+															}
 														</select>
 													</div>
 												</>
@@ -488,8 +437,8 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 												<>
 													<div className="row two-colums-small">
 														<div className="form-box">
-															<label htmlFor="type_state">Estado Actual</label>
-															<input type="text" name='general_name' disabled value={typeStateFilter(currentState)} />
+															<label htmlFor="stade_id">Estado Actual</label>
+															<input type="text" name='state_id' disabled value={unicState} />
 														</div>
 														<div className="form-box">
 															<input type='button' className='btn-send-form' onClick={openStateWindow} value={'Actualizar Estado'} />
@@ -511,6 +460,9 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										<div className="form-box">
 											<label htmlFor="specific_name">Nombre Especifico</label>
 											<input type="text" name='specific_name' {...(subEvent ? {} : { disabled: 'disabled' })} onChange={handleInputChange} value={formData.specific_name} placeholder='Nombre Especifico' />
+											{isFormSubmitted && formData.specific_name === '' && subEvent && (
+												<div className="message-error">Este campo es obligatorio</div>
+											)}
 										</div>
 									</div>
 
@@ -545,16 +497,16 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									</div>
 									<div className="row two-colums">
 										<div className="form-box">
-											<label htmlFor="place">Lugar</label>
-											<select name="place" onChange={handleInputChange} value={formData.place}>
+											<label htmlFor="place_id">Lugar</label>
+											<select name="place_id" onChange={handleInputChange} value={formData.place_id}>
 												<option value="" disabled>Seleccionar</option>
-												<option value="sala">Sala</option>
-												<option value="cafe-teatro">Cafe Teatro</option>
-												<option value="plazoleta">Plazoleta</option>
-												<option value="aula-taller">Aula Taller</option>
-												<option value="otros">Otros</option>
+												{
+													spaces.map((element, index) => (
+														<option key={index} value={`${element.id}`}>{`${element.name}`}</option>
+													))
+												}
 											</select>
-											{isFormSubmitted && formData.place === '' && (
+											{isFormSubmitted && formData.place_id === '' && (
 												<div className="message-error">Este campo es obligatorio</div>
 											)}
 										</div>

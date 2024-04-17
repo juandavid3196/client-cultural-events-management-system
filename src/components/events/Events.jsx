@@ -24,7 +24,6 @@ const Events = () => {
 	const [deploy, setDeploy] = useState(false)
 	const [subId, setSubId] = useState(false);
 	const [fullData, setFullData] = useState({});
-	const [fullEvents, setFullEvents] = useState([]);
 
 
 	const { setSubEvent, id, setId, subEvent, openState, setOpenState } = useAppContext();
@@ -61,11 +60,6 @@ const Events = () => {
 		setOpenForm(false);
 	}
 
-	const getEvents = async () => {
-		const data = await crudService.fetchItems('events');
-		setFullEvents(data);
-	}
-
 	const updateEvent = (id, type) => {
 		if (type === 'subevent') {
 			setSubEvent(true);
@@ -97,18 +91,17 @@ const Events = () => {
 		setUpdate(false);
 	}
 
-	const handleDelete = (id) => {
-
-		const response = crudService.deleteItem('events', id);
-		response.then((res) => {
-			if (res) toast.success('Elemento eliminado con Exito');
-		}).catch((error) => {
-			console.error('Error en la solicitud DELETE:', error);
-		});
+	const handleDelete = async (id) => {
+		try {
+			await crudService.deleteItem('events', id);
+			toast.success('¡Evento Eliminado con Exito!');
+		} catch (error) {
+			console.error('Error al eliminar el evento:', error);
+			toast.error('Error al eliminar el evento');
+		}
 
 		getFullEvents();
 		refresh();
-
 	}
 
 	const handleDeploy = (itemId) => {
@@ -116,29 +109,35 @@ const Events = () => {
 		setDeploy(!deploy);
 	}
 
-	const getFullEvents = () => {
-		getEvents();
-		const subEvents = [];
-		const eventsWithoutParent = [];
+	const getFullEvents = async () => {
 
-		fullEvents.map((element) => {
+		try {
+			const data = await crudService.fetchItems('events');
+			const subEvents = [];
+			const eventsWithoutParent = [];
 
-			if (element.hasOwnProperty('parent_event_id') && element.parent_event_id > 0) {
-				subEvents.push(element);
-			} else {
-				eventsWithoutParent.push(element);
-			}
-		});
+			data.map((element) => {
 
-		setSubEvents(subEvents);
-		setEvents(eventsWithoutParent);
+				if (element.hasOwnProperty('parent_event_id') && element.parent_event_id > 0) {
+					subEvents.push(element);
+				} else {
+					eventsWithoutParent.push(element);
+				}
+			});
+
+			setSubEvents(subEvents);
+			setEvents(eventsWithoutParent);
+		} catch (error) {
+			console.error('Error al cargar los eventos:', error);
+		}
+
 	};
 
 
 	const refresh = () => {
 		setOpenMenu(false);
 		setOpenSubMenu(false);
-		getFullEvents();
+		setId('');
 	}
 
 	const subEventsCount = (id) => {

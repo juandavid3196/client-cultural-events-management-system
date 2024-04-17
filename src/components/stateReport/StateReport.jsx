@@ -9,7 +9,7 @@ const StateReport = ({ onCloseReport, openReport }) => {
     const [originalReport, setOriginalReport] = useState([]);
     const [filteredReport, setFilteredReport] = useState([]);
     const [states, setStates] = useState([]);
-    const { typeModalityFilter, typeStateFilter, typePlaceFilter, colorState } = useAppContext();
+    const { typeModalityFilter, typeStateFilter, typePlaceFilter } = useAppContext();
 
     const [reportData, setReportData] = useState({
         name: '',
@@ -136,8 +136,7 @@ const StateReport = ({ onCloseReport, openReport }) => {
                                             <td>{elem.date_start}</td>
                                             <td>{elem.date_finishing}</td>
                                             <td>{typePlaceFilter(elem.place)}</td>
-                                            <td className='state-cell'>{typeStateFilter(elem.type_state)}
-                                                <span className='state-circle' style={{ backgroundColor: colorState(elem.type_state) }}></span>
+                                            <td>{typeStateFilter(elem.type_state)}
                                             </td>
                                         </tr>
                                     ))

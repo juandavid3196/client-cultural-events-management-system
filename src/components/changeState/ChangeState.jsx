@@ -13,30 +13,24 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
     const [section, setSection] = useState('editar');
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const [icon, setIcon] = useState(false);
-    const { setSubEvent, typeStateFilter, colorState, openState, setUpdateState, subEvent } = useAppContext();
+    const { setSubEvent, typeStateFilter, openState, setUpdateState, subEvent } = useAppContext();
 
     const [formData, setFormData] = useState({
-        id_state: '',
-        type_state: '',
-        date_state: '',
-        hour_state: '',
+        event_id: '',
+        state_id: '',
         justification: '',
-        user_state: 'default',
-        ...(subEvent ? { subevent_id: id } : { event_id: id })
     })
 
     const [historyData, setHistoryData] = useState({
-        type_state: '',
-        date_state: '',
-        hour_state: '',
-        justification: '',
-        user_state: 'default',
-        ...(subEvent ? { subeventstate_id: '' } : { eventstate_id: '' })
+        event_id: '',
+        old_state_id: '',
+        new_state_id: '',
+        justification: 'default',
     })
 
 
     useEffect(() => {
-        getStateById();
+        getStateById(id);
         getDate();
     }, [openState])
 
@@ -88,24 +82,21 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
         })
     }
 
-    const getStateById = async () => {
-        let data = null;
-        if (subEvent) {
-            data = await crudService.fetchItemById('subeventstate', id);
-        } else {
-            data = await crudService.fetchItemById('eventstate', id);
-        }
-        setStateData(data);
+    const getStateById = async (id) => {
+        let data = await crudService.fetchItems('eventstate');
+
+        data.map((element) => {
+            if (element.event_id == id) {
+                setStateData(element);
+            }
+        })
+
     }
 
     const getHistoryById = async () => {
         let data = null;
         if (stateData.id_state) {
-            if (subEvent) {
-                data = await crudService.fetchItemById('historysubevent', stateData.id_state);
-            } else {
-                data = await crudService.fetchItemById('historyevent', stateData.id_state);
-            }
+            data = await crudService.fetchItemById('historyevent', stateData.id_state);
             setHistoryStateData(data);
         }
     }
@@ -299,8 +290,7 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
                                                     <td>{elem.date_state}</td>
                                                     <td>{elem.hour_state}</td>
                                                     <td>{elem.justification}</td>
-                                                    <td className='state-cell'>{typeStateFilter(elem.type_state)}
-                                                        <span className='state-circle' style={{ backgroundColor: colorState(elem.type_state) }}></span>
+                                                    <td>{typeStateFilter(elem.type_state)}
                                                     </td>
                                                     <td>{elem.user_state}</td>
                                                 </tr>
