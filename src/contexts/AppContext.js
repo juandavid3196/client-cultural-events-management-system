@@ -25,6 +25,8 @@ export function AppContextProvider({ children }) {
                 setModalities(element.name);
             }
         })
+
+        return modalities;
     }
 
     const typeStateFilter = async (state_type) => {
@@ -43,6 +45,7 @@ export function AppContextProvider({ children }) {
                 setSpaces(element.name);
             }
         })
+        return spaces;
     }
 
     return (

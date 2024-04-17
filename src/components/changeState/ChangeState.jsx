@@ -8,12 +8,14 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
 
 
     const [close, setClose] = useState(false);
-    const [stateData, setStateData] = useState({});
     const [historyStateData, setHistoryStateData] = useState([]);
     const [section, setSection] = useState('editar');
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const [icon, setIcon] = useState(false);
-    const { setSubEvent, typeStateFilter, openState, setUpdateState, subEvent } = useAppContext();
+    const [hour, setHour] = useState('');
+    const [date, setDate] = useState('');
+    const [states, setStates] = useState([]);
+    const { setSubEvent, unicState, typeStateFilter, openState, subEvent } = useAppContext();
 
     const [formData, setFormData] = useState({
         event_id: '',
@@ -31,12 +33,15 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
 
     useEffect(() => {
         getStateById(id);
+        getStates();
         getDate();
     }, [openState])
+
 
     useEffect(() => {
         getHistoryById();
     }, [section]);
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -56,6 +61,24 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
         }, 500)
     }
 
+    const filterHourDate = (value, type) => {
+        const date = new Date(value);
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        const hour = String(date.getHours()).padStart(2, '0');
+        const minute = String(date.getMinutes()).padStart(2, '0');
+
+        if (type === 'date') {
+            return `${year}-${month}-${day}`;
+        } else {
+            return `${hour}:${minute}`
+        }
+    }
+
+
     const getDate = () => {
         const date = new Date();
 
@@ -66,99 +89,23 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
         let minutes = date.getMinutes();
 
 
-        let fullDate = `${day}/${month}/${year}`;
+        let fullDate = `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`;
         let fullHour = `${hour}:${minutes < 10 ? '0' + minutes : minutes}`;
+        setDate(fullDate);
+        setHour(fullHour);
 
-        setFormData({
-            ...formData,
-            hour_state: fullHour,
-            date_state: fullDate,
-        })
-
-        setHistoryData({
-            ...historyData,
-            hour_state: fullHour,
-            date_state: fullDate,
-        })
     }
 
-    const getStateById = async (id) => {
-        let data = await crudService.fetchItems('eventstate');
 
-        data.map((element) => {
-            if (element.event_id == id) {
-                setStateData(element);
+    const stateFilter = async (id) => {
+        states.map((element) => {
+            if (element.id == id) {
+                return element.name;
             }
         })
-
-    }
-
-    const getHistoryById = async () => {
-        let data = null;
-        if (stateData.id_state) {
-            data = await crudService.fetchItemById('historyevent', stateData.id_state);
-            setHistoryStateData(data);
-        }
     }
 
     const setInfo = () => {
-        formData.id_state = stateData.id_state;
-        historyData.justification = formData.justification;
-        historyData.type_state = formData.type_state;
-        if (subEvent) {
-            historyData.subeventstate_id = stateData.id_state;
-        } else {
-            historyData.eventstate_id = stateData.id_state;
-        }
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setInfo();
-
-        if (subEvent) {
-            if (validateErrors()) {
-                setIsFormSubmitted(true);
-                setIcon(true);
-                return;
-            } else {
-                const response = crudService.createItem('historysubevent', historyData);
-                response.then((res) => {
-                    if (res) {
-                        crudService.updateItem('subeventstate', formData.id_state, formData);
-                        toast.success('¡Estado Editado con Exito!');
-                        if (update) setSubEvent(true);
-                        setUpdateState(true);
-                        refresh();
-                    }
-                }).catch((error) => {
-                    console.error('Error en la solicitud', error);
-                    return;
-                });
-            }
-        } else {
-            if (validateErrors()) {
-                setIsFormSubmitted(true);
-                setIcon(true);
-                return;
-            } else {
-                const response = crudService.createItem('historyevent', historyData);
-                response.then((res) => {
-                    if (res) {
-                        crudService.updateItem('eventstate', formData.id_state, formData);
-                        toast.success('¡Estado Editado con Exito!');
-                        setUpdateState(true);
-                        refresh();
-                    }
-                }).catch((error) => {
-                    console.error('Error en la solicitud', error);
-                    return;
-                });
-            }
-        }
-        resetFormData();
-        handleClose();
-        setSubEvent(false);
 
     }
 
@@ -186,7 +133,7 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
 
         let hasErrors = false;
 
-        if (formData.type_state === '') {
+        if (formData.state_id === '') {
             hasErrors = true;
         }
 
@@ -200,6 +147,57 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
     const refresh = () => {
         setIsFormSubmitted(false);
         setIcon(false);
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        saveState();
+    }
+
+
+    ///CRUD Operatios 
+
+    const getStateById = async (id) => {
+        let data = await crudService.fetchItems('eventstate');
+
+        data.map((element) => {
+            if (element.event_id == id) {
+                typeStateFilter(element.state_id);
+            }
+        })
+
+    }
+
+    const getHistoryById = async (id) => {
+        let data = await crudService.fetchItemById('historyeventstate', id);
+        setHistoryStateData(data);
+    }
+
+    const saveState = async () => {
+        try {
+            if (validateErrors()) {
+                setIsFormSubmitted(true);
+                setIcon(true);
+                return;
+            } else {
+                await crudService.updateItem('eventstate', formData.state_id, formData);
+                toast.success('¡Estado Editado con Exito!');
+            }
+
+        } catch (error) {
+            console.error('Error al guardar el evento:', error);
+            toast.error('Error al guardar el evento');
+        }
+
+        resetFormData();
+        handleClose();
+        setSubEvent(false);
+        refresh();
+    }
+
+    const getStates = async () => {
+        const data = await crudService.fetchItems('states');
+        setStates(data);
     }
 
     return (
@@ -226,30 +224,29 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
                                     <div className="row two-colums">
                                         <div className="form-box">
                                             <label htmlFor="date_state">Fecha</label>
-                                            <input className='blocked' type="text" name='date_state' value={formData.date_state} disabled />
+                                            <input className='blocked' type="text" name='date_state' value={date} disabled />
                                         </div>
                                         <div className="form-box">
                                             <label htmlFor="hour_state">Hora</label>
-                                            <input className='blocked' type="text" name='hour_state' value={formData.hour_state} disabled />
+                                            <input className='blocked' type="text" name='hour_state' value={hour} disabled />
                                         </div>
                                     </div>
                                     <div className="row two-colums">
                                         <div className="form-box">
                                             <label htmlFor="specific_name">Estado Actual</label>
-                                            <input className='blocked' type="text" name='specific_name' disabled value={typeStateFilter(stateData.type_state)} />
+                                            <input className='blocked' type="text" name='specific_name' disabled value={unicState} />
                                         </div>
                                         <div className="form-box">
-                                            <label htmlFor="type_state">Estado Nuevo</label>
-                                            <select name="type_state" onChange={handleInputChange} value={formData.type_state}>
+                                            <label htmlFor="state_id">Estado Nuevo</label>
+                                            <select name="state_id" onChange={handleInputChange} value={formData.state_id}>
                                                 <option value="" disabled>seleccionar</option>
-                                                <option value="pre-reserva">Pre-reserva</option>
-                                                <option value="confirmado">Confirmado</option>
-                                                <option value="ejecutar">Listo para Ejecutar</option>
-                                                <option value="cancelado">Cancelado</option>
-                                                <option value="ejecucion">En Ejecución</option>
-                                                <option value="terminado">Terminado</option>
+                                                {
+                                                    states.map((element, index) => (
+                                                        <option key={index} value={`${element.id}`}>{`${element.name}`}</option>
+                                                    ))
+                                                }
                                             </select>
-                                            {isFormSubmitted && formData.type_state === '' && (
+                                            {isFormSubmitted && formData.state_id === '' && (
                                                 <div className="message-error">Este campo es obligatorio</div>
                                             )}
                                         </div>
@@ -280,19 +277,16 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
                                             <td>Hora</td>
                                             <td>Justificaión</td>
                                             <td>Estado</td>
-                                            <td>Usuario</td>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
                                             historyStateData.length > 0 && historyStateData.map((elem, index) => (
                                                 <tr key={index}>
-                                                    <td>{elem.date_state}</td>
-                                                    <td>{elem.hour_state}</td>
+                                                    <td>{filterHourDate(elem.created_date, 'date')}</td>
+                                                    <td>{filterHourDate(elem.created_date, 'hour')}</td>
                                                     <td>{elem.justification}</td>
-                                                    <td>{typeStateFilter(elem.type_state)}
-                                                    </td>
-                                                    <td>{elem.user_state}</td>
+                                                    <td>{stateFilter(elem.state_id)}</td>
                                                 </tr>
                                             ))
                                         }

@@ -67,7 +67,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 
 	useEffect(() => {
-		getDate();
 		getModalities();
 		getSpaces();
 		getStates();
@@ -246,19 +245,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 		}
 	}
-
-	// sin uso
-
-	const getDate = () => {
-		const date = new Date();
-
-		let day = date.getDate();
-		let month = date.getMonth() + 1;
-		let year = date.getFullYear();
-
-		let fullDate = `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`;
-	}
-
 
 	const validateErrors = () => {
 
