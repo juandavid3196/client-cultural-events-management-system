@@ -15,19 +15,20 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
     const [hour, setHour] = useState('');
     const [date, setDate] = useState('');
     const [states, setStates] = useState([]);
+    const [stateId, setStateId] = useState('');
     const { setSubEvent, unicState, typeStateFilter, openState, subEvent } = useAppContext();
 
     const [formData, setFormData] = useState({
-        event_id: '',
         state_id: '',
         justification: '',
     })
 
     const [historyData, setHistoryData] = useState({
+        event_name: '',
+        state_id: '',
+        state_name: '',
+        justification: '',
         event_id: '',
-        old_state_id: '',
-        new_state_id: '',
-        justification: 'default',
     })
 
 
@@ -35,12 +36,8 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
         getStateById(id);
         getStates();
         getDate();
-    }, [openState])
-
-
-    useEffect(() => {
-        getHistoryById();
-    }, [section]);
+        getAllHistory();
+    }, [openState]);
 
 
     const handleInputChange = (e) => {
@@ -97,15 +94,18 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
     }
 
 
-    const stateFilter = async (id) => {
-        states.map((element) => {
-            if (element.id == id) {
-                return element.name;
-            }
-        })
+    const stateFilter = (id) => {
+        const foundState = states.find((element) => element.id == id);
+        return foundState.name;
     }
 
-    const setInfo = () => {
+    const setHistoryInfo = () => {
+
+        historyData.event_name = element.general_name;
+        historyData.state_id = formData.state_id;
+        historyData.state_name = stateFilter(formData.state_id);
+        historyData.justification = formData.justification;
+        historyData.event_id = id;
 
     }
 
@@ -162,15 +162,24 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
 
         data.map((element) => {
             if (element.event_id == id) {
+                setStateId(element.id);
                 typeStateFilter(element.state_id);
             }
         })
 
     }
 
-    const getHistoryById = async (id) => {
-        let data = await crudService.fetchItemById('historyeventstate', id);
-        setHistoryStateData(data);
+    const getAllHistory = async () => {
+        let data = await crudService.fetchItems('historyeventstate');
+        let historyArray = [];
+        if (data) {
+            data.map((elem) => {
+                if (elem.event_id === id) {
+                    historyArray.push(elem);
+                }
+            })
+        }
+        setHistoryStateData(historyArray);
     }
 
     const saveState = async () => {
@@ -180,7 +189,12 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
                 setIcon(true);
                 return;
             } else {
-                await crudService.updateItem('eventstate', formData.state_id, formData);
+                setHistoryInfo();
+                const response = await crudService.createItem('historyeventstate', historyData);
+                if (response.request.status === 204) {
+                    await crudService.updateItem('eventstate', stateId, formData);
+                }
+
                 toast.success('¡Estado Editado con Exito!');
             }
 
@@ -188,7 +202,6 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
             console.error('Error al guardar el evento:', error);
             toast.error('Error al guardar el evento');
         }
-
         resetFormData();
         handleClose();
         setSubEvent(false);
@@ -286,7 +299,7 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
                                                     <td>{filterHourDate(elem.created_date, 'date')}</td>
                                                     <td>{filterHourDate(elem.created_date, 'hour')}</td>
                                                     <td>{elem.justification}</td>
-                                                    <td>{stateFilter(elem.state_id)}</td>
+                                                    <td>{elem.state_name}</td>
                                                 </tr>
                                             ))
                                         }

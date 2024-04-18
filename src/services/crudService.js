@@ -33,7 +33,7 @@ const fetchItemById = async (resource, id) => {
 const updateItem = async (resource, id, data) => {
     try {
         const response = await axios.patch(`${BASE_URL}/${resource}/${id}`, data);
-        return response.data;
+        return response;
     } catch (error) {
         throw error;
     }
