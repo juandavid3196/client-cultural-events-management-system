@@ -288,7 +288,7 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
                                         <tr>
                                             <td>Fecha</td>
                                             <td>Hora</td>
-                                            <td>Justificaión</td>
+                                            <td>Justificación</td>
                                             <td>Estado</td>
                                         </tr>
                                     </thead>
