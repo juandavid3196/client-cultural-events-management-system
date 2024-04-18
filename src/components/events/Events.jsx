@@ -17,20 +17,20 @@ const Events = () => {
 	const [openData, setOpenData] = useState(false);
 	const [openReport, setOpenReport] = useState(false);
 	const [events, setEvents] = useState([])
+	const [subEvents, setSubEvents] = useState([])
 	const [updateItem, setUpdateItem] = useState({});
 	const [update, setUpdate] = useState(false);
 	const [searchTerm, setSearchTerm] = useState('');
-	const [subEvents, setSubEvents] = useState([])
 	const [deploy, setDeploy] = useState(false)
 	const [subId, setSubId] = useState(false);
 	const [fullData, setFullData] = useState({});
+
 
 	const { setSubEvent, id, setId, subEvent, openState, setOpenState } = useAppContext();
 
 	useEffect(() => {
 		getFullEvents();
 	}, []);
-
 
 	const filteredEvents = events.filter(event => event.general_name.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -60,16 +60,11 @@ const Events = () => {
 		setOpenForm(false);
 	}
 
-	const getEvents = async () => {
-		const data = await crudService.fetchItems('event');
-		setEvents(data);
-	}
-
 	const updateEvent = (id, type) => {
 		if (type === 'subevent') {
 			setSubEvent(true);
 		}
-		getUnicItem(id, type);
+		getUnicItem(id);
 		setId(id);
 		setUpdate(true);
 		setOpenForm(true);
@@ -77,13 +72,18 @@ const Events = () => {
 		setOpenSubMenu(false);
 	}
 
-	const getUnicItem = async (id, type) => {
-		let data = null;
-		if (type === 'subevent') {
-			data = await crudService.fetchItemById('subevent', id);
-		} else {
-			data = await crudService.fetchItemById('event', id);
-		}
+	const addSubEvent = (id) => {
+		setSubEvent(true);
+		setUpdate(false);
+		setId(id);
+		setOpenForm(true);
+		getUnicItem(id);
+		setOpenMenu(false);
+	}
+
+
+	const getUnicItem = async (id) => {
+		let data = await crudService.fetchItemById('events', id);
 		setUpdateItem(data);
 	}
 
@@ -91,42 +91,17 @@ const Events = () => {
 		setUpdate(false);
 	}
 
-	const handleDelete = (id, type) => {
-
-		if (type === 'event') {
-			const response = crudService.deleteItem('event', id);
-			response.then((res) => {
-				if (res) toast.success('Elemento eliminado con Exito');
-			}).catch((error) => {
-				console.error('Error en la solicitud DELETE:', error);
-			});
-
-		} else {
-			const response = crudService.deleteItem('subevent', id);
-			response.then((res) => {
-				if (res) toast.success('Elemento eliminado con Exito');
-			}).catch((error) => {
-				console.error('Error en la solicitud DELETE:', error);
-			});
+	const handleDelete = async (id) => {
+		try {
+			await crudService.deleteItem('events', id);
+			toast.success('¡Evento Eliminado con Exito!');
+		} catch (error) {
+			console.error('Error al eliminar el evento:', error);
+			toast.error('Error al eliminar el evento');
 		}
 
 		getFullEvents();
 		refresh();
-
-	}
-
-	const addSubEvent = (id) => {
-		setSubEvent(true);
-		setUpdate(false);
-		setId(id);
-		setOpenForm(true);
-		getUnicItem(id, 'event');
-		setOpenMenu(false);
-	}
-
-	const getSubEvents = async () => {
-		const data = await crudService.fetchItems('subevent');
-		setSubEvents(data);
 	}
 
 	const handleDeploy = (itemId) => {
@@ -134,21 +109,41 @@ const Events = () => {
 		setDeploy(!deploy);
 	}
 
-	const getFullEvents = () => {
-		getEvents();
-		getSubEvents();
-	}
+	const getFullEvents = async () => {
+
+		try {
+			const data = await crudService.fetchItems('events');
+			const subEvents = [];
+			const eventsWithoutParent = [];
+
+			data.map((element) => {
+
+				if (element.hasOwnProperty('parent_event_id') && element.parent_event_id > 0) {
+					subEvents.push(element);
+				} else {
+					eventsWithoutParent.push(element);
+				}
+			});
+
+			setSubEvents(subEvents);
+			setEvents(eventsWithoutParent);
+		} catch (error) {
+			console.error('Error al cargar los eventos:', error);
+		}
+
+	};
+
 
 	const refresh = () => {
 		setOpenMenu(false);
 		setOpenSubMenu(false);
-		getFullEvents();
+		setId('');
 	}
 
 	const subEventsCount = (id) => {
 		let count = 0;
 		subEvents.map((element) => {
-			if (element.event_id === id) {
+			if (element.parent_event_id === id) {
 				count++;
 			}
 		})
@@ -271,7 +266,7 @@ const Events = () => {
 								</div>
 								<div className={`event-box subevent-box ${id === element.id && deploy ? 'expanded' : ''}`}>
 									{subEvents.length > 0 && subEvents.map((subElem, index) => {
-										if (subElem.event_id === element.id) {
+										if (subElem.parent_event_id === element.id) {
 											return (
 												<div className='event-data subevent-data' key={index}>
 													{subId === subElem.id && openSubMenu && <div className='event-options'>

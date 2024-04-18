@@ -7,7 +7,6 @@ import crudService from '../../services/crudService';
 
 const ModalityManager = () => {
 
-    const uuid = require('uuid');
     const [openForm, setOpenForm] = useState(false);
     const [openMenu, setOpenMenu] = useState(false);
     const [update, setUpdate] = useState(false);
@@ -19,42 +18,22 @@ const ModalityManager = () => {
 
 
     const [formData, setFormData] = useState({
-        id: uuid.v4(),
-        modality_name: "",
-        creation_date: "",
-        update_date: "",
+        name: "",
     });
 
-    const filteredEvents = modalities.filter(modality => modality.modality_name.toLowerCase().includes(searchTerm.toLowerCase()));
+    const filteredEvents = modalities.filter(modality => modality.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     useEffect(() => {
         getModalities();
-        getDate();
     }, [])
 
-    const handleUpdate = () => {
+    const handleUpdate = (id) => {
+        setId(id);
         setClose(false);
         setOpenMenu(false);
         setUpdate(true);
         getDataById();
         setOpenForm(true);
-        getDate();
-    }
-
-
-    const getDate = () => {
-        const date = new Date();
-
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
-
-        let fullDate = `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`;
-
-        setFormData({
-            ...formData,
-            ...(update ? { update_date: fullDate } : { creation_date: fullDate, update_date: fullDate })
-        })
     }
 
     const handleMenu = (id) => {
@@ -77,11 +56,9 @@ const ModalityManager = () => {
         const emptyFormData = {};
 
         keys.forEach((key) => {
-            if (key === "id") {
-                emptyFormData[key] = uuid.v4();
-            } else {
-                emptyFormData[key] = '';
-            }
+
+            emptyFormData[key] = '';
+
         });
 
         setFormData(emptyFormData);
@@ -91,7 +68,7 @@ const ModalityManager = () => {
 
         let hasErrors = false;
 
-        if (formData.name_state === '') {
+        if (formData.name === '') {
             hasErrors = true;
         }
 
@@ -112,7 +89,6 @@ const ModalityManager = () => {
         setClose(false);
         setOpenForm(!openForm);
         setOpenMenu(false);
-        getDate();
     }
 
     const handleForm = (e) => {
@@ -123,7 +99,7 @@ const ModalityManager = () => {
     //// CRUD OPERATIONS
 
     const getModalities = async () => {
-        const data = await crudService.fetchItems('modality');
+        const data = await crudService.fetchItems('contractual-modes');
         setModalities(data);
 
     }
@@ -135,7 +111,7 @@ const ModalityManager = () => {
                     setIsFormSubmitted(true);
                     return;
                 } else {
-                    await crudService.updateItem('modality', formData.id, formData);
+                    await crudService.updateItem('contractual-modes', id, formData);
                     setUpdate(false);
                     toast.success('¡Modalidad Editada con Exito!');
                 }
@@ -144,7 +120,7 @@ const ModalityManager = () => {
                     setIsFormSubmitted(true);
                     return;
                 } else {
-                    await crudService.createItem('modality', formData);
+                    await crudService.createItem('contractual-modes', formData);
                     toast.success('¡Modalidad Añadida con Exito!');
                 }
 
@@ -158,12 +134,12 @@ const ModalityManager = () => {
     }
 
     const getDataById = async () => {
-        const data = await crudService.fetchItemById('modality', id);
+        const data = await crudService.fetchItemById('contractual-modes', id);
         setFormData(data);
     }
 
     const handleDelete = async (id) => {
-        await crudService.deleteItem('modality', id);
+        await crudService.deleteItem('contractual-modes', id);
         toast.success('¡Modalidad Eliminada con Exito!');
         handleClose();
     }
@@ -197,7 +173,7 @@ const ModalityManager = () => {
                                             </ul>
                                         </div>}
                                         <div className="event-text">
-                                            {element.modality_name}
+                                            {element.name}
                                         </div>
                                         <div className="icon-container">
                                             <i className="fa-solid fa-ellipsis-vertical" onClick={() => handleMenu(element.id)}></i>
@@ -238,9 +214,9 @@ const ModalityManager = () => {
                                         <span className='section-title'>Datos de la Modalidad Contractual</span>
                                         <div className="row">
                                             <div className="form-box">
-                                                <label htmlFor="modality_name">Nombre de la Modalidad</label>
-                                                <input type="text" name='modality_name' onChange={handleInputChange} value={formData.modality_name} placeholder='Nombre de la modalidad' />
-                                                {isFormSubmitted && formData.modality_name === '' && (
+                                                <label htmlFor="name">Nombre de la Modalidad</label>
+                                                <input type="text" name='name' onChange={handleInputChange} value={formData.name} placeholder='Nombre de la modalidad' />
+                                                {isFormSubmitted && formData.name === '' && (
                                                     <div className="message-error">Este campo es obligatorio</div>
                                                 )}
 

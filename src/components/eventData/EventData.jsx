@@ -9,11 +9,8 @@ const EventData = ({ element, onCloseData, openData }) => {
     const [section, setSection] = useState('evento');
     const [close, setClose] = useState(false);
     const [stateData, setStateData] = useState({});
-    const { typeEventFilter, typeStateFilter, typePlaceFilter, subEvent, setSubEvent, colorState } = useAppContext();
+    const { setSubEvent, typeModalityFilter, typePlaceFilter, typeStateFilter, modalities, spaces, unicState } = useAppContext();
 
-    useEffect(() => {
-        getStateById();
-    }, openData);
 
     const handleClose = () => {
         setClose(true);
@@ -23,23 +20,30 @@ const EventData = ({ element, onCloseData, openData }) => {
         }, 500)
     }
 
-    const getStateById = async () => {
-        let data = null;
-        if (subEvent) {
-            data = await crudService.fetchItemById('subeventstate', element.id);
-        } else {
-            data = await crudService.fetchItemById('eventstate', element.id);
-        }
-        setStateData(data);
-    }
+    useEffect(() => {
+        getStateById(element.id);
+        typeModalityFilter(element.event_type_id);
+        typePlaceFilter(element.place_id)
+    }, [])
 
+    const getStateById = async (id) => {
+        let data = await crudService.fetchItems('eventstate');
+        data.map((element) => {
+            if (element.event_id == id) {
+                setStateData(element);
+                typeStateFilter(element.state_id);
+                return;
+            }
+        })
+
+    }
 
 
     return (
         <div className={`data-container ${close ? 'close' : ''}`}>
             <div className={`data-main-box ${close ? 'close' : ''}`}>
                 <div className='form-title'>
-                    <span>{`Datos ${element.event_id ? `${element.specific_name}` : `${element.general_name}`}`}</span>
+                    <span>{`Datos ${element.parent_event_id ? `${element.specific_name}` : `${element.general_name}`}`}</span>
                     <i class="fa-regular fa-circle-xmark" onClick={() => handleClose()}></i>
                 </div>
                 <main>
@@ -61,17 +65,15 @@ const EventData = ({ element, onCloseData, openData }) => {
                                     <>
                                         <tr>
                                             <td>Tipo de Evento</td>
-                                            <td>{typeEventFilter(element.event_type)}</td>
+                                            <td>{modalities}</td>
                                         </tr>
                                         <tr>
                                             <td>Estado</td>
-                                            <td className='state-cell'>{typeStateFilter(stateData.type_state)}
-                                                <span className='state-circle' style={{ backgroundColor: colorState(stateData.type_state) }}></span>
-                                            </td>
+                                            <td>{unicState}</td>
                                         </tr>
                                         <tr>
                                             <td>Fecha de Estado</td>
-                                            <td>{stateData.date_state}</td>
+                                            <td>{stateData.created_at}</td>
                                         </tr>
                                         <tr>
                                             <td>Nombre General</td>
@@ -99,7 +101,7 @@ const EventData = ({ element, onCloseData, openData }) => {
                                         </tr>
                                         <tr>
                                             <td>Lugar</td>
-                                            <td>{typePlaceFilter(element.place)}</td>
+                                            <td>{spaces}</td>
                                         </tr>
                                     </>
                                 )

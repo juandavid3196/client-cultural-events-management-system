@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import crudService from '../services/crudService';
 
 const AppContext = createContext();
 
@@ -12,85 +13,47 @@ export function AppContextProvider({ children }) {
     const [id, setId] = useState('');
     const [openState, setOpenState] = useState(false);
     const [updateState, setUpdateState] = useState(false);
+    const [modalities, setModalities] = useState('');
+    const [spaces, setSpaces] = useState('');
+    const [unicState, setUnicState] = useState('');
 
-    const typeEventFilter = (event_type) => {
-        switch (event_type) {
-            case 'propio':
-                return 'Propio';
-            case 'copro':
-                return 'Co-Producción';
-            case 'canje':
-                return 'Canje';
-            case 'apoyo':
-                return 'Apoyo';
-            case 'alquiler':
-                return 'Alquiler';
-            default:
-                return event_type;
-        }
+
+    const typeModalityFilter = async (event_type) => {
+        const data = await crudService.fetchItems('contractual-modes')
+        data.map((element) => {
+            if (element.id === event_type) {
+                setModalities(element.name);
+            }
+        })
+
+        return modalities;
     }
 
-    const typeStateFilter = (state_type) => {
-        switch (state_type) {
-            case 'pre-reserva':
-                return 'Pre-Reserva';
-            case 'confirmado':
-                return 'Confirmado';
-            case 'ejecutar':
-                return 'Listo para Ejecutar';
-            case 'cancelado':
-                return 'Cancelado';
-            case 'ejecucion':
-                return 'En Ejecución';
-            case 'terminado':
-                return 'Terminado';
-            default:
-                return state_type;
-        }
+    const typeStateFilter = async (state_type) => {
+        const data = await crudService.fetchItems('states');
+        data.map((element) => {
+            if (element.id === state_type) {
+                setUnicState(element.name);
+            }
+        })
     }
 
-    const typePlaceFilter = (place_type) => {
-        switch (place_type) {
-            case 'sala':
-                return 'Sala';
-            case 'cafe-teatro':
-                return 'Cafe-Teatro';
-            case 'plazoleta':
-                return 'Plazoleta';
-            case 'aula-taller':
-                return 'Aula-Taller';
-            case 'otros':
-                return 'Otros';
-            default:
-                return place_type;
-        }
-    }
-
-    const colorState = (state_type) => {
-        switch (state_type) {
-            case 'pre-reserva':
-                return '#56caff';
-            case 'confirmado':
-                return '#4646ff';
-            case 'ejecutar':
-                return '#ffd167';
-            case 'cancelado':
-                return '#f66969';
-            case 'ejecucion':
-                return '#56ff56';
-            case 'terminado':
-                return '#cbcaca';
-            default:
-                return 'white';
-        }
+    const typePlaceFilter = async (place_type) => {
+        const data = await crudService.fetchItems('spaces');
+        data.map((element) => {
+            if (element.id === place_type) {
+                setSpaces(element.name);
+            }
+        })
+        return spaces;
     }
 
     return (
         <AppContext.Provider value={{
             subEvent, setSubEvent,
             id, setId,
-            typeEventFilter, typeStateFilter,
-            typePlaceFilter, colorState,
+            typeStateFilter, typeModalityFilter,
+            typePlaceFilter, modalities, spaces, unicState,
             openState, setOpenState,
             updateState, setUpdateState
 

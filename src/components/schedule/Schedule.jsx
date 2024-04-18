@@ -12,59 +12,75 @@ const localizer = momentLocalizer(moment)
 
 const Schedule = () => {
 
-    const uuid = require('uuid');
     const [events, setEvents] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [close, setClose] = useState(false);
-    const [subEvent, setSubEvent] = useState(false);
     const [update, setUpdate] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-
-
+    const [modalities, setModalities] = useState([]);
+    const [spaces, setSpaces] = useState([]);
+    const [states, setStates] = useState([]);
+    const [id, setId] = useState('');
 
     const [formData, setFormData] = useState({
-        id: uuid.v4(),
-        event_type: "",
-        ...(subEvent ? { event_id: null } : {}),
+        parent_event_id: null,
+        event_type_id: "",
         general_name: "",
-        ...(subEvent ? { specific_name: "" } : {}),
+        specific_name: "",
         date_start: "",
         date_finishing: "",
-        place: "",
+        hour_start: "",
+        hour_finishing: "",
+        place_id: "",
+        user_name: "",
+        phone: "",
+        identification_type: "",
+        identification_value: "",
+        email: "",
         description: "",
         observation: "",
+        duration: "",
+        mounting_date: "",
+        mounting_start_hour: "",
+        mounting_finishing_hour: "",
+        technic_contact: "",
+        rider: "",
+        min_tomin: "",
+        communication_contact: "",
+        pulep: "",
+        access_data: "",
+        ticket_company: "",
+        age_restriction: "",
+        agreement: ""
     }
     );
 
     const [stateData, setStateData] = useState({
-        id_state: uuid.v4(),
-        type_state: 'pre-reserva',
-        date_state: '',
-        hour_state: '',
+        event_id: '',
+        state_id: '',
         justification: '',
-        user_state: 'default',
-        ...(subEvent ? { subevent_id: formData.id } : { event_id: formData.id })
     });
 
     const [historyData, setHistoryData] = useState({
-        type_state: '',
-        date_state: '',
-        hour_state: '',
+        event_id: '',
+        old_state_id: '',
+        new_state_id: '',
         justification: 'default',
-        user_state: 'default',
-        ...(subEvent ? { subeventstate_id: '' } : { eventstate_id: '' })
     })
 
     useEffect(() => {
         getEvents();
+        getModalities();
+        getSpaces();
+        getStates();
+        generateDate();
     }, []);
-
 
     const getEvents = async () => {
         setLoading(true);
         try {
-            const data = await crudService.fetchItems('event');
+            const data = await crudService.fetchItems('events');
             const eventsCalendar = [];
 
             if (data.length > 0)
@@ -94,10 +110,10 @@ const Schedule = () => {
 
         const { name, value } = e.target;
 
-        if (name === 'type_state') {
+        if (name === 'state_id') {
             setStateData({
                 ...stateData,
-                ['type_state']: value
+                ['state_id']: value
             })
         } else {
 
@@ -112,30 +128,11 @@ const Schedule = () => {
 
     const generateDate = (currentDate) => {
         let date = new Date(currentDate);
-        let dateHour = new Date();
         let day = date.getDate();
         let month = date.getMonth() + 1;
         let year = date.getFullYear();
 
-        let hour = dateHour.getHours();
-        let minutes = dateHour.getMinutes();
-
-
         let fullDate = `${year + "-" + `${month < 10 ? "0" + month : month}` + "-" + `${day < 10 ? "0" + day : day}`}`;
-        let fullHour = `${hour}:${minutes < 10 ? '0' + minutes : minutes}`;
-
-
-        setStateData({
-            ...stateData,
-            hour_state: fullHour,
-            date_state: fullDate,
-        })
-
-        setHistoryData({
-            ...historyData,
-            hour_state: fullHour,
-            date_state: fullDate,
-        })
 
         setFormData({
             ...formData, date_start: fullDate,
@@ -143,14 +140,11 @@ const Schedule = () => {
 
     }
 
-    const setInfo = () => {
-        if (subEvent) {
-            historyData.subeventstate_id = stateData.id_state;
-        } else {
-            stateData.event_id = formData.id;
-            historyData.eventstate_id = stateData.id_state;
-        }
-        historyData.type_state = stateData.type_state;
+    const setInfo = (id) => {
+        stateData.event_id = id;
+        historyData.event_id = id;
+        historyData.new_state_id = stateData.state_id;
+        historyData.old_state_id = stateData.state_id;
     }
 
     const resetFormData = () => {
@@ -158,13 +152,9 @@ const Schedule = () => {
         const emptyFormData = {};
 
         keys.forEach((key) => {
-            if (key === "id") {
-                emptyFormData[key] = uuid.v4();
-            } else {
-                emptyFormData[key] = '';
-            }
+            emptyFormData[key] = '';
         });
-
+        emptyFormData.parent_event_id = null;
         setFormData(emptyFormData);
     };
 
@@ -174,13 +164,7 @@ const Schedule = () => {
         const emptyFormData = {};
 
         keys.forEach((key) => {
-            if (key === "id_state") {
-                emptyFormData[key] = uuid.v4();
-            } else if (key === "type_state") {
-                emptyFormData[key] = 'pre-reserva';
-            } else {
-                emptyFormData[key] = '';
-            }
+            emptyFormData[key] = '';
         });
         setStateData(emptyFormData);
     };
@@ -194,11 +178,11 @@ const Schedule = () => {
             hasErrors = true;
         }
 
-        if (formData.event_type === '') {
+        if (formData.event_type_id === '') {
             hasErrors = true;
         }
 
-        if (formData.place === '') {
+        if (formData.place_id === '') {
             hasErrors = true;
         }
 
@@ -216,18 +200,18 @@ const Schedule = () => {
 
     const handleForm = (e) => {
         e.preventDefault();
-        setInfo();
         saveEvent();
     }
 
 
     const handleClose = () => {
-        setClose(true);
-        setShowModal(false);
-        setUpdate(false);
-        setIsFormSubmitted(false);
         resetFormData();
         resetStateData();
+        setUpdate(false);
+        setId('');
+        setIsFormSubmitted(false);
+        setClose(true);
+        setShowModal(false);
         getEvents();
     }
 
@@ -242,10 +226,29 @@ const Schedule = () => {
         setClose(false);
         setUpdate(true);
         getDataById(event);
+        setId(event.id);
+    }
+
+
+    ///CRUD operations
+
+    const getModalities = async () => {
+        const data = await crudService.fetchItems('contractual-modes');
+        setModalities(data);
+    }
+
+    const getSpaces = async () => {
+        const data = await crudService.fetchItems('spaces');
+        setSpaces(data);
+    }
+
+    const getStates = async () => {
+        const data = await crudService.fetchItems('states');
+        setStates(data);
     }
 
     const getDataById = async (event) => {
-        const data = await crudService.fetchItemById('event', event.id);
+        const data = await crudService.fetchItemById('events', event.id);
         setFormData(data);
     }
 
@@ -257,8 +260,7 @@ const Schedule = () => {
                     setIsFormSubmitted(true);
                     return;
                 } else {
-                    await crudService.updateItem('event', formData.id, formData);
-                    setUpdate(false);
+                    await crudService.updateItem('events', id, formData);
                     toast.success('¡Evento Editado con Exito!');
                 }
             } else {
@@ -266,18 +268,12 @@ const Schedule = () => {
                     setIsFormSubmitted(true);
                     return;
                 } else {
-                    const response = await crudService.createItem('event', formData);
-
+                    const response = await crudService.createItem('events', formData);
+                    setInfo(response.data.id);
                     if (response.request.status === 201) {
-                        const response = await crudService.createItem('eventstate', stateData);
-
-                        if (response.request.status === 201) {
-                            crudService.createItem('historyevent', historyData);
-                        }
-
+                        await crudService.createItem('eventstate', stateData);
+                        toast.success('¡Evento Añadido con Exito!');
                     }
-
-                    toast.success('¡Evento Añadido con Exito!');
                 }
 
             }
@@ -285,17 +281,14 @@ const Schedule = () => {
             console.error('Error al guardar el evento:', error);
             toast.error('Error al guardar el evento');
         }
-        setShowModal(false);
         handleClose();
     }
 
 
 
-    const deleteEvents = async () => {
-        await crudService.deleteItem('event', formData.id);
+    const deleteEvents = async (id) => {
+        await crudService.deleteItem('events', id);
         toast.success('¡Evento Eliminado con Exito!');
-        setUpdate(false);
-        setShowModal(false);
         handleClose();
     }
 
@@ -341,16 +334,16 @@ const Schedule = () => {
 
                                                 </div>
                                                 <div className="form-box">
-                                                    <label htmlFor="event_type">Modalidad Contractual</label>
-                                                    <select name="event_type" onChange={handleInputChange} value={formData.event_type} >
+                                                    <label htmlFor="event_type_id">Modalidad Contractual</label>
+                                                    <select name="event_type_id" onChange={handleInputChange} value={formData.event_type_id} >
                                                         <option value="" disabled>seleccionar</option>
-                                                        <option value="propio">Propio</option>
-                                                        <option value="copro">Co-Producción</option>
-                                                        <option value="canje">Canje</option>
-                                                        <option value="apoyo">Apoyo</option>
-                                                        <option value="alquiler">Alquiler</option>
+                                                        {
+                                                            modalities.map((element, index) => (
+                                                                <option key={index} value={`${element.id}`}>{`${element.name}`}</option>
+                                                            ))
+                                                        }
                                                     </select>
-                                                    {isFormSubmitted && formData.event_type === '' && (
+                                                    {isFormSubmitted && formData.event_type_id === '' && (
                                                         <div className="message-error">Este campo es obligatorio</div>
                                                     )}
                                                 </div>
@@ -373,29 +366,28 @@ const Schedule = () => {
                                                 </div>
                                                 <div className={`row  ${update ? '' : 'two-colums'}`}>
                                                     <div className="form-box">
-                                                        <label htmlFor="place">Lugar</label>
-                                                        <select name="place" onChange={handleInputChange} value={formData.place} >
+                                                        <label htmlFor="place_id">Lugar</label>
+                                                        <select name="place_id" onChange={handleInputChange} value={formData.place_id} >
                                                             <option value="" disabled>Seleccionar</option>
-                                                            <option value="sala">Sala</option>
-                                                            <option value="cafe-teatro">Cafe Teatro</option>
-                                                            <option value="plazoleta">Plazoleta</option>
-                                                            <option value="aula-taller">Aula Taller</option>
-                                                            <option value="otros">Otros</option>
+                                                            {
+                                                                spaces.map((element, index) => (
+                                                                    <option key={index} value={`${element.id}`}>{`${element.name}`}</option>
+                                                                ))
+                                                            }
                                                         </select>
-                                                        {isFormSubmitted && formData.place === '' && (
+                                                        {isFormSubmitted && formData.place_id === '' && (
                                                             <div className="message-error">Este campo es obligatorio</div>
                                                         )}
                                                     </div>
                                                     {!update && (
                                                         <div className="form-box">
-                                                            <label htmlFor="type_state">Estado</label>
-                                                            <select name="type_state" onChange={handleInputChange} value={stateData.type_state}>
-                                                                <option value="pre-reserva" selected>Pre-reserva</option>
-                                                                <option value="confirmado">Confirmado</option>
-                                                                <option value="ejecutar">Listo para Ejecutar</option>
-                                                                <option value="cancelado">Cancelado</option>
-                                                                <option value="ejecucion">En Ejecución</option>
-                                                                <option value="terminado">Terminado</option>
+                                                            <label htmlFor="state_id">Estado</label>
+                                                            <select name="state_id" onChange={handleInputChange} value={stateData.state_id}>
+                                                                {
+                                                                    states.map((element, index) => (
+                                                                        <option key={index} value={`${element.id}`}>{`${element.name}`}</option>
+                                                                    ))
+                                                                }
                                                             </select>
                                                         </div>
                                                     )
@@ -419,7 +411,7 @@ const Schedule = () => {
                                             <div className={`row ${update ? "two-colums" : ""}`}>
                                                 {update && (
                                                     <div className="form-box form-box-btn">
-                                                        <button type="button" className="btn-delete" onClick={deleteEvents} > Eliminar </button>
+                                                        <button type="button" className="btn-delete" onClick={() => deleteEvents(id)} > Eliminar </button>
                                                     </div>
                                                 )}
                                                 <div className="form-box form-box-btn">

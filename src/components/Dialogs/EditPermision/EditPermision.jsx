@@ -8,7 +8,6 @@ const EditPermision = ({ open, setDialogOpen, responsabilidad, onConfirm }) => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const modeId = searchParams.get('modeId');
-    console.log(modeId);
     const navigate = useNavigate();
 
     const handleConfirm = () => {
