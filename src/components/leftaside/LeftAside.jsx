@@ -58,7 +58,8 @@ const LeftAside = () => {
                         options={[
                             <Link to="/states"> Gestor de Estados</Link>,
                             <Link to="/places"> Gestor de Espacios</Link>,
-                            <Link to="/modalities"> Gestor de Modalidades</Link>
+                            <Link to="/modalities"> Gestor de Modalidades</Link>,
+                            <Link to="/responsabilities"> Gestor de Responsabilidades</Link>
 
                         ]}
 
