@@ -21,6 +21,7 @@ const EditPermision = ({ open, setDialogOpen, responsabilidad, onConfirm }) => {
         if (currentModeId) {
             // Actualizar el valor de modeId para forzar la recarga del componente Home
             navigate(`/TablaPermisos?modeId=${currentModeId}`);
+            window.location.reload(); // Recargar la página
         }
     };
 
