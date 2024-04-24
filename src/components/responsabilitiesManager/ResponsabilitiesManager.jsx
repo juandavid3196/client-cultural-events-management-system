@@ -42,7 +42,7 @@ const ResponsabilitiesManager = () => {
       
             if (response.ok) {
               console.log('El recurso fue creado exitosamente.');
-              // Aquí podrías realizar alguna acción adicional, como redirigir a otra página
+              toast.success('¡Responsabilidad Añadida con Exito!');
             } else {
               console.error('Hubo un problema al crear el recurso:', response.statusText);
               // Manejar el error según sea necesario
@@ -51,6 +51,7 @@ const ResponsabilitiesManager = () => {
             console.error('Hubo un error al realizar la solicitud:', error.message);
             // Manejar el error según sea necesario
           }
+          handleClose();
     }
 
     const handleDelete = () => {

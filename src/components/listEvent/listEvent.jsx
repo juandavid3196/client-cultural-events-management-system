@@ -83,14 +83,15 @@ const ListEvent = () => {
               />
             </div>
           </div>
+        </div>
+        <div className="table-style px-5" style={{ overflowY: "auto" }}>
           <div className="list-top-info">
             <h4><strong>Modalidad contractual:</strong> {contractualMode}</h4>
           </div>
           <div className="list-top-info">
             <h4><strong>Espacio del evento:</strong> {eventSpace}</h4>
           </div>
-        </div>
-        <div className="table-style px-5" style={{ overflowY: "auto" }}>
+
           {selectedEvent && (
             <TableSpecifyRespEvent eventId={selectedEvent.value} />
           )}
