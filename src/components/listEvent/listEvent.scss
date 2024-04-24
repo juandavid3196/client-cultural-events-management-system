@@ -30,14 +30,19 @@
 
     .list-top {
       display: flex;
-      gap: 35px;
+      gap: 30px;
       align-items: center;
-      justify-content: center;
       padding: 20px 25px;
       border-bottom: 1px solid #d3d3d3;
 
+      .list-top-info{
+        display: flex;
+        justify-content: space-between;
+        width: 38%;
+      }
+
       .input-box {
-        width: 100%;
+        width: 30%;
 
         .input-box-relative {
           width: 100%;
