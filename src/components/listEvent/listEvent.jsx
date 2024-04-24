@@ -85,6 +85,8 @@ const ListEvent = () => {
           </div>
           <div className="list-top-info">
             <h4><strong>Modalidad contractual:</strong> {contractualMode}</h4>
+          </div>
+          <div className="list-top-info">
             <h4><strong>Espacio del evento:</strong> {eventSpace}</h4>
           </div>
         </div>
