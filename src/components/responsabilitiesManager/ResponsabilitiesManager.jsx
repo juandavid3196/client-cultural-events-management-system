@@ -12,46 +12,29 @@ const ResponsabilitiesManager = () => {
     const [update, setUpdate] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [close, setClose] = useState(false);
-    const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-    const [responsabilidades, setResponsabilidades] = useState([]);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const [responsabilities, setResponsabilities] = useState([]);
     const [id, setId] = useState('');
+
+    const filteredResponsabilities = responsabilities.filter(responsabilities => responsabilities.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     useEffect(() => {
         getResponsabilidades();
     }, [])
 
-    const handleUpdate = () => {
-        console.log("Tiene que actualizar la responsabilidad")
+    const handleUpdate = (id) => {
         setClose(false);
         setOpenMenu(false);
         setUpdate(true);
         setOpenForm(true);
+        getDataById(id);
     }
 
-    const handleCreate = async () => {
-        try {
-            const response = await fetch('http://localhost:8007/api/responsability', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ name, description }),
-            });
-      
-            if (response.ok) {
-              console.log('El recurso fue creado exitosamente.');
-              toast.success('¡Responsabilidad Añadida con Exito!');
-            } else {
-              console.error('Hubo un problema al crear el recurso:', response.statusText);
-              // Manejar el error según sea necesario
-            }
-          } catch (error) {
-            console.error('Hubo un error al realizar la solicitud:', error.message);
-            // Manejar el error según sea necesario
-          }
-          handleClose();
+    const getDataById = async () => {
+        const data = await crudService.fetchItemById('responsability', id);
+        setName(data.name)
+        setDescription(data.description)
     }
 
     const handleDelete = () => {
@@ -60,7 +43,6 @@ const ResponsabilitiesManager = () => {
 
     const handleMenu = (id) => {
         setId(id)
-        console.log(id)
         setOpenMenu(!openMenu);
     }
 
@@ -68,7 +50,6 @@ const ResponsabilitiesManager = () => {
         setClose(true);
         setOpenForm(false);
         setUpdate(false);
-        setIsFormSubmitted(false);
         getResponsabilidades();
         setId('');
     }
@@ -87,22 +68,64 @@ const ResponsabilitiesManager = () => {
 
     const handleFormWindow = () => {
         setClose(false);
+        setName("")
+        setDescription("")
         setOpenForm(!openForm);
         setOpenMenu(false);
     }
 
     const handleForm = (e) => {
         e.preventDefault();
+        saveResponsability();
+    }
+
+    const saveResponsability = async () => {
+        try {
+            if (!update) {
+                const response = await fetch('http://localhost:8007/api/responsability', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, description }),
+                });
+
+                if (response.ok) {
+                    console.log('El recurso fue creado exitosamente.');
+                    toast.success('¡Responsabilidad Añadida con Exito!');
+                } else {
+                    console.error('Hubo un problema al crear el recurso:', response.statusText);
+                }
+            }else {
+                const response = await fetch(`http://localhost:8007/api/responsability/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: name, description: description }),
+
+            });
+
+            if (response.ok) {
+                console.log('El recurso fue actualizado exitosamente.');
+                toast.success('¡Responsabilidad Actualizada con Éxito!');
+            } else {
+                console.error('Hubo un problema al actualizar el recurso:', response.statusText);
+            }
+            }
+
+        } catch (error) {
+            console.error('Hubo un error al realizar la solicitud:', error.message);
+        }
+        setUpdate(false);
+        handleClose();
     }
 
     //// CRUD OPERATIONS
 
     const getResponsabilidades = async () => {
         const data = await crudService.fetchItems('responsability');
-        setResponsabilidades(data);
-        console.log("Aca abajo debería salir")
-        console.log(data)
-
+        setResponsabilities(data);
     }
 
 
@@ -124,7 +147,7 @@ const ResponsabilitiesManager = () => {
                     </div>
                     <div className='events-bottom'>
                         {
-                            responsabilidades.map((responsabilidad, index) => (
+                            filteredResponsabilities.length > 0 && filteredResponsabilities.map((responsabilidad, index) => (
                                 <div key={index} className='event-box'>
                                     <div className='event-data'>
                                         {id === responsabilidad.id && openMenu && <div className='event-options'>
@@ -174,19 +197,21 @@ const ResponsabilitiesManager = () => {
                                         <div className="row">
                                             <div className="form-box">
                                                 <label htmlFor="responsability_name">Nombre de la responsabilidad</label>
-                                                <input type="text" name='responsability_name' onChange={handleInputChangeName} placeholder='Nombre de la responsabilidad' />
+                                                <input type="text" name='responsability_name' onChange={handleInputChangeName} value={name} placeholder='Nombre de la responsabilidad' />
                                             </div>
                                             <div className="form-box">
                                                 <label htmlFor="responsability_descriptión">Descripción de la responsabilidad</label>
-                                                <input type="text" name='responsability_descriptión' onChange={handleInputChangeDescription} placeholder='Nombre de la responsabilidad' />
+                                                <input type="text" name='responsability_descriptión' onChange={handleInputChangeDescription} value={description} placeholder='Nombre de la responsabilidad' />
                                             </div>
                                         </div>
-                                        <div className={`row ${update ? "two-colums" : ""}`}>  
+                                        <div className={`row ${update ? "two-colums" : ""}`}>
+                                            {update && (
                                                 <div className="form-box form-box-btn">
                                                     <button type="button" className="btn-delete" onClick={() => handleDelete(id)} > Eliminar </button>
                                                 </div>
+                                            )}
                                             <div className="form-box form-box-btn">
-                                                <button type="submit" className='btn-send-form' onClick={() => handleCreate()}> {update ? "Editar" : "Guardar"} </button>
+                                                <button type="submit" className='btn-send-form'> {update ? "Editar" : "Guardar"} </button>
                                             </div>
                                         </div>
                                     </div>
