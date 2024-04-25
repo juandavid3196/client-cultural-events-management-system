@@ -37,8 +37,31 @@ const ResponsabilitiesManager = () => {
         setDescription(data.description)
     }
 
-    const handleDelete = () => {
-        console.log("Tiene que borrar la responsabilidad")
+    const handleDelete = async (id) => {
+        try {
+            // Mostrar cuadro de diálogo de confirmación
+            const confirmDelete = window.confirm('¿Estás seguro que desea eliminar esta responsabilidad?');
+
+            if (confirmDelete) {
+                const response = await fetch(`http://localhost:8007/api/responsability/${id}/desactive`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    console.log('La responsabilidad fue eliminada exitosamente.');
+                    toast.success('¡Responsabilidad Eliminada con Éxito!');
+                } else {
+                    console.error('Hubo un problema al desactivar el recurso:', response.statusText);
+                }
+            }
+
+        } catch (error) {
+            console.error('Hubo un error al realizar la solicitud:', error.message);
+        }
+        handleClose();
     }
 
     const handleMenu = (id) => {
@@ -96,22 +119,22 @@ const ResponsabilitiesManager = () => {
                 } else {
                     console.error('Hubo un problema al crear el recurso:', response.statusText);
                 }
-            }else {
-                const response = await fetch(`http://localhost:8007/api/responsability/${id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: name, description: description }),
-
-            });
-
-            if (response.ok) {
-                console.log('El recurso fue actualizado exitosamente.');
-                toast.success('¡Responsabilidad Actualizada con Éxito!');
             } else {
-                console.error('Hubo un problema al actualizar el recurso:', response.statusText);
-            }
+                const response = await fetch(`http://localhost:8007/api/responsability/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: name, description: description }),
+
+                });
+
+                if (response.ok) {
+                    console.log('El recurso fue actualizado exitosamente.');
+                    toast.success('¡Responsabilidad Actualizada con Éxito!');
+                } else {
+                    console.error('Hubo un problema al actualizar el recurso:', response.statusText);
+                }
             }
 
         } catch (error) {
@@ -124,7 +147,7 @@ const ResponsabilitiesManager = () => {
     //// CRUD OPERATIONS
 
     const getResponsabilidades = async () => {
-        const data = await crudService.fetchItems('responsability');
+        const data = await crudService.fetchItemsActive('responsability');
         setResponsabilities(data);
     }
 
