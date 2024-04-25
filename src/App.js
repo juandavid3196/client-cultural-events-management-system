@@ -15,6 +15,7 @@ import PlacesManager from './components/placesManager/PlacesManager';
 import ModalityManager from './components/modalityManager/ModalityManager';
 import LoginPage from './pages/LoginPage';
 import ResponsabilitiesManager from './components/responsabilitiesManager/ResponsabilitiesManager';
+import { useAuth0 } from "@auth0/auth0-react";
 
 
 const App = () => {
@@ -23,23 +24,6 @@ const App = () => {
 		<AppContextProvider>
 			<Router>
 				<AppContent />
-				<div className='super-container'>
-					<LeftAside />
-					<Routes>
-						<Route path="/" element={<Events />} />
-						<Route path="/reports" element={<ReportPage />} />
-						<Route path="/tablapermisos" element={<Home />} />
-						<Route path="/eventosEspera" element={<EventosEnEspera />} />
-						<Route path="/responsabilidades" element={<Responsibility />} />
-						<Route path="/calendar" element={<Schedule />} />
-						<Route path="/states" element={<StatesManager />} />
-						<Route path="/places" element={<PlacesManager />} />
-						<Route path="/modalities" element={<ModalityManager />} />
-						<Route path="/responsabilities" element={<ResponsabilitiesManager />} />
-						<Route path="*" element={<NotFoundPage />} />
-
-					</Routes>
-				</div>
 			</Router>
 		</AppContextProvider>
 	);
@@ -48,37 +32,46 @@ const App = () => {
 const AppContent = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const isLoginPage = location.pathname === '/login';
+
+	const { isAuthenticated, isLoading } = useAuth0();
+
 
 	useEffect(() => {
 		verifyAuthentication();
-	}, [])
+	}, [isAuthenticated]);
+
 
 	const verifyAuthentication = () => {
+		if (isLoading) {
+			return <h1>Cargando Pagina</h1>;
+		}
+
 		if (!isAuthenticated && !isLoginPage) {
 			navigate('/login', { replace: true });
 			return null;
 		}
+
+		return <Routes>
+			<Route path="/login" element={<LoginPage />} />
+			<Route path="/" element={<Events />} />
+			<Route path="/reports" element={<ReportPage />} />
+			<Route path="/tablapermisos" element={<Home />} />
+			<Route path="/eventosEspera" element={<EventosEnEspera />} />
+			<Route path="/responsabilidades" element={<Responsibility />} />
+			<Route path="/calendar" element={<Schedule />} />
+			<Route path="/states" element={<StatesManager />} />
+			<Route path="/places" element={<PlacesManager />} />
+			<Route path="/modalities" element={<ModalityManager />} />
+			<Route path="*" element={<NotFoundPage />} />
+			<Route path="/responsabilities" element={<ResponsabilitiesManager />} />
+		</Routes>;
 	}
 
 	return (
 		<div className='super-container'>
 			{!isLoginPage && <LeftAside />}
-
-			<Routes>
-				<Route path="/login" element={<LoginPage />} />
-				<Route path="/" element={<Events />} />
-				<Route path="/reports" element={<ReportPage />} />
-				<Route path="/tablapermisos" element={<Home />} />
-				<Route path="/eventosEspera" element={<EventosEnEspera />} />
-				<Route path="/responsabilidades" element={<Responsibility />} />
-				<Route path="/calendar" element={<Schedule />} />
-				<Route path="/states" element={<StatesManager />} />
-				<Route path="/places" element={<PlacesManager />} />
-				<Route path="/modalities" element={<ModalityManager />} />
-				<Route path="*" element={<NotFoundPage />} />
-			</Routes>
+			{verifyAuthentication()}
 		</div>
 	);
 }

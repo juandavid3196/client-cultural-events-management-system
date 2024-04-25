@@ -40,16 +40,34 @@
             flex-direction: column;
             gap: 75px;
             color: #e7f2ff;
+            align-items: center;
 
             span {
                 font-size: 30px;
                 text-align: center;
             }
 
+            button {
+                padding: 10px 15px;
+                border-radius: 50px;
+                font-size: 14px;
+                width: 150px;
+                height: 50px;
+                background-color: #e7f2ff;
+                color: #1976d3;
+            }
+
+            button:hover {
+                background-color: #46a2ff;
+                color: #e7f2ff;
+                transition: background-color 0.2s ease-in-out;
+            }
+
             .form-content {
                 display: flex;
                 flex-direction: column;
                 gap: 30px;
+
 
                 .form-box {
                     position: relative;

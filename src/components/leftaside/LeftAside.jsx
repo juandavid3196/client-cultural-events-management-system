@@ -6,14 +6,26 @@ import { TbReportSearch } from "react-icons/tb";
 import { IoSettingsOutline } from "react-icons/io5";
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
+import { useAuth0 } from "@auth0/auth0-react";
+import { Background } from 'devextreme-react/cjs/range-selector';
 
 const LeftAside = () => {
+
+    const { logout, user, isAuthenticated } = useAuth0();
+
     return (
         <div className='container'>
             <div className="aside-top">
                 <img src="/media/img/image 2.svg" alt="img-aside" />
             </div>
             <div className="aside-bottom">
+                {isAuthenticated && (
+                    <div className='user-info'>
+                        <span className='user-name'>{user.nickname}</span>
+                        <span className='user-icon' style={{ backgroundImage: `url(${user.picture})` }}></span>
+                    </div>
+                )
+                }
                 <div className='text-white'>
                     <Card
                         options={[
@@ -67,6 +79,10 @@ const LeftAside = () => {
                         icon={<IoSettingsOutline />}
                     />
 
+                </div>
+
+                <div className='logout-section'>
+                    <button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>cerrar sesión</button>
                 </div>
             </div>
         </div>
