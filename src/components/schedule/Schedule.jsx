@@ -87,14 +87,16 @@ const Schedule = () => {
                 for (let i = 0; i < data.length; i++) {
 
                     const [year, month, day] = data[i].date_start.split("-").map(Number);
+                    const [hours, minutess] = data[i].hour_start.split(":").map(Number);
+                    const [hourf, minutesf] = data[i].hour_finishing.split(":").map(Number);
+
 
                     eventsCalendar.push({
                         id: data[i].id,
-                        title: data[i].general_name,
-                        start: new Date(year, month - 1, day, 10, 0),
-                        end: moment(data[i].date_start)
-                            .add(1, "hours")
-                            .toDate(),
+                        title: (data[i].parent_event_id > 0) ? data[i].specific_name : data[i].general_name,
+                        start: new Date(year, month - 1, day, (hours != null) ? hours : 0, (minutess != null) ? minutess : 0),
+                        end: new Date(year, month - 1, day, (hourf != null) ? hourf : 0, (minutesf != null) ? minutesf : 0),
+                        color: data[i].place_id,
                     });
                 }
             setEvents(eventsCalendar)
@@ -293,6 +295,41 @@ const Schedule = () => {
     }
 
 
+    const eventStyleGetter = (event) => {
+        let backgroundColor = '';
+
+        switch (event.color) {
+            case 1:
+                backgroundColor = '#FFC265';
+                break;
+            case 2:
+                backgroundColor = '#6575FF';
+                break;
+            case 3:
+                backgroundColor = '#FF6565';
+                break;
+            case 4:
+                backgroundColor = '#46ED90';
+                break;
+            case 5:
+                backgroundColor = '#B765FF';
+                break;
+            default:
+                backgroundColor = '';
+                break;
+        }
+
+        let style = {
+            backgroundColor: backgroundColor,
+        };
+
+        return {
+            style: style,
+        };
+    }
+
+
+
     return (
 
         <>
@@ -309,6 +346,7 @@ const Schedule = () => {
                         selectable={true}
                         onSelectSlot={handleSelectSlot}
                         onSelectEvent={handleSelectEvent}
+                        eventPropGetter={eventStyleGetter}
                     />
 
                     {showModal && (
@@ -350,18 +388,28 @@ const Schedule = () => {
                                                 <div><span className='form-subtitle'>Fecha y Hora</span></div>
                                                 <div className="row two-colums">
                                                     <div className="form-box">
-                                                        <label htmlFor="date_start">Inicio</label>
+                                                        <label htmlFor="date_start">Fecha de Inicio</label>
                                                         <input type="date" name='date_start' onChange={handleInputChange} value={formData.date_start} />
                                                         {isFormSubmitted && formData.date_start === '' && (
                                                             <div className="message-error">Este campo es obligatorio</div>
                                                         )}
                                                     </div>
                                                     <div className="form-box">
-                                                        <label htmlFor="date_finishing">Finalización</label>
+                                                        <label htmlFor="date_finishing">Fecha de Finalización</label>
                                                         <input type="date" name='date_finishing' onChange={handleInputChange} value={formData.date_finishing} min={formData.date_start} />
                                                         {isFormSubmitted && formData.date_finishing === '' && (
                                                             <div className="message-error">Este campo es obligatorio</div>
                                                         )}
+                                                    </div>
+                                                </div>
+                                                <div className="row two-colums">
+                                                    <div className="form-box">
+                                                        <label htmlFor="hour_start">Hora de Inicio</label>
+                                                        <input type="time" name='hour_start' onChange={handleInputChange} value={formData.hour_start} />
+                                                    </div>
+                                                    <div className="form-box">
+                                                        <label htmlFor="hour_finishing">Hora de Finalización</label>
+                                                        <input type="time" name='hour_finishing' onChange={handleInputChange} value={formData.hour_finishing} min={(formData.date_start === formData.date_finishing) ? formData.hour_start : ''} />
                                                     </div>
                                                 </div>
                                                 <div className={`row  ${update ? '' : 'two-colums'}`}>
@@ -383,6 +431,7 @@ const Schedule = () => {
                                                         <div className="form-box">
                                                             <label htmlFor="state_id">Estado</label>
                                                             <select name="state_id" onChange={handleInputChange} value={stateData.state_id}>
+                                                                <option value="" disabled>seleccionar</option>
                                                                 {
                                                                     states.map((element, index) => (
                                                                         <option key={index} value={`${element.id}`}>{`${element.name}`}</option>

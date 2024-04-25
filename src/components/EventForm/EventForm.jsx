@@ -466,14 +466,14 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<div className="row two-colums">
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="date_start">Inicio</label>
+												<label htmlFor="date_start">Fecha de Inicio</label>
 												<input type="date" name='date_start' onChange={handleInputChange} value={formData.date_start} />
 												{isFormSubmitted && formData.date_start === '' && (
 													<div className="message-error">Este campo es obligatorio</div>
 												)}
 											</div>
 											<div className="form-box">
-												<label htmlFor="date_finishing">Finalización</label>
+												<label htmlFor="date_finishing">Fecha de Finalización</label>
 												<input type="date" name='date_finishing' onChange={handleInputChange} value={formData.date_finishing} min={formData.date_start} />
 												{isFormSubmitted && formData.date_finishing === '' && (
 													<div className="message-error">Este campo es obligatorio</div>
@@ -482,12 +482,12 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										</div>
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="hour_start">Inicio</label>
+												<label htmlFor="hour_start">Hora de Inicio</label>
 												<input type="time" name='hour_start' onChange={handleInputChange} value={formData.hour_start} />
 											</div>
 											<div className="form-box">
-												<label htmlFor="hour_finishing">Finalización</label>
-												<input type="time" name='hour_finishing' onChange={handleInputChange} value={formData.hour_finishing} />
+												<label htmlFor="hour_finishing">Hora de Finalización</label>
+												<input type="time" name='hour_finishing' onChange={handleInputChange} value={formData.hour_finishing} min={(formData.date_start === formData.date_finishing) ? formData.hour_start : ''} />
 											</div>
 										</div>
 									</div>
