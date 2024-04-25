@@ -14,6 +14,7 @@ import StatesManager from './components/statesManager/StatesManager';
 import PlacesManager from './components/placesManager/PlacesManager';
 import ModalityManager from './components/modalityManager/ModalityManager';
 import LoginPage from './pages/LoginPage';
+import ResponsabilitiesManager from './components/responsabilitiesManager/ResponsabilitiesManager';
 
 
 const App = () => {
@@ -22,6 +23,23 @@ const App = () => {
 		<AppContextProvider>
 			<Router>
 				<AppContent />
+				<div className='super-container'>
+					<LeftAside />
+					<Routes>
+						<Route path="/" element={<Events />} />
+						<Route path="/reports" element={<ReportPage />} />
+						<Route path="/tablapermisos" element={<Home />} />
+						<Route path="/eventosEspera" element={<EventosEnEspera />} />
+						<Route path="/responsabilidades" element={<Responsibility />} />
+						<Route path="/calendar" element={<Schedule />} />
+						<Route path="/states" element={<StatesManager />} />
+						<Route path="/places" element={<PlacesManager />} />
+						<Route path="/modalities" element={<ModalityManager />} />
+						<Route path="/responsabilities" element={<ResponsabilitiesManager />} />
+						<Route path="*" element={<NotFoundPage />} />
+
+					</Routes>
+				</div>
 			</Router>
 		</AppContextProvider>
 	);
