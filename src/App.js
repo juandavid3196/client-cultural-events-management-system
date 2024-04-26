@@ -16,6 +16,7 @@ import ModalityManager from './components/modalityManager/ModalityManager';
 import LoginPage from './pages/LoginPage';
 import ResponsabilitiesManager from './components/responsabilitiesManager/ResponsabilitiesManager';
 import { useAuth0 } from "@auth0/auth0-react";
+import Spinner from './components/spinner/Spinner';
 
 
 const App = () => {
@@ -44,7 +45,7 @@ const AppContent = () => {
 
 	const verifyAuthentication = () => {
 		if (isLoading) {
-			return <h1>Cargando Pagina</h1>;
+			return <Spinner />;
 		}
 
 		if (!isAuthenticated && !isLoginPage) {

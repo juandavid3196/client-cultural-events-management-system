@@ -22,11 +22,7 @@ const StateReport = ({ onCloseReport }) => {
     })
 
     useEffect(() => {
-        getFullStates();
-        getStates();
-        getModalities();
-        getSpaces();
-        getReports();
+        getFullData();
     }, [])
 
     useEffect(() => {
@@ -40,14 +36,27 @@ const StateReport = ({ onCloseReport }) => {
         }, 500)
     }
 
-    console.log(originalReport);
-
-    const getReports = async () => {
+    const getFullData = () => {
         setLoading(true);
         try {
-            const data = await crudService.fetchItems('events');
+            getFullStates();
+            getStates();
+            getModalities();
+            getSpaces();
+            getReports();
 
-            console.log(data);
+        } catch (error) {
+            console.error('Error al cargar los eventos:', error);
+        } finally {
+            setLoading(false);
+
+        }
+    }
+
+
+    const getReports = async () => {
+        try {
+            const data = await crudService.fetchItems('events');
             const eventsReport = [];
 
             if (data.length > 0)
@@ -64,9 +73,6 @@ const StateReport = ({ onCloseReport }) => {
             setOriginalReport(eventsReport);
         } catch (error) {
             console.error('Error al cargar los eventos:', error);
-        } finally {
-            setLoading(false);
-
         }
     };
 
