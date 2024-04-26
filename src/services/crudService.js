@@ -21,6 +21,16 @@ const fetchItems = async (resource) => {
     }
 };
 
+const fetchItemsActive = async (resource) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/${resource}?active=true`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+
 const fetchItemById = async (resource, id) => {
     try {
         const response = await axios.get(`${BASE_URL}/${resource}/${id}`);
@@ -61,4 +71,5 @@ export default {
     fetchItemById,
     updateItem,
     deleteItem,
+    fetchItemsActive
 };

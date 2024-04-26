@@ -95,8 +95,6 @@ const PlacesManager = () => {
         savePlace();
     }
 
-    //// CRUD OPERATIONS
-
     const getPlaces = async () => {
         const data = await crudService.fetchItems('spaces');
         setPlaces(data);
