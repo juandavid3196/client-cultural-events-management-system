@@ -1,0 +1,132 @@
+.login-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+
+    .left {
+        width: 60%;
+        display: flex;
+        padding: 60px 30px;
+        justify-content: center;
+        background: url('https://www.centropolismedellin.com/wp-content/uploads/2022/11/51026251028_4354be34a5_o-1080x715.jpeg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+
+        span {
+            font-size: 25px;
+            text-align: center;
+            line-height: 1.8;
+            color: #e7f2ff;
+
+            .teather-name {
+                font-weight: 600;
+            }
+        }
+    }
+
+    .right {
+        background: rgb(2, 0, 36);
+        background: linear-gradient(90deg, rgb(2, 0, 36) 0%, rgb(5, 4, 84) 0%, rgb(2 27 100) 0%, rgb(25 108 192) 48%, rgb(25, 118, 211) 100%);
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        padding: 80px 0;
+        width: 40%;
+
+        .login-box {
+            width: 65%;
+            display: flex;
+            flex-direction: column;
+            gap: 75px;
+            color: #e7f2ff;
+            align-items: center;
+
+            span {
+                font-size: 30px;
+                text-align: center;
+            }
+
+            button {
+                padding: 10px 15px;
+                border-radius: 50px;
+                font-size: 14px;
+                width: 150px;
+                height: 50px;
+                background-color: #e7f2ff;
+                color: #1976d3;
+            }
+
+            button:hover {
+                background-color: #46a2ff;
+                color: #e7f2ff;
+                transition: background-color 0.2s ease-in-out;
+            }
+
+            .form-content {
+                display: flex;
+                flex-direction: column;
+                gap: 30px;
+
+
+                .form-box {
+                    position: relative;
+                    height: 35px;
+                    font-size: 15px;
+
+                    input {
+                        width: 100%;
+                        height: 100%;
+                        background: none;
+                        padding: 0 5px;
+                        font-size: 14px;
+                        border-bottom: 1.5px solid #e7f2ff;
+
+                    }
+
+                    input::placeholder {
+                        color: #e7f2ff;
+                    }
+
+                    input:focus {
+                        outline: none;
+                        border-bottom: 1.5px solid #3995F8;
+                    }
+
+                    i {
+                        position: absolute;
+                        right: 5px;
+                        top: 10px;
+                        color: #e7f2ff;
+                    }
+                }
+            }
+
+            .register-message {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+                font-size: 13px;
+
+
+                button {
+                    padding: 10px 15px;
+                    border-radius: 50px;
+                    width: 120px;
+                    background-color: #e7f2ff;
+                    color: #1976d3;
+                }
+
+                button:hover {
+                    background-color: #46a2ff;
+                    color: #e7f2ff;
+                    transition: background-color 0.2s ease-in-out;
+                }
+            }
+        }
+
+    }
+
+
+}

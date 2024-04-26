@@ -46,13 +46,15 @@ const StateReport = ({ onCloseReport }) => {
         setLoading(true);
         try {
             const data = await crudService.fetchItems('events');
+
+            console.log(data);
             const eventsReport = [];
 
             if (data.length > 0)
                 for (let i = 0; i < data.length; i++) {
                     eventsReport.push({
                         id: data[i].id,
-                        general_name: data[i].general_name,
+                        general_name: (data[i].parent_event_id > 0) ? data[i].specific_name : data[i].general_name,
                         event_type_id: data[i].event_type_id,
                         date_start: data[i].date_start,
                         date_finishing: data[i].date_finishing,
@@ -206,8 +208,7 @@ const StateReport = ({ onCloseReport }) => {
                                                     <td>{elem.date_start}</td>
                                                     <td>{elem.date_finishing}</td>
                                                     {<td>{typePlaceFilter(elem.place_id)}</td>}
-                                                    <td>{getStateById(elem.id)}
-                                                    </td>
+                                                    <td>{getStateById(elem.id)}</td>
                                                 </tr>
                                             ))
                                         }
