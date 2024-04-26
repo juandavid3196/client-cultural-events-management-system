@@ -60,8 +60,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 
 	const [historyData, setHistoryData] = useState({
 		event_id: '',
-		old_state_id: '',
-		new_state_id: '',
+		state_id: '',
 		justification: 'default',
 	})
 
@@ -161,6 +160,17 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		});
 
 		setStateData(emptyFormData);
+	};
+
+	const resetHistoryData = () => {
+		const keys = Object.keys(historyData);
+		const emptyFormData = {};
+
+		keys.forEach((key) => {
+			emptyFormData[key] = '';
+		});
+
+		setHistoryData(emptyFormData);
 	};
 
 
@@ -291,8 +301,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const setInfo = (id) => {
 		stateData.event_id = id;
 		historyData.event_id = id;
-		historyData.new_state_id = stateData.state_id;
-		historyData.old_state_id = stateData.state_id;
+		historyData.state_id = stateData.state_id;
 	}
 
 	const openStateWindow = () => {
@@ -323,10 +332,13 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 					const response = await crudService.createItem('events', formData);
 					setInfo(response.data.id);
 					if (response.request.status === 201) {
-						await crudService.createItem('eventstate', stateData);
+						const response = await crudService.createItem('eventstate', stateData);
+						if (response.request.status === 204) {
+							await crudService.createItem('historyeventstate', historyData);
+							toast.success('¡Evento Añadido con Exito!');
+						}
 					}
 				}
-				toast.success('¡Evento Añadido con Exito!');
 			}
 		} catch (error) {
 			console.error('Error al guardar el evento:', error);
@@ -336,6 +348,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		onUpdateState();
 		resetFormData();
 		resetStateData();
+		resetHistoryData();
 		onFinishForm();
 		refresh();
 		onGetFullEvents();
@@ -466,14 +479,14 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 									<div className="row two-colums">
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="date_start">Inicio</label>
+												<label htmlFor="date_start">Fecha de Inicio</label>
 												<input type="date" name='date_start' onChange={handleInputChange} value={formData.date_start} />
 												{isFormSubmitted && formData.date_start === '' && (
 													<div className="message-error">Este campo es obligatorio</div>
 												)}
 											</div>
 											<div className="form-box">
-												<label htmlFor="date_finishing">Finalización</label>
+												<label htmlFor="date_finishing">Fecha de Finalización</label>
 												<input type="date" name='date_finishing' onChange={handleInputChange} value={formData.date_finishing} min={formData.date_start} />
 												{isFormSubmitted && formData.date_finishing === '' && (
 													<div className="message-error">Este campo es obligatorio</div>
@@ -482,12 +495,12 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 										</div>
 										<div className="row two-colums-small">
 											<div className="form-box">
-												<label htmlFor="hour_start">Inicio</label>
+												<label htmlFor="hour_start">Hora de Inicio</label>
 												<input type="time" name='hour_start' onChange={handleInputChange} value={formData.hour_start} />
 											</div>
 											<div className="form-box">
-												<label htmlFor="hour_finishing">Finalización</label>
-												<input type="time" name='hour_finishing' onChange={handleInputChange} value={formData.hour_finishing} />
+												<label htmlFor="hour_finishing">Hora de Finalización</label>
+												<input type="time" name='hour_finishing' onChange={handleInputChange} value={formData.hour_finishing} min={(formData.date_start === formData.date_finishing) ? formData.hour_start : ''} />
 											</div>
 										</div>
 									</div>
