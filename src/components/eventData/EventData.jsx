@@ -154,7 +154,7 @@ const EventData = ({ element, onCloseData, openData }) => {
                                             </tr>
                                             <tr>
                                                 <td>Hora de Inicio</td>
-                                                <td>{element.mounting_star_hour}</td>
+                                                <td>{element.mounting_start_hour}</td>
                                             </tr>
                                             <tr>
                                                 <td>Hora de Finalización</td>

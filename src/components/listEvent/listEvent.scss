@@ -16,8 +16,8 @@
     }
   }
 
-  .table-style{
-   max-height: calc(100vh - 200px); 
+  .table-style {
+    max-height: calc(100vh - 200px); 
   }
 
   .listEvents-container {
@@ -35,8 +35,7 @@
       padding: 20px 25px;
       border-bottom: 1px solid #d3d3d3;
 
-      .list-top-info{
-        display: flex;
+      .list-top-info {
         width: 25%;
       }
 
@@ -75,6 +74,36 @@
           }
         }
       }
+    }
+
+    .centered-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    
+    .centered-container > div {
+      display: flex;
+      align-items: center;
+      gap: 10px; 
+    }
+    
+    .centered-container button {
+      margin-top: 0; 
+    }
+
+    button {
+      background-color: #3995F8;
+      color: white;
+      font-size: 15px;
+      font-weight: 400;
+      border-style: none;
+      border-radius: 5px;
+      height: 35px;
+      width: 300px;
+      margin-top: 20px;
+      cursor: pointer;
     }
   }
 }
