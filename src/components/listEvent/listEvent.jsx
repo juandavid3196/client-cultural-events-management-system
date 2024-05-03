@@ -176,10 +176,6 @@ const ListEvent = () => {
           <button className="btn-add-event" onClick={() => handleFormWindow()}>
             Añadir Responsabilidad Especifica
           </button>
-            <div className="flex flex-row">
-              <h4><strong>Modalidad contractual:</strong> {contractualMode}</h4>
-              <h4><strong>Espacio del evento:</strong> {eventSpace}</h4>
-            </div>
           </div>
           <div className="table-style px-5" style={{ overflowY: "auto" }}>
             {selectedEvent && (
