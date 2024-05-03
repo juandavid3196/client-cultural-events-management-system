@@ -184,10 +184,6 @@ const ListEvent = () => {
           <div className="table-style px-5" style={{ overflowY: "auto" }}>
             {selectedEvent && (
               <TableSpecifyRespEvent key={tablaKey} eventId={selectedEvent.value}/>
-              <TableSpecifyRespEvent
-                key={tablaKey}
-                eventId={selectedEvent.value}
-              />
             )}
           </div>
         </div>
