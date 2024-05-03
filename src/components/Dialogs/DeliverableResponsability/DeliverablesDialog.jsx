@@ -1,12 +1,30 @@
+import React, { useState, useEffect } from 'react';
 import { AiFillCloseCircle } from 'react-icons/ai';
-import { Button, Checkbox, Dialog, DialogContent, DialogTitle, List, ListItem, ListItemText, TextareaAutosize } from "@mui/material"
-import React, { useState } from 'react';
+import { Checkbox, Dialog, DialogContent, DialogTitle, List, ListItem, ListItemText, TextareaAutosize } from "@mui/material"
+import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify';
+import { PropertiesPanel } from 'devextreme-react/cjs/diagram';
 
-const DeliverablesDialog = ({ open, setDialogOpen, id }) => {
+
+const DeliverablesDialog = ({ open, setDialogOpen, id, edit, incrementTablaKey}) => {
     const [observations, setObservations] = useState('');
     const [deliverables, setDeliverables] = useState([]);
     const [responsibilityCompleted, setResponsibilityCompleted] = useState(false);
     const [file, setFile] = useState(null);
+
+    useEffect(() => {
+        if (edit) {
+            
+            fetch(`http://localhost:8007/api/accomplishments/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizar el estado de observations con el valor obtenido
+                    setObservations(data.text);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+    }, [edit, id]);
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -35,6 +53,9 @@ const DeliverablesDialog = ({ open, setDialogOpen, id }) => {
     
             if (response.ok) {
                 console.log('Accomplishment updated successfully!');
+                toast.success('¡Entregable Editado con Exito!');
+                incrementTablaKey()
+                setDialogOpen(false);
             } else {
                 console.error('Failed to update accomplishment');
             }
@@ -60,7 +81,7 @@ const DeliverablesDialog = ({ open, setDialogOpen, id }) => {
     return (
         <Dialog open={open}>
 
-            <div className='px-4 py-2'>
+            <div className='px-4'>
                 <DialogTitle className='font-bold'>
                     Observaciones
                     <AiFillCloseCircle style={{ float: 'right', cursor: 'pointer' }} onClick={() => setDialogOpen(false)} />
@@ -95,8 +116,21 @@ const DeliverablesDialog = ({ open, setDialogOpen, id }) => {
                     />
                 </div>
 
-                <Button onClick={handleUpload}> Guardar</Button>
+                <button className='bg-blue-500 text-white border-2 rounded-md py-1 px-3' onClick={handleUpload}> Guardar</button>
             </div>
+
+            <ToastContainer
+                    position="top-right"
+                    autoClose={800}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="light"
+                />
         </Dialog>
     );
 };

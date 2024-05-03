@@ -3,6 +3,7 @@ import axios from "axios";
 import TableSpecifyRespEvent from "../tableSpecifyRespEvent/tableSpecifyRespEvent";
 import Select from "react-select";
 import { toast, ToastContainer } from 'react-toastify';
+import { DeliverablesDialog } from '../Dialogs/DeliverableResponsability/DeliverablesDialog';
 import "./listEvent.scss";
 
 const ListEvent = () => {
@@ -18,6 +19,11 @@ const ListEvent = () => {
   const [update, setUpdate] = useState(false);
   const [id, setId] = useState('');
   const [tablaKey, setTablaKey] = useState(0); // Nuevo estado para la clave de la tabla
+
+
+  const incrementTablaKey = () => {
+    setTablaKey(prevKey => prevKey + 1);
+  };
 
   useEffect(() => {
     axios
@@ -85,7 +91,7 @@ const ListEvent = () => {
       if (response.ok) {
         console.log('El recurso fue creado exitosamente.');
         toast.success('¡Responsabilidad Añadida con Exito!');
-        setTablaKey(prevKey => prevKey + 1); // Incrementa la clave de la tabla para forzar la actualización
+        incrementTablaKey()
       } else {
         console.error('Hubo un problema al crear el recurso:', response.statusText);
       }
@@ -151,17 +157,21 @@ const ListEvent = () => {
               </div>
               <button className='' onClick={() => handleFormWindow()}>Añadir Responsabilidad Especifica</button>
             </div>
-            <div className="flex flex-row justify-between">
-                <h4><strong>Modalidad contractual:</strong> {contractualMode}</h4>
-                <h4><strong>Espacio del evento:</strong> {eventSpace}</h4>
+            <div className="flex flex-row">
+              <h4><strong>Modalidad contractual:</strong> {contractualMode}</h4>
+              <h4><strong>Espacio del evento:</strong> {eventSpace}</h4>
             </div>
           </div>
           <div className="table-style px-5" style={{ overflowY: "auto" }}>
             {selectedEvent && (
-              <TableSpecifyRespEvent key={tablaKey} eventId={selectedEvent.value} />
+              <TableSpecifyRespEvent key={tablaKey} eventId={selectedEvent.value}/>
             )}
           </div>
         </div>
+
+        <DeliverablesDialog incrementTablaKey={incrementTablaKey} />
+
+
         <ToastContainer
           position="top-right"
           autoClose={800}

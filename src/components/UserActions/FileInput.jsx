@@ -7,10 +7,17 @@ import { saveAs } from 'file-saver';
 
 const FileInput = ({ id }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [edit, setEdit] = useState(false);
 
   const handleProgileDialogClick = () => {
+    setEdit(false)
     setDialogOpen(true);
   };
+
+  const handleEditClick = () => {
+    setEdit(true)
+    setDialogOpen(true);
+  }
 
   const generateDocument = async () => {
     try {
@@ -49,9 +56,9 @@ const FileInput = ({ id }) => {
   return (
     <div className="text-3xl flex gap-2">
       <MdUpload className="text-gray-900 hover:text-yellow-600 hover:cursor-pointer" onClick={handleProgileDialogClick} />
-      <MdModeEditOutline className="text-gray-900 hover:text-red-600 hover:cursor-pointer" />
+      <MdModeEditOutline className="text-gray-900 hover:text-red-600 hover:cursor-pointer" onClick={handleEditClick}/>
       <MdDownload className="text-gray-900 hover:text-green-600 hover:cursor-pointer" onClick={generateDocument} />
-      <DeliverablesDialog open={dialogOpen} setDialogOpen={setDialogOpen} id={id} />
+      <DeliverablesDialog open={dialogOpen} setDialogOpen={setDialogOpen} id={id} edit={edit} incrementTablaKey={() => {}}/>
     </div>
   );
 };
