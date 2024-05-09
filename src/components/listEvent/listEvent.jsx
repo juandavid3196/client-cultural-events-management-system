@@ -95,9 +95,6 @@ const ListEvent = () => {
         console.log('El recurso fue creado exitosamente.');
         toast.success('¡Responsabilidad Añadida con Exito!');
         incrementTablaKey()
-        console.log("El recurso fue creado exitosamente.");
-        toast.success("¡Responsabilidad Añadida con Exito!");
-        setTablaKey((prevKey) => prevKey + 1); // Incrementa la clave de la tabla para forzar la actualización
       } else {
         console.error(
           "Hubo un problema al crear el recurso:",
@@ -179,13 +176,10 @@ const ListEvent = () => {
           </div>
           <div className="table-style px-5" style={{ overflowY: "auto" }}>
             {selectedEvent && (
-              <TableSpecifyRespEvent key={tablaKey} eventId={selectedEvent.value}/>
+              <TableSpecifyRespEvent key={tablaKey} eventId={selectedEvent.value} incrementTablaKey={incrementTablaKey}/>
             )}
           </div>
         </div>
-
-        <DeliverablesDialog incrementTablaKey={incrementTablaKey} />
-
 
         <ToastContainer
           position="top-right"

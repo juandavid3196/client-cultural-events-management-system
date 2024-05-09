@@ -6,7 +6,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { PropertiesPanel } from 'devextreme-react/cjs/diagram';
 
 
-const DeliverablesDialog = ({ open, setDialogOpen, id, edit, incrementTablaKey}) => {
+const DeliverablesDialog = ({ open, setDialogOpen, idEspecifyResponsability, edit, eventId, incrementTablaKey}) => {
     const [observations, setObservations] = useState('');
     const [deliverables, setDeliverables] = useState([]);
     const [responsibilityCompleted, setResponsibilityCompleted] = useState(false);
@@ -15,16 +15,15 @@ const DeliverablesDialog = ({ open, setDialogOpen, id, edit, incrementTablaKey})
     useEffect(() => {
         if (edit) {
             
-            fetch(`http://localhost:8007/api/accomplishments/${id}`)
+            fetch(`http://localhost:8007/api/accomplishments/${idEspecifyResponsability}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Actualizar el estado de observations con el valor obtenido
                     setObservations(data.text);
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
 
-    }, [edit, id]);
+    }, [edit, idEspecifyResponsability]);
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -33,26 +32,29 @@ const DeliverablesDialog = ({ open, setDialogOpen, id, edit, incrementTablaKey})
     };
 
     const handleUpload = async () => {
-        /* if (!file) {
+        if (!file) {
             console.error('No file selected');
+            toast.error('No ha seleccionado ningún archivo')
             return;
-        } */
+        }
        
         const formData = new FormData();
         formData.append('file', file);
+
+        console.log(file)
         try {
-            const response = await fetch(`http://localhost:8007/api/accomplishments/${id}`, {
+            const response = await fetch(`http://localhost:8007/api/accomplishments/${idEspecifyResponsability}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    text: observations
+                    text: observations,
+                    file_url: `${eventId}/${idEspecifyResponsability}/${file.name}`
                 })
             });
     
             if (response.ok) {
-                console.log('Accomplishment updated successfully!');
                 toast.success('¡Entregable Editado con Exito!');
                 incrementTablaKey()
                 setDialogOpen(false);
@@ -63,8 +65,8 @@ const DeliverablesDialog = ({ open, setDialogOpen, id, edit, incrementTablaKey})
             console.error('Error updating accomplishment:', error);
         }
     
-        /* try {
-            const response = await fetch('http://localhost:8007/api/backend/upload-file/?event_id=1', {
+        try {
+            const response = await fetch(`http://localhost:8007/api/bucket/upload-file/?event_id=${eventId}&responsability_id=${idEspecifyResponsability}`, {
                 method: 'POST',
                 body: formData,
             });
@@ -76,7 +78,7 @@ const DeliverablesDialog = ({ open, setDialogOpen, id, edit, incrementTablaKey})
             }
         } catch (error) {
             console.error('Error uploading file:', error);
-        } */
+        }
     };
     return (
         <Dialog open={open}>
