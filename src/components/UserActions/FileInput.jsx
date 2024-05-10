@@ -6,10 +6,12 @@ import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { saveAs } from 'file-saver';
 
-const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey}) => {
+const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [edit, setEdit] = useState(false);
   const [statusAcomplishments, setStatusAcomplishments] = useState(false);
+  const [nameFile, setNameFile] = useState("");
+
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -20,13 +22,14 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey}) => {
 
         if (response.data.check) {
           setStatusAcomplishments(true)
+          setNameFile(response.data.file_url)
         }
       } catch (error) {
         console.error("Error al obtener los datos del evento:", error);
       }
     };
     fetchEventData();
-  }, [eventId]);
+  }, [idEspecifyResponsability]);
 
   const handleProgileDialogClick = () => {
     setEdit(false)
@@ -38,7 +41,28 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey}) => {
     setDialogOpen(true);
   }
 
-  const generateDocument = async () => {
+
+  const downloadDocumentDeliverable = async () => {
+    try {  
+    const documentDownload = await axios.get(
+        `http://localhost:8007/api/bucket/download-file/${nameFile}`, {
+          responseType: 'blob',
+        }
+      );
+
+      const fileURL = window.URL.createObjectURL(new Blob([documentDownload.data]))
+      const fileLink = document.createElement('a')
+      fileLink.href = fileURL
+      fileLink.setAttribute('download', nameFile)
+      document.body.appendChild(fileLink)
+      fileLink.click()
+
+    } catch (error) {
+      console.error("Error al obtener el archivo", error);
+    }
+  }
+
+  const generateDocumentTemplate = async () => {
     try {
       // Load the document template from a URL
       const response = await fetch('espacioPublico.docx');
@@ -79,9 +103,9 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey}) => {
 
       {!statusAcomplishments
         ?
-        "" : <MdDownload className="text-gray-900 hover:text-green-600 hover:cursor-pointer" onClick={generateDocument} />}
+        "" : <MdDownload className="text-gray-900 hover:text-green-600 hover:cursor-pointer" onClick={downloadDocumentDeliverable} />}
 
-      <DeliverablesDialog  open={dialogOpen} setDialogOpen={setDialogOpen} eventId={eventId} idEspecifyResponsability={idEspecifyResponsability} edit={edit} incrementTablaKey={incrementTablaKey} />
+      <DeliverablesDialog open={dialogOpen} setDialogOpen={setDialogOpen} eventId={eventId} idEspecifyResponsability={idEspecifyResponsability} edit={edit} incrementTablaKey={incrementTablaKey} />
     </div>
   );
 };

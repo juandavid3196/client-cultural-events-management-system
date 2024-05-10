@@ -3,7 +3,6 @@ import axios from "axios";
 import TableSpecifyRespEvent from "../tableSpecifyRespEvent/tableSpecifyRespEvent";
 import Select from "react-select";
 import { toast, ToastContainer } from 'react-toastify';
-import { DeliverablesDialog } from '../Dialogs/DeliverableResponsability/DeliverablesDialog';
 import "./listEvent.scss";
 
 const ListEvent = () => {

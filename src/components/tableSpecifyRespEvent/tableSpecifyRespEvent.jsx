@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FileInput } from "../UserActions/FileInput";
+import Tooltip from '@mui/material/Tooltip';
 
-function TableSpecifyRespEvent({ eventId, incrementTablaKey}) {
+function TableSpecifyRespEvent({ eventId, incrementTablaKey }) {
   const [eventData, setEventData] = useState(null);
 
   useEffect(() => {
@@ -35,10 +36,16 @@ function TableSpecifyRespEvent({ eventId, incrementTablaKey}) {
           <tbody>
             {eventData.map((event) => (
               <tr key={event.id}>
-                <td className="capitalize text-gray-500">
-                  {event.specific_responsability_id
-                    ? event.specific_responsability_name
-                    : event.responsability_by_mode_name}
+                <td className="capitalize text-gray-500" style={{ overflow: 'visible' }}>
+                  {event.specific_responsability_id ? (
+                    <Tooltip title={event.specific_responsability_name} arrow>
+                      {event.specific_responsability_name}
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title={event.responsability_by_mode_name} arrow>
+                      {event.responsability_by_mode_name}
+                    </Tooltip>
+                  )}
                 </td>
 
                 <td className="capitalize text-gray-500 text-center">
@@ -50,8 +57,8 @@ function TableSpecifyRespEvent({ eventId, incrementTablaKey}) {
                 <td className="capitalize text-gray-500 text-center">
                   {event.accomplishment_compliment_date
                     ? new Date(
-                        event.accomplishment_compliment_date
-                      ).toLocaleDateString()
+                      event.accomplishment_compliment_date
+                    ).toLocaleDateString()
                     : ""}
                 </td>
 
@@ -67,7 +74,7 @@ function TableSpecifyRespEvent({ eventId, incrementTablaKey}) {
                 </td>
 
                 <td className="flex flex-row justify-center">
-                  <FileInput idEspecifyResponsability={event.accomplishment_id} eventId={eventId} incrementTablaKey={incrementTablaKey}/>
+                  <FileInput idEspecifyResponsability={event.accomplishment_id} eventId={eventId} incrementTablaKey={incrementTablaKey} />
                 </td>
               </tr>
             ))}
