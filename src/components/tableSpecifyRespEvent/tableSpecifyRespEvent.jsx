@@ -30,7 +30,7 @@ function TableSpecifyRespEvent({ eventId, incrementTablaKey }) {
               <th className="text-black capitalize">Fecha de creación</th>
               <th className="capitalize text-black">Fecha de entrega</th>
               <th className="capitalize text-black">Estado</th>
-              <th className="capitalize text-black">Subir entregable</th>
+              <th className="capitalize text-black">Acciones de cumplimiento</th>
             </tr>
           </thead>
           <tbody>

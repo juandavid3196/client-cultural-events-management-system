@@ -11,6 +11,7 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
   const [edit, setEdit] = useState(false);
   const [statusAcomplishments, setStatusAcomplishments] = useState(false);
   const [nameFile, setNameFile] = useState("");
+  const [statusFile, setStatusFile] = useState();
 
 
   useEffect(() => {
@@ -19,6 +20,7 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
         const response = await axios.get(
           `http://localhost:8007/api/accomplishments/${idEspecifyResponsability}`
         );
+      
 
         if (response.data.check) {
           setStatusAcomplishments(true)
@@ -101,9 +103,9 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
       <MdUpload className="text-gray-900 hover:text-yellow-600 hover:cursor-pointer" onClick={handleProgileDialogClick} />
       <MdModeEditOutline className="text-gray-900 hover:text-red-600 hover:cursor-pointer" onClick={handleEditClick} />
 
-      {!statusAcomplishments
+      {statusAcomplishments && nameFile
         ?
-        "" : <MdDownload className="text-gray-900 hover:text-green-600 hover:cursor-pointer" onClick={downloadDocumentDeliverable} />}
+        <MdDownload className="text-gray-900 hover:text-green-600 hover:cursor-pointer" onClick={downloadDocumentDeliverable}/> : "" }
 
       <DeliverablesDialog open={dialogOpen} setDialogOpen={setDialogOpen} eventId={eventId} idEspecifyResponsability={idEspecifyResponsability} edit={edit} incrementTablaKey={incrementTablaKey} />
     </div>

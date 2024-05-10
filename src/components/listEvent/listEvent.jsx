@@ -165,7 +165,7 @@ const ListEvent = () => {
                   options={eventos}
                   value={selectedEvent}
                   onChange={handleSelectChange}
-                  placeholder="Buscar evento"
+                  placeholder="Escribe aqui para buscar evento"
                   isSearchable
                   styles={customStyles}
                 />
