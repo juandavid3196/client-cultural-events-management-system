@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import TableSpecifyRespEvent from "../tableSpecifyRespEvent/tableSpecifyRespEvent";
 import Select from "react-select";
-import { toast, ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from 'react-toastify';
 import "./listEvent.scss";
 import CloseEventForm from "../Dialogs/CloseEventForm/CloseEventForm";
 
@@ -21,6 +21,11 @@ const ListEvent = () => {
   const [tablaKey, setTablaKey] = useState(0); // Nuevo estado para la clave de la tabla
   const [isClosedForm, setIsClosedForm] = useState(true);
   const [openCloseEventForm, setOpenCloseEventForm] = useState(false); // Nuevo estado para controlar la visibilidad del formulario de cierre de evento
+
+
+  const incrementTablaKey = () => {
+    setTablaKey(prevKey => prevKey + 1);
+  };
 
   useEffect(() => {
     axios
@@ -89,9 +94,9 @@ const ListEvent = () => {
       );
 
       if (response.ok) {
-        console.log("El recurso fue creado exitosamente.");
-        toast.success("¡Responsabilidad Añadida con Exito!");
-        setTablaKey((prevKey) => prevKey + 1); // Incrementa la clave de la tabla para forzar la actualización
+        console.log('El recurso fue creado exitosamente.');
+        toast.success('¡Responsabilidad Añadida con Exito!');
+        incrementTablaKey()
       } else {
         console.error(
           "Hubo un problema al crear el recurso:",
@@ -189,13 +194,11 @@ const ListEvent = () => {
           </div>
           <div className="table-style px-5" style={{ overflowY: "auto" }}>
             {selectedEvent && (
-              <TableSpecifyRespEvent
-                key={tablaKey}
-                eventId={selectedEvent.value}
-              />
+              <TableSpecifyRespEvent key={tablaKey} eventId={selectedEvent.value} incrementTablaKey={incrementTablaKey}/>
             )}
           </div>
         </div>
+
         <ToastContainer
           position="top-right"
           autoClose={800}

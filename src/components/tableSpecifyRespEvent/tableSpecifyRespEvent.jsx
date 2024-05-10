@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FileInput } from "../UserActions/FileInput";
-import { Center } from "devextreme-react/cjs/map";
+import Tooltip from '@mui/material/Tooltip';
 
-function TableSpecifyRespEvent({ eventId }) {
+function TableSpecifyRespEvent({ eventId, incrementTablaKey }) {
   const [eventData, setEventData] = useState(null);
 
   useEffect(() => {
@@ -27,37 +27,43 @@ function TableSpecifyRespEvent({ eventId }) {
           <thead style={{ position: "sticky", top: "0", backgroundColor: "white" }}>
             <tr>
               <th className="text-black">Responsabilidad</th>
-              <th className="capitalize text-gray-400">Fecha de creación</th>
-              <th className="capitalize text-gray-400">Fecha de entrega</th>
-              <th className="capitalize text-gray-400">Estado</th>
-              <th className="capitalize text-gray-400">Subir entregable</th>
+              <th className="text-black capitalize">Fecha de creación</th>
+              <th className="capitalize text-black">Fecha de entrega</th>
+              <th className="capitalize text-black">Estado</th>
+              <th className="capitalize text-black">Subir entregable</th>
             </tr>
           </thead>
           <tbody>
             {eventData.map((event) => (
               <tr key={event.id}>
-                <td className="capitalize text-gray-400">
-                  {event.specific_responsability_id
-                    ? event.specific_responsability_name
-                    : event.responsability_by_mode_name}
+                <td className="capitalize text-gray-500" style={{ overflow: 'visible' }}>
+                  {event.specific_responsability_id ? (
+                    <Tooltip title={event.specific_responsability_name} arrow>
+                      {event.specific_responsability_name}
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title={event.responsability_by_mode_name} arrow>
+                      {event.responsability_by_mode_name}
+                    </Tooltip>
+                  )}
                 </td>
 
-                <td className="capitalize text-gray-400 text-center">
+                <td className="capitalize text-gray-500 text-center">
                   {new Date(
                     event.accomplishment_creation_date
                   ).toLocaleDateString()}
                 </td>
 
-                <td className="capitalize text-gray-400 text-center">
+                <td className="capitalize text-gray-500 text-center">
                   {event.accomplishment_compliment_date
                     ? new Date(
-                        event.accomplishment_compliment_date
-                      ).toLocaleDateString()
+                      event.accomplishment_compliment_date
+                    ).toLocaleDateString()
                     : ""}
                 </td>
 
                 <td
-                  className="capitalize text-gray-400 text-center font-semibold"
+                  className="capitalize text-white text-center font-semibold"
                   style={{
                     backgroundColor: event.accomplishment_status
                       ? "#00ff00"
@@ -68,7 +74,7 @@ function TableSpecifyRespEvent({ eventId }) {
                 </td>
 
                 <td className="flex flex-row justify-center">
-                  <FileInput id={event.accomplishment_id} />
+                  <FileInput idEspecifyResponsability={event.accomplishment_id} eventId={eventId} incrementTablaKey={incrementTablaKey} />
                 </td>
               </tr>
             ))}

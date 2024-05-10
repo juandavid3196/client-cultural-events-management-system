@@ -1,4 +1,3 @@
-import { ResponsibilityTable } from "../components/DeliverResponsibility/ResponsabilityTable";
 import ListEvent from "../components/listEvent/listEvent";
 const Responsibility = ({ nameEvent }) => {
   return (
