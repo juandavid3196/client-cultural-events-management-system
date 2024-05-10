@@ -5,6 +5,7 @@ import Select from "react-select";
 import { toast, ToastContainer } from 'react-toastify';
 import { DeliverablesDialog } from '../Dialogs/DeliverableResponsability/DeliverablesDialog';
 import "./listEvent.scss";
+import CloseEventForm from "../Dialogs/CloseEventForm/CloseEventForm";
 
 const ListEvent = () => {
   const [eventos, setEventos] = useState([]);
@@ -19,6 +20,8 @@ const ListEvent = () => {
   const [update, setUpdate] = useState(false);
   const [id, setId] = useState("");
   const [tablaKey, setTablaKey] = useState(0); // Nuevo estado para la clave de la tabla
+  const [isClosedForm, setIsClosedForm] = useState(true);
+  const [openCloseEventForm, setOpenCloseEventForm] = useState(false); // Nuevo estado para controlar la visibilidad del formulario de cierre de evento
 
 
   const incrementTablaKey = () => {
@@ -118,6 +121,7 @@ const ListEvent = () => {
 
   const handleClose = () => {
     setClose(true);
+    setOpenCloseEventForm(false);
     setOpenForm(false);
     setUpdate(false);
     setId("");
@@ -137,6 +141,12 @@ const ListEvent = () => {
   const handleInputChangeDescription = (e) => {
     const { description, value } = e.target;
     setDescription(value);
+  };
+
+  const handleOpenCloseEventForm = () => {
+    setOpenCloseEventForm(true);
+    setOpenMenu(false);
+    setClose(false);
   };
 
   return (
@@ -170,9 +180,18 @@ const ListEvent = () => {
                 <strong>Espacio del evento:</strong> {eventSpace}
               </h4>
             </div>
-          <button className="btn-add-event" onClick={() => handleFormWindow()}>
-            Añadir Responsabilidad Especifica
-          </button>
+            <button
+              className="btn-add-event"
+              onClick={() => handleFormWindow()}
+            >
+              Añadir Responsabilidad Especifica
+            </button>
+            <button
+              className="btn-add-event"
+              onClick={() => handleOpenCloseEventForm()}
+            >
+              Cerrar Evento
+            </button>
           </div>
           <div className="table-style px-5" style={{ overflowY: "auto" }}>
             {selectedEvent && (
@@ -194,6 +213,23 @@ const ListEvent = () => {
           theme="light"
         />
       </div>
+
+      {openCloseEventForm && (
+        <div className={`form-container ${close ? "close" : ""}`}>
+          <div className={`form-main-box ${close ? "close" : ""}`}>
+            <div className="form-title">
+              <span>Cierre de Evento</span>
+              <i
+                className="fa-regular fa-circle-xmark"
+                onClick={() => handleClose()}
+              ></i>
+            </div>
+            <div className="main-form">
+              <CloseEventForm />
+            </div>
+          </div>
+        </div>
+      )}
 
       {openForm && (
         <div className={`form-container ${close ? "close" : ""}`}>
