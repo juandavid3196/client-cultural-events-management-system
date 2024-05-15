@@ -89,7 +89,7 @@ const DeliverablesDialog = ({ open, setDialogOpen, idEspecifyResponsability, edi
             }
 
             try {
-                const response = await fetch(`http://localhost:8007/api/bucket/upload-file/?event_id=${eventId}&responsability_id=${idEspecifyResponsability}`, {
+                const response = await fetch(`http://localhost:8007/api/accomplishments${idEspecifyResponsability}/updload-file`, {
                     method: 'POST',
                     body: formData,
                 });
