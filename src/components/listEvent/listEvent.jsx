@@ -11,6 +11,7 @@ const ListEvent = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [contractualMode, setContractualMode] = useState("");
   const [eventSpace, setEventSpace] = useState("");
+  const [stateId, setStateId] = useState("");
   const [close, setClose] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -19,13 +20,13 @@ const ListEvent = () => {
   const [update, setUpdate] = useState(false);
   const [id, setId] = useState("");
   const [tablaKey, setTablaKey] = useState(0); // Nuevo estado para la clave de la tabla
-  const [isClosedForm, setIsClosedForm] = useState(true);
   const [openCloseEventForm, setOpenCloseEventForm] = useState(false); // Nuevo estado para controlar la visibilidad del formulario de cierre de evento
 
 
   const incrementTablaKey = () => {
     setTablaKey(prevKey => prevKey + 1);
   };
+
 
   useEffect(() => {
     axios
@@ -65,6 +66,25 @@ const ListEvent = () => {
         })
         .catch((error) => {
           console.error("Error al obtener el espacio del evento:", error);
+        });
+
+      axios
+        .get(
+          `http://localhost:8007/api/eventstate/${selectedEvent.value}`
+        )
+        .then((response) => {
+          const stateId = response.data.id;
+          axios
+            .get(`http://localhost:8007/api/states/${stateId}`)
+            .then((response) => {
+              setStateId(response.data.name)
+            })
+            .catch((error) => {
+              console.error("Error al obtener el nombre del estado:", error);
+            });
+        })
+        .catch((error) => {
+          console.error("Error al obtener el id del estado:", error);
         });
     }
   }, [selectedEvent]);
@@ -165,7 +185,7 @@ const ListEvent = () => {
                   options={eventos}
                   value={selectedEvent}
                   onChange={handleSelectChange}
-                  placeholder="Buscar evento"
+                  placeholder="Escribe aqui para buscar evento"
                   isSearchable
                   styles={customStyles}
                 />
@@ -177,6 +197,9 @@ const ListEvent = () => {
               </h4>
               <h4>
                 <strong>Espacio del evento:</strong> {eventSpace}
+              </h4>
+              <h4>
+                <strong>Estadodel evento:</strong> {stateId}
               </h4>
             </div>
             <button
@@ -194,7 +217,7 @@ const ListEvent = () => {
           </div>
           <div className="table-style px-5" style={{ overflowY: "auto" }}>
             {selectedEvent && (
-              <TableSpecifyRespEvent key={tablaKey} eventId={selectedEvent.value} incrementTablaKey={incrementTablaKey}/>
+              <TableSpecifyRespEvent key={tablaKey} eventId={selectedEvent.value} incrementTablaKey={incrementTablaKey} />
             )}
           </div>
         </div>
@@ -217,7 +240,7 @@ const ListEvent = () => {
         <div className={`form-container ${close ? "close" : ""}`}>
           <div className={`form-main-box ${close ? "close" : ""}`}>
             <div className="form-title">
-              <span>Cierre de Evento</span>
+              <span>{selectedEvent.label}</span>
               <i
                 className="fa-regular fa-circle-xmark"
                 onClick={() => handleClose()}

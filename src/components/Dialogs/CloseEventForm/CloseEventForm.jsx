@@ -4,7 +4,6 @@ import "./CloseEventForm.scss";
 const CloseEventForm = () => {
   const [update, setUpdate] = useState(false);
   const [formData, setFormData] = useState({
-    eventName: "",
     totalAttendees: "",
     uploadDocuments: [],
     considerAddingDocuments: false,
@@ -13,7 +12,6 @@ const CloseEventForm = () => {
     palcosAndCourtesy: [],
     uploadedFiles: [],
     cashLiquidation: "",
-    accessCertificate: "",
     situationsWithOrganizer: "",
     situationsWithPublic: "",
     situationsWithAmbulance: "",
@@ -39,6 +37,7 @@ const CloseEventForm = () => {
       uploadedFiles: uploadedFiles.map((file) => file.name),
     }));
   };
+
   const handlePalcosFilesUpload = (event) => {
     const palcosAndCourtesy = Array.from(event.target.files);
     setFormData((prevData) => ({
@@ -80,33 +79,23 @@ const CloseEventForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="form-section event-section">
-        <span className="section-title">Cierre de Evento</span>
+        <span className="section-title font-bold">Cierre del evento</span>
         <div className="row">
-          <div className="form-box">
-            <label htmlFor="eventName">Nombre del Evento:</label>
-            <input
-              type="text"
-              name="eventName"
-              id="eventName"
-              value={formData.eventName}
-              onChange={handleChange}
-              placeholder="Ingrese el nombre del evento"
-            />
-          </div>
-
-          <div className="form-box">
-            <label htmlFor="totalAttendees">Total de asistentes:</label>
-            <input
-              type="number"
-              name="totalAttendees"
-              id="totalAttendees"
-              value={formData.totalAttendees}
-              onChange={handleChange}
-              placeholder="Ingrese el número total de asistentes"
-            />
-          </div>
 
           <div className="row two-colums">
+
+            <div className="form-box">
+              <label htmlFor="totalAttendees">Total de asistentes:</label>
+              <input
+                type="number"
+                name="totalAttendees"
+                id="totalAttendees"
+                value={formData.totalAttendees}
+                onChange={handleChange}
+                placeholder="Ingrese el número de asistentes"
+              />
+            </div>
+
             <div className="form-box">
               <label htmlFor="initiatedOnTime">Inició a tiempo:</label>
               <select

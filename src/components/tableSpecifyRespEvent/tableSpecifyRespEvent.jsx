@@ -30,7 +30,7 @@ function TableSpecifyRespEvent({ eventId, incrementTablaKey }) {
               <th className="text-black capitalize">Fecha de creación</th>
               <th className="capitalize text-black">Fecha de entrega</th>
               <th className="capitalize text-black">Estado</th>
-              <th className="capitalize text-black">Subir entregable</th>
+              <th className="capitalize text-black">Acciones de cumplimiento</th>
             </tr>
           </thead>
           <tbody>
@@ -39,11 +39,16 @@ function TableSpecifyRespEvent({ eventId, incrementTablaKey }) {
                 <td className="capitalize text-gray-500" style={{ overflow: 'visible' }}>
                   {event.specific_responsability_id ? (
                     <Tooltip title={event.specific_responsability_name} arrow>
-                      {event.specific_responsability_name}
+                      <div>
+                        {event.specific_responsability_name}
+                      </div>
                     </Tooltip>
                   ) : (
                     <Tooltip title={event.responsability_by_mode_name} arrow>
+                      <div>
                       {event.responsability_by_mode_name}
+                      </div>
+                      
                     </Tooltip>
                   )}
                 </td>
