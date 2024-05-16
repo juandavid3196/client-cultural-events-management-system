@@ -73,7 +73,7 @@ const DeliverablesDialog = ({ open, setDialogOpen, idEspecifyResponsability, edi
                     },
                     body: JSON.stringify({
                         text: observations,
-                        file_url: `${eventId}/${idEspecifyResponsability}/${file.name}`
+                        file_url: `accomplishment/${idEspecifyResponsability}/${file.name}`
                     })
                 });
 

@@ -21,10 +21,13 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
         );
 
 
+
         if (response.data.check) {
           setStatusAcomplishments(true)
           setNameFile(response.data.file_url)
+          console.log(nameFile)
         }
+
       } catch (error) {
         console.error("Error al obtener los datos de la responsabilidad:", error);
       }
@@ -35,7 +38,6 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
   const handleProgileDialogClick = () => {
     setEdit(false)
     setDialogOpen(true);
-    console.log(idEspecifyResponsability)
   };
 
   const handleEditClick = () => {
@@ -50,18 +52,18 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
         await axios.delete(
           `http://localhost:8007/api/bucket/delete-file/${nameFile}`
         );
-  
+
         await axios.patch(
           `http://localhost:8007/api/accomplishments/${idEspecifyResponsability}/cancel`
         );
-  
+
         incrementTablaKey();
-      } 
+      }
     } catch (error) {
       console.error("Error al borrar el archivo o cancelar el logro:", error);
     }
   };
-  
+
   const downloadDocumentDeliverable = async () => {
     try {
       const documentDownload = await axios.get(
@@ -135,7 +137,7 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
         :
         <Tooltip title="Deshacer la entrega de una responsabilidad, esto implica borrar el documento entregado y sus observaciones.">
           <div>
-            <MdCancel className="text-gray-900 hover:text-red-600 hover:cursor-pointer" onClick={cancelToAcomplishments}/>
+            <MdCancel className="text-gray-900 hover:text-red-600 hover:cursor-pointer" onClick={cancelToAcomplishments} />
           </div>
         </Tooltip>
       }
