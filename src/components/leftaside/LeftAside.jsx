@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import './LeftAside.scss';
 import { MdCalendarMonth, MdShield } from 'react-icons/md';
 import { IoCalendarNumberSharp } from "react-icons/io5";
@@ -7,9 +7,21 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
-import { Background } from 'devextreme-react/cjs/range-selector';
+import axios from 'axios';
 
 const LeftAside = () => {
+
+    const [modes, setModes] = useState([]);
+
+    useEffect(() => {
+        axios.get('http://localhost:8007/api/contractual-modes?active=true')
+            .then(response => {
+                setModes(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }, []);
 
     const { logout, user, isAuthenticated } = useAuth0();
 
@@ -28,14 +40,9 @@ const LeftAside = () => {
                 }
                 <div className='text-white'>
                     <Card
-                        options={[
-                            <Link to="/tablapermisos?modeId=1">Alquiler</Link>,
-                            <Link to="/tablapermisos?modeId=2">Propio</Link>,
-                            <Link to="/tablapermisos?modeId=3">Proyecto</Link>,
-                            <Link to="/tablapermisos?modeId=4">Co-producción</Link>,
-                            <Link to="/tablapermisos?modeId=5">Apoyo</Link>,
-                            <Link to="/tablapermisos?modeId=6">Canje</Link>,
-                        ]}
+                        options={modes.map(mode => (
+                            <Link key={mode.id} to={`/tablapermisos?modeId=${mode.id}`}>{mode.name}</Link>
+                        ))}
                         text="Modalidades"
                         icon={<MdShield />}
                     />

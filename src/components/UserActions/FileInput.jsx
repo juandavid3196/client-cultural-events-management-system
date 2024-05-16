@@ -26,7 +26,7 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
           setNameFile(response.data.file_url)
         }
       } catch (error) {
-        console.error("Error al obtener los datos del evento:", error);
+        console.error("Error al obtener los datos de la responsabilidad:", error);
       }
     };
     fetchEventData();
@@ -35,6 +35,7 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
   const handleProgileDialogClick = () => {
     setEdit(false)
     setDialogOpen(true);
+    console.log(idEspecifyResponsability)
   };
 
   const handleEditClick = () => {
@@ -42,7 +43,25 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
     setDialogOpen(true);
   }
 
-
+  const cancelToAcomplishments = async () => {
+    try {
+      const confirmar = window.confirm("¿Estás seguro de cancelar esta entrega?");
+      if (confirmar) {
+        await axios.delete(
+          `http://localhost:8007/api/bucket/delete-file/${nameFile}`
+        );
+  
+        await axios.patch(
+          `http://localhost:8007/api/accomplishments/${idEspecifyResponsability}/cancel`
+        );
+  
+        incrementTablaKey();
+      } 
+    } catch (error) {
+      console.error("Error al borrar el archivo o cancelar el logro:", error);
+    }
+  };
+  
   const downloadDocumentDeliverable = async () => {
     try {
       const documentDownload = await axios.get(
@@ -54,7 +73,9 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
       const fileURL = window.URL.createObjectURL(new Blob([documentDownload.data]))
       const fileLink = document.createElement('a')
       fileLink.href = fileURL
-      fileLink.setAttribute('download', nameFile)
+      const urlParts = nameFile.split("/");
+      const ultimoSegmento = urlParts[urlParts.length - 1];
+      fileLink.setAttribute('download', ultimoSegmento)
       document.body.appendChild(fileLink)
       fileLink.click()
 
@@ -114,7 +135,7 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
         :
         <Tooltip title="Deshacer la entrega de una responsabilidad, esto implica borrar el documento entregado y sus observaciones.">
           <div>
-            <MdCancel className="text-gray-900 hover:text-red-600 hover:cursor-pointer" />
+            <MdCancel className="text-gray-900 hover:text-red-600 hover:cursor-pointer" onClick={cancelToAcomplishments}/>
           </div>
         </Tooltip>
       }
