@@ -105,61 +105,77 @@ const ResponsabilitiesManager = () => {
 
     const saveResponsability = async () => {
         try {
+            let response;
             if (!update) {
-                const response = await fetch('http://localhost:8007/api/responsability', {
+                response = await fetch('http://localhost:8007/api/responsability', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ name, description }),
                 });
-
+    
                 if (response.ok) {
                     console.log('El recurso fue creado exitosamente.');
-                    toast.success('¡Responsabilidad Añadida con Exito!');
+                    toast.success('¡Responsabilidad Añadida con Éxito!');
                 } else {
                     console.error('Hubo un problema al crear el recurso:', response.statusText);
                 }
             } else {
-                const response = await fetch(`http://localhost:8007/api/responsability/${id}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ name: name, description: description }),
-
-                });
-
-                if (file) {
+                if (!file) {
+                    response = await fetch(`http://localhost:8007/api/responsability/${id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ name, description }),
+                    });
+                } else {
+                    
+                    if (file.name.slice(0, file.name.lastIndexOf('.')) !== name) {
+                        toast.error('Por favor, coloque el nombre del archivo igual al de la responsabilidad para poder subir la plantilla');
+                        return; 
+                    }
+    
                     const formData = new FormData();
                     formData.append('file', file);
+
+                    response = await fetch(`http://localhost:8007/api/responsability/${id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ name: name, description: description, template_url: `template/${id}/${file.name}`}),
+                    });
+
                     try {
-                        const response = await fetch(`http://localhost:8007/api/responsability${id}/updload-file`, {
+                        const fileUploadResponse = await fetch(`http://localhost:8007/api/responsability${id}/updload-file`, {
                             method: 'POST',
                             body: formData,
                         });
-        
-                        if (response.ok) {
-                            console.log('File uploaded successfully!');
+    
+                        if (fileUploadResponse.ok) {
+                            console.log('¡Archivo subido exitosamente!');
                         } else {
-                            console.error('Failed to upload file');
+                            console.error('Error al subir el archivo');
                         }
                     } catch (error) {
-                        console.error('Error uploading file:', error);
+                        console.error('Error al subir el archivo:', error);
                     }
-                }
-
-                if (response.ok) {
-                    console.log('El recurso fue actualizado exitosamente.');
-                    toast.success('¡Responsabilidad Actualizada con Éxito!');
-                } else {
-                    console.error('Hubo un problema al actualizar el recurso:', response.statusText);
+                    
                 }
             }
-
+    
+            if (response.ok) {
+                console.log('El recurso fue actualizado exitosamente.');
+                toast.success('¡Responsabilidad Actualizada con Éxito!');
+            } else {
+                console.error('Hubo un problema al actualizar el recurso:', response.statusText);
+            }
         } catch (error) {
             console.error('Hubo un error al realizar la solicitud:', error.message);
         }
+    
         setUpdate(false);
         handleClose();
     }
@@ -191,7 +207,7 @@ const ResponsabilitiesManager = () => {
                         <div className='input-box'>
                             <div className="input-box-relative">
                                 <input type="text" placeholder='Buscar' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <i className="fa-solid fa-magnifying-glass"></i>
                             </div>
                         </div>
                         <button className='btn-add-event' onClick={() => handleFormWindow()}>Añadir Responsabilidad</button>
@@ -221,7 +237,7 @@ const ResponsabilitiesManager = () => {
 
                 <ToastContainer
                     position="top-right"
-                    autoClose={800}
+                    autoClose={false}
                     hideProgressBar={false}
                     newestOnTop={false}
                     closeOnClick
@@ -240,7 +256,7 @@ const ResponsabilitiesManager = () => {
 
                             <div className='form-title'>
                                 <span> {update ? "Editar Responsabilidad" : "Crear Responsabilidad"} </span>
-                                <i class="fa-regular fa-circle-xmark" onClick={() => handleClose()}></i>
+                                <i className="fa-regular fa-circle-xmark" onClick={() => handleClose()}></i>
                             </div>
                             <div className="main-form">
                                 <form onSubmit={handleForm}>
