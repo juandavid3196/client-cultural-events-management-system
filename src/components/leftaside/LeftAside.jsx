@@ -7,7 +7,6 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
-import { Background } from 'devextreme-react/cjs/range-selector';
 
 const LeftAside = () => {
 
@@ -70,8 +69,7 @@ const LeftAside = () => {
                             <Link to="/states"> Gestor de Estados</Link>,
                             <Link to="/places"> Gestor de Espacios</Link>,
                             <Link to="/modalities"> Gestor de Modalidades</Link>,
-                            <Link to="/responsabilities"> Gestor de Responsabilidades</Link>
-
+                            <Link to="/responsabilities"> Gestor de Responsabilidades</Link>,
                         ]}
 
                         text="Configuración"

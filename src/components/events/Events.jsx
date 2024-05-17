@@ -8,6 +8,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import EventData from '../eventData/EventData';
 import ChangeState from '../changeState/ChangeState';
 import StateReport from '../stateReport/StateReport';
+import { useAuth0 } from "@auth0/auth0-react";
+import { createAuth0Client } from '@auth0/auth0-spa-js';
 
 const Events = () => {
 
@@ -24,15 +26,35 @@ const Events = () => {
 	const [deploy, setDeploy] = useState(false)
 	const [subId, setSubId] = useState(false);
 	const [fullData, setFullData] = useState({});
+	const [token, setToken] = useState(null);
+	const [user, setUser] = useState(null);
+	const { getAccessTokenSilently } = useAuth0();
+	let auth0 = null;
+
 
 
 	const { setSubEvent, id, setId, subEvent, openState, setOpenState } = useAppContext();
 
 	useEffect(() => {
 		getFullEvents();
+		fetchData();
 	}, []);
 
 	const filteredEvents = events.filter(event => event.general_name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+	const fetchData = async () => {
+		try {
+			// Get the access token silently
+			const accessToken = await getAccessTokenSilently({
+				audience: 'http://localhost:3001', // Specify the audience (API identifier)
+			});
+
+			// Now you have the access token, you can use it to make authenticated requests to your API
+			console.log('Access Token:', accessToken);
+		} catch (error) {
+			console.error('Error getting access token:', error);
+		}
+	};
 
 	const closeForm = () => {
 		setOpenForm(false);
