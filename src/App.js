@@ -64,8 +64,8 @@ const AppContent = () => {
 			<Route path="/states" element={<StatesManager />} />
 			<Route path="/places" element={<PlacesManager />} />
 			<Route path="/modalities" element={<ModalityManager />} />
-			<Route path="*" element={<NotFoundPage />} />
 			<Route path="/responsabilities" element={<ResponsabilitiesManager />} />
+			<Route path="*" element={<NotFoundPage />} />
 		</Routes>;
 	}
 

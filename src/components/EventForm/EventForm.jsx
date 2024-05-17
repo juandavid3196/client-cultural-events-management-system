@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import crudService from '../../services/crudService'
 import 'react-toastify/dist/ReactToastify.css';
 import { useAppContext } from '../../contexts/AppContext';
+import { useAuth0 } from "@auth0/auth0-react";
 
 
 const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateState, onGetFullEvents, setUpdate }) => {
@@ -16,6 +17,9 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const [modalities, setModalities] = useState([]);
 	const [spaces, setSpaces] = useState([]);
 	const [states, setStates] = useState([]);
+	const { user, isAuthenticated } = useAuth0();
+
+	console.log(user);
 	const { setSubEvent, subEvent, id, setOpenState, openState, unicState, typeStateFilter, updateState, setUpdateState } = useAppContext();
 
 	const [formData, setFormData] = useState({
@@ -47,7 +51,9 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		access_data: "",
 		ticket_company: "",
 		age_restriction: "",
-		agreement: ""
+		agreement: "",
+		user_email: isAuthenticated ? user.email : '',
+		user_name: isAuthenticated ? user.nickname : '',
 	}
 	);
 
@@ -62,6 +68,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 		event_id: '',
 		state_id: '',
 		justification: 'default',
+		user_email: isAuthenticated ? user.email : '',
 	})
 
 

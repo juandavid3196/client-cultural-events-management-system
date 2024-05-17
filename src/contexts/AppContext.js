@@ -48,11 +48,22 @@ export function AppContextProvider({ children }) {
         return spaces;
     }
 
+    function checkPermission(userRoles, requiredPermission) {
+
+        for (let role of userRoles) {
+
+            if (role.permissions && role.permissions.includes(requiredPermission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     return (
         <AppContext.Provider value={{
             subEvent, setSubEvent,
             id, setId,
-            typeStateFilter, typeModalityFilter,
+            typeStateFilter, typeModalityFilter, checkPermission,
             typePlaceFilter, modalities, spaces, unicState,
             openState, setOpenState,
             updateState, setUpdateState
