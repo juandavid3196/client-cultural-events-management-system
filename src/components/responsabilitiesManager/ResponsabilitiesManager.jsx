@@ -9,6 +9,7 @@ const ResponsabilitiesManager = () => {
 
     const [openForm, setOpenForm] = useState(false);
     const [openMenu, setOpenMenu] = useState(false);
+    const [file, setFile] = useState(null);
     const [update, setUpdate] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [close, setClose] = useState(false);
@@ -129,6 +130,25 @@ const ResponsabilitiesManager = () => {
 
                 });
 
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    try {
+                        const response = await fetch(`http://localhost:8007/api/responsability${id}/updload-file`, {
+                            method: 'POST',
+                            body: formData,
+                        });
+        
+                        if (response.ok) {
+                            console.log('File uploaded successfully!');
+                        } else {
+                            console.error('Failed to upload file');
+                        }
+                    } catch (error) {
+                        console.error('Error uploading file:', error);
+                    }
+                }
+
                 if (response.ok) {
                     console.log('El recurso fue actualizado exitosamente.');
                     toast.success('¡Responsabilidad Actualizada con Éxito!');
@@ -143,6 +163,14 @@ const ResponsabilitiesManager = () => {
         setUpdate(false);
         handleClose();
     }
+
+    const handleTemplate = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setFile(e.target.files[0]);
+        }
+        console.log(file)
+
+    };
 
     //// CRUD OPERATIONS
 
@@ -190,6 +218,7 @@ const ResponsabilitiesManager = () => {
                             ))}
                     </div>
                 </div>
+
                 <ToastContainer
                     position="top-right"
                     autoClose={800}
@@ -202,7 +231,7 @@ const ResponsabilitiesManager = () => {
                     pauseOnHover
                     theme="light"
                 />
-            </div>
+            </div >
 
             {
                 openForm && (
@@ -226,6 +255,18 @@ const ResponsabilitiesManager = () => {
                                                 <label htmlFor="responsability_descriptión">Descripción de la responsabilidad</label>
                                                 <input type="text" name='responsability_descriptión' onChange={handleInputChangeDescription} value={description} placeholder='Nombre de la responsabilidad' />
                                             </div>
+                                            <div className="form-box">
+                                                <label htmlFor="acomodadoresArqueo">
+                                                    Plantilla:
+                                                </label>
+                                                <input
+                                                    type="file"
+                                                    name="template"
+                                                    id="template"
+                                                    multiple
+                                                    onChange={handleTemplate}
+                                                />
+                                            </div>
                                         </div>
                                         <div className={`row ${update ? "two-colums" : ""}`}>
                                             {update && (
@@ -242,7 +283,8 @@ const ResponsabilitiesManager = () => {
                             </div>
                         </div>
                     </div>
-                )}
+                )
+            }
         </>
     )
 }

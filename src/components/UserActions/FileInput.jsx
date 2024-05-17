@@ -7,11 +7,12 @@ import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
 import { saveAs } from 'file-saver';
 
-const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => {
+const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey, idByMode }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [edit, setEdit] = useState(false);
   const [statusAcomplishments, setStatusAcomplishments] = useState(false);
   const [nameFile, setNameFile] = useState("");
+  const [idResp, setIdResp] = useState("");
 
   useEffect(() => {
     const fetchEventData = async () => {
@@ -21,19 +22,36 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
         );
 
 
-
         if (response.data.check) {
           setStatusAcomplishments(true)
           setNameFile(response.data.file_url)
-          console.log(nameFile)
         }
-
       } catch (error) {
         console.error("Error al obtener los datos de la responsabilidad:", error);
       }
     };
     fetchEventData();
   }, [idEspecifyResponsability]);
+
+  useEffect(() => {
+    const fetchIdResp = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8007/api/responsability-by-mode/${idByMode}`
+        );
+
+
+        if (response.data.responsability_id) {
+          setIdResp(response.data.responsability_id)
+        }
+      } catch (error) {
+        console.error("Error al obtener el id de la responsabilidad:", error);
+      }
+    };
+    fetchIdResp();
+  }, [idByMode]);
+
+
 
   const handleProgileDialogClick = () => {
     setEdit(false)
@@ -71,7 +89,7 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
         responseType: 'blob',
       }
       );
-
+      
       const fileURL = window.URL.createObjectURL(new Blob([documentDownload.data]))
       const fileLink = document.createElement('a')
       fileLink.href = fileURL
@@ -86,24 +104,28 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
     }
   }
 
-  /*const generateDocumentTemplate = async () => {
+  const generateDocumentTemplate = async () => {
+
     try {
       // Load the document template from a URL
-      const response = await fetch('espacioPublico.docx');
-      if (!response.ok) {
-        throw new Error('Failed to load the document template.');
+      const template= await axios.get(
+        `http://localhost:8007/api/bucket/download-file/template/1/espacioPublico.docx`, {
+        responseType: 'blob',
       }
-      const templateData = await response.arrayBuffer();
+      );
+      const templateData = await template.data.arrayBuffer();
 
       const zip = new PizZip(templateData);
       const doc = new Docxtemplater(zip);
 
       // Data to fill the document
       const data = {
-        fecha: 'Medellin, 1 de agosto de 2024',
         contenido: 'Official show of Clown PLIM PLIM on August 27, 2023 from 4:00 pm',
         asunto: 'Event of August 27, 2023',
-        id: idEspecifyResponsability // Aquí se pasa el ID como parte de los datos
+        estado: 'Official show of Clown PLIM PLIM on August 27, 2023 from 4:00 pm',
+        finalizacion: 'Event of August 27, 2023',
+        iniciacion: 'Official show of Clown PLIM PLIM on August 27, 2023 from 4:00 pm',
+        terminacion: 'Event of August 27, 2023',
       };
 
       // Fill the template with data
@@ -118,7 +140,7 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
     } catch (error) {
       console.error('Error generating the document:', error);
     }
-  };*/
+  };
 
   return (
 
@@ -165,7 +187,7 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey }) => 
 
       <Tooltip title="Descargar una plantilla previamente cargada y llena con alguna información del evento actualmente en revisión.">
         <div>
-          <MdEditDocument className="text-gray-900 hover:text-gray-500 hover:cursor-pointer" />
+          <MdEditDocument className="text-gray-900 hover:text-gray-500 hover:cursor-pointer" onClick={generateDocumentTemplate} />
         </div>
       </Tooltip>
 

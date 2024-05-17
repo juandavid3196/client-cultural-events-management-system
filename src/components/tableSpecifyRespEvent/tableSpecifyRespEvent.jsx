@@ -79,7 +79,7 @@ function TableSpecifyRespEvent({ eventId, incrementTablaKey }) {
                 </td>
 
                 <td className="flex flex-row justify-center">
-                  <FileInput idEspecifyResponsability={event.accomplishment_id} eventId={eventId} incrementTablaKey={incrementTablaKey} />
+                  <FileInput idEspecifyResponsability={event.accomplishment_id} eventId={eventId} incrementTablaKey={incrementTablaKey} idByMode={event.responsability_by_mode_id} />
                 </td>
               </tr>
             ))}
