@@ -3,6 +3,7 @@ import "../changeState/ChangeState.scss"
 import { toast } from 'react-toastify';
 import crudService from '../../services/crudService';
 import { useAppContext } from '../../contexts/AppContext';
+import { useAuth0 } from "@auth0/auth0-react";
 
 const ChangeState = ({ onCloseState, id, element, update }) => {
 
@@ -16,6 +17,7 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
     const [date, setDate] = useState('');
     const [states, setStates] = useState([]);
     const [stateId, setStateId] = useState('');
+    const { user, isAuthenticated } = useAuth0();
     const { setSubEvent, unicState, typeStateFilter, openState, subEvent } = useAppContext();
 
     const [formData, setFormData] = useState({
@@ -29,6 +31,7 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
         state_name: '',
         justification: '',
         event_id: '',
+        user_email: isAuthenticated ? user.email : '',
     })
 
 

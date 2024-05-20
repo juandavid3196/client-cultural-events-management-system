@@ -7,6 +7,7 @@ import crudService from '../../services/crudService';
 import Spinner from '../spinner/Spinner';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'react-toastify';
+import { useAuth0 } from "@auth0/auth0-react";
 
 const localizer = momentLocalizer(moment)
 
@@ -21,6 +22,7 @@ const Schedule = () => {
     const [modalities, setModalities] = useState([]);
     const [spaces, setSpaces] = useState([]);
     const [states, setStates] = useState([]);
+    const { user, isAuthenticated } = useAuth0();
     const [id, setId] = useState('');
 
     const [formData, setFormData] = useState({
@@ -52,7 +54,9 @@ const Schedule = () => {
         access_data: "",
         ticket_company: "",
         age_restriction: "",
-        agreement: ""
+        agreement: "",
+        user_email: isAuthenticated ? user.email : '',
+        user_name: isAuthenticated ? user.nickname : '',
     }
     );
 
@@ -66,6 +70,7 @@ const Schedule = () => {
         event_id: '',
         state_id: '',
         justification: 'default',
+        user_email: isAuthenticated ? user.email : '',
     })
 
     useEffect(() => {
