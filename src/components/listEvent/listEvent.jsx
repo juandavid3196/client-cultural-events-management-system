@@ -19,8 +19,8 @@ const ListEvent = () => {
   const [openMenu, setOpenMenu] = useState(false);
   const [update, setUpdate] = useState(false);
   const [id, setId] = useState("");
-  const [tablaKey, setTablaKey] = useState(0); // Nuevo estado para la clave de la tabla
-  const [openCloseEventForm, setOpenCloseEventForm] = useState(false); // Nuevo estado para controlar la visibilidad del formulario de cierre de evento
+  const [tablaKey, setTablaKey] = useState(0); 
+  const [openCloseEventForm, setOpenCloseEventForm] = useState(false);
 
 
   const incrementTablaKey = () => {
@@ -247,7 +247,7 @@ const ListEvent = () => {
               ></i>
             </div>
             <div className="main-form">
-              <CloseEventForm />
+              <CloseEventForm eventId={selectedEvent.value} />
             </div>
           </div>
         </div>

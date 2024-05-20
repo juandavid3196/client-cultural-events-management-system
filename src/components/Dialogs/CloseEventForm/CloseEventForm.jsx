@@ -1,25 +1,22 @@
 import React, { useState } from "react";
 import "./CloseEventForm.scss";
 
-const CloseEventForm = () => {
+const CloseEventForm = ({ eventId }) => {
   const [update, setUpdate] = useState(false);
+
   const [formData, setFormData] = useState({
     totalAttendees: "",
-    uploadDocuments: [],
-    considerAddingDocuments: false,
     initiatedOnTime: "",
     finalizedOnTime: "",
-    palcosAndCourtesy: [],
-    uploadedFiles: [],
-    cashLiquidation: "",
+    filesAcomodadoresArqueo: [],
+    filesBoleteriaLiquidacion: [],
+    filesAccessCertificate: [],
+    filesPalcosAndCourtesy: [],
     situationsWithOrganizer: "",
     situationsWithPublic: "",
     situationsWithAmbulance: "",
-    situationsWithEntities: "",
+    situationsWithEntitiesControl: "",
     situationsWithLogistics: "",
-    acomodadoresArqueo: [],
-    boleteriaLiquidacion: [],
-    accessCertificate: [],
   });
 
   const handleChange = (event) => {
@@ -30,19 +27,11 @@ const CloseEventForm = () => {
     }));
   };
 
-  const handleFileUpload = (event) => {
-    const uploadedFiles = Array.from(event.target.files);
-    setFormData((prevData) => ({
-      ...prevData,
-      uploadedFiles: uploadedFiles.map((file) => file.name),
-    }));
-  };
-
   const handlePalcosFilesUpload = (event) => {
     const palcosAndCourtesy = Array.from(event.target.files);
     setFormData((prevData) => ({
       ...prevData,
-      palcosAndCourtesy: palcosAndCourtesy.map((file) => file.name),
+      filesPalcosAndCourtesy: palcosAndCourtesy
     }));
   };
 
@@ -50,7 +39,7 @@ const CloseEventForm = () => {
     const uploadedFiles = Array.from(event.target.files);
     setFormData((prevData) => ({
       ...prevData,
-      acomodadoresArqueo: uploadedFiles.map((file) => file.name),
+      filesAcomodadoresArqueo: uploadedFiles
     }));
   };
 
@@ -58,7 +47,7 @@ const CloseEventForm = () => {
     const uploadedFiles = Array.from(event.target.files);
     setFormData((prevData) => ({
       ...prevData,
-      boleteriaLiquidacion: uploadedFiles.map((file) => file.name),
+      filesBoleteriaLiquidacion: uploadedFiles
     }));
   };
 
@@ -66,7 +55,7 @@ const CloseEventForm = () => {
     const uploadedFiles = Array.from(event.target.files);
     setFormData((prevData) => ({
       ...prevData,
-      accessCertificate: uploadedFiles.map((file) => file.name),
+      filesAccessCertificate: uploadedFiles
     }));
   };
 
@@ -92,6 +81,7 @@ const CloseEventForm = () => {
                 id="totalAttendees"
                 value={formData.totalAttendees}
                 onChange={handleChange}
+                required
                 placeholder="Ingrese el número de asistentes"
               />
             </div>
@@ -140,19 +130,17 @@ const CloseEventForm = () => {
                 onChange={handlePalcosFilesUpload}
                 placeholder="Ingrese la información de palcos y cortesías"
               />
-              {formData.palcosAndCourtesy.length > 0 && (
+              {formData.filesPalcosAndCourtesy && formData.filesPalcosAndCourtesy.length > 0 && (
                 <ul>
-                  {formData.palcosAndCourtesy.map((file) => (
-                    <li key={file}>{file}</li>
+                  {formData.filesPalcosAndCourtesy.map((file, index) => (
+                    <li key={index}>{file.name}</li>
                   ))}
                 </ul>
               )}
             </div>
 
             <div className="form-box">
-              <label htmlFor="acomodadoresArqueo">
-                Arqueo de acomodadores:
-              </label>
+              <label htmlFor="acomodadoresArqueo">Arqueo de acomodadores:</label>
               <input
                 type="file"
                 name="acomodadoresArqueo"
@@ -160,10 +148,10 @@ const CloseEventForm = () => {
                 multiple
                 onChange={handleAcomodadoresArqueoUpload}
               />
-              {formData.acomodadoresArqueo.length > 0 && (
+              {formData.filesAcomodadoresArqueo && formData.filesAcomodadoresArqueo.length > 0 && (
                 <ul>
-                  {formData.acomodadoresArqueo.map((file) => (
-                    <li key={file}>{file}</li>
+                  {formData.filesAcomodadoresArqueo.map((file, index) => (
+                    <li key={index}>{file.name}</li>
                   ))}
                 </ul>
               )}
@@ -172,9 +160,7 @@ const CloseEventForm = () => {
 
           <div className="row two-colums">
             <div className="form-box">
-              <label htmlFor="boleteriaLiquidacion">
-                Liquidación de boletería:
-              </label>
+              <label htmlFor="boleteriaLiquidacion">Liquidación de boletería:</label>
               <input
                 type="file"
                 name="boleteriaLiquidacion"
@@ -182,10 +168,10 @@ const CloseEventForm = () => {
                 multiple
                 onChange={handleBoleteriaLiquidacionUpload}
               />
-              {formData.boleteriaLiquidacion.length > 0 && (
+              {formData.filesBoleteriaLiquidacion && formData.filesBoleteriaLiquidacion.length > 0 && (
                 <ul>
-                  {formData.boleteriaLiquidacion.map((file) => (
-                    <li key={file}>{file}</li>
+                  {formData.filesBoleteriaLiquidacion.map((file, index) => (
+                    <li key={index}>{file.name}</li>
                   ))}
                 </ul>
               )}
@@ -200,10 +186,10 @@ const CloseEventForm = () => {
                 multiple
                 onChange={handleAccessCertificateUpload}
               />
-              {formData.accessCertificate.length > 0 && (
+              {formData.filesAccessCertificate && formData.filesAccessCertificate.length > 0 && (
                 <ul>
-                  {formData.accessCertificate.map((file) => (
-                    <li key={file}>{file}</li>
+                  {formData.filesAccessCertificate.map((file, index) => (
+                    <li key={index}>{file.name}</li>
                   ))}
                 </ul>
               )}
@@ -214,9 +200,10 @@ const CloseEventForm = () => {
             <label htmlFor="situationsWithOrganizer">
               Situaciones con el organizador:
             </label>
-            <input
+            <textarea
               type="text"
               name="situationsWithOrganizer"
+              cols="30" rows="4"
               id="situationsWithOrganizer"
               value={formData.situationsWithOrganizer}
               onChange={handleChange}
@@ -228,9 +215,10 @@ const CloseEventForm = () => {
             <label htmlFor="situationsWithPublic">
               Situaciones con el público:
             </label>
-            <input
+            <textarea
               type="text"
               name="situationsWithPublic"
+              cols="30" rows="4"
               id="situationsWithPublic"
               value={formData.situationsWithPublic}
               onChange={handleChange}
@@ -242,9 +230,10 @@ const CloseEventForm = () => {
             <label htmlFor="situationsWithAmbulance">
               Situaciones con la ambulancia / APH:
             </label>
-            <input
+            <textarea
               type="text"
               name="situationsWithAmbulance"
+              cols="30" rows="4"
               id="situationsWithAmbulance"
               value={formData.situationsWithAmbulance}
               onChange={handleChange}
@@ -256,11 +245,12 @@ const CloseEventForm = () => {
             <label htmlFor="situationsWithEntities">
               Situaciones con entidades de control (Inspecciones) :
             </label>
-            <input
+            <textarea
               type="text"
               name="situationsWithEntities"
+              cols="30" rows="4"
               id="situationsWithEntities"
-              value={formData.situationsWithEntities}
+              value={formData.situationsWithEntitiesControl}
               onChange={handleChange}
               placeholder="Ingrese las situaciones con entidades"
             />
@@ -270,9 +260,10 @@ const CloseEventForm = () => {
             <label htmlFor="situationsWithLogistics">
               Situaciones con logísticas (Cambios a ultima hora):
             </label>
-            <input
+            <textarea
               type="text"
               name="situationsWithLogistics"
+              cols="30" rows="4"
               id="situationsWithLogistics"
               value={formData.situationsWithLogistics}
               onChange={handleChange}
