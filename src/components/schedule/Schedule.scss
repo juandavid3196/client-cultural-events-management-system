@@ -312,3 +312,29 @@
     }
 
 }
+
+
+
+@media (max-width: 1024px) {
+
+    .calendar-container {
+        .form-container {
+            .form-main-box {
+                .main-form {
+                    form {
+                        .form-section {
+                            .two-colums {
+                                flex-direction: column;
+
+                                .form-box {
+                                    width: 100%;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}

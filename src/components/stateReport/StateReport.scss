@@ -291,3 +291,100 @@
         }
     }
 }
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .state-report-big-container {
+        .state-report-container {
+            main {
+                .event-section {
+                    .filter-container {
+                        height: auto;
+                        width: 100vw;
+                        flex-direction: column;
+                        gap: 12px;
+
+                        .filter-box {
+                            width: 100%;
+                        }
+
+                        .date-filter {
+                            justify-content: space-between;
+                        }
+
+                    }
+
+                    form {
+
+                        .row {
+                            gap: 18px;
+                        }
+
+                        .two-colums {
+                            flex-direction: column;
+                            gap: 15px;
+                            justify-content: none;
+                            margin-bottom: 15px;
+
+                            .form-box {
+                                width: 100%;
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+@media (max-width: 768px) {
+    .state-report-big-container {
+        .state-report-container {
+            main {
+                .event-section {
+                    .filter-container {
+                        height: auto;
+                        width: 100vw;
+                        flex-direction: column;
+                        gap: 12px;
+
+                        .filter-box {
+                            width: 100%;
+                        }
+
+                        .date-filter {
+                            justify-content: space-between;
+                            flex-direction: column;
+
+                            .filter-second-box {
+                                width: 100%;
+                            }
+                        }
+
+                    }
+
+                    form {
+
+                        .row {
+                            gap: 18px;
+                        }
+
+                        .two-colums {
+                            flex-direction: column;
+                            gap: 15px;
+                            justify-content: none;
+                            margin-bottom: 15px;
+
+                            .form-box {
+                                width: 100%;
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+}

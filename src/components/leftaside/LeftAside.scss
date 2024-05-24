@@ -1,3 +1,11 @@
+.menu-icon {
+    display: none;
+}
+
+.return-icon {
+    display: none;
+}
+
 .container {
     width: 310px;
     height: 100vh;
@@ -58,4 +66,131 @@
 
 
     }
+}
+
+
+
+@media (min-width:769px) and (max-width: 1024px) {
+    .container {
+        width: 10%;
+        transition: width 0.3s ease-in-out;
+        display: block;
+        background-color: #1B222A;
+
+        /* Inicialmente oculta el menú */
+        .aside-top {
+            .menu-icon {
+                display: block;
+                font-size: 50px;
+                color: white;
+            }
+
+            .return-icon {
+                display: none;
+            }
+
+            img {
+                display: none;
+            }
+        }
+
+        .aside-bottom {
+            display: none;
+        }
+
+    }
+
+    .container.open {
+        width: 30%;
+        transition: width 0.3s ease-in-out;
+        display: block;
+        position: fixed;
+        z-index: 1000;
+
+        /* Muestra el menú cuando está abierto */
+        .aside-top {
+            .menu-icon {
+                display: none;
+            }
+
+            img {
+                display: none;
+            }
+
+            .return-icon {
+                display: block;
+                font-size: 50px;
+                color: white;
+            }
+        }
+
+        .aside-bottom {
+            display: block;
+        }
+    }
+
+
+
+}
+
+@media (max-width: 768px) {
+
+    .container {
+        width: 10%;
+        transition: width 0.3s ease-in-out;
+        display: block;
+        background-color: #1B222A;
+
+        /* Inicialmente oculta el menú */
+        .aside-top {
+            .menu-icon {
+                display: block;
+                font-size: 50px;
+                color: white;
+            }
+
+            .return-icon {
+                display: none;
+            }
+
+            img {
+                display: none;
+            }
+        }
+
+        .aside-bottom {
+            display: none;
+        }
+
+    }
+
+    .container.open {
+        width: 50%;
+        transition: width 0.3s ease-in-out;
+        display: block;
+        position: fixed;
+        z-index: 1000;
+
+        /* Muestra el menú cuando está abierto */
+        .aside-top {
+            .menu-icon {
+                display: none;
+            }
+
+            img {
+                display: none;
+            }
+
+            .return-icon {
+                display: block;
+                font-size: 50px;
+                color: white;
+            }
+        }
+
+        .aside-bottom {
+            display: block;
+        }
+    }
+
 }
