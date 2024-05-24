@@ -25,7 +25,7 @@ const LeftAside = () => {
                     <IoIosReturnLeft className='return-icon' onClick={toggleMenu} />
 
                 </div>
-                <div className="aside-bottom">
+                <div className="aside-bottom  event-section">
                     {isAuthenticated && (
                         <div className='user-info'>
                             <span className='user-name'>{user.nickname}</span>
