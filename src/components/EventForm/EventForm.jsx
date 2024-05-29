@@ -19,7 +19,6 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	const [states, setStates] = useState([]);
 	const { user, isAuthenticated } = useAuth0();
 
-	console.log(user);
 	const { setSubEvent, subEvent, id, setOpenState, openState, unicState, typeStateFilter, updateState, setUpdateState } = useAppContext();
 
 	const [formData, setFormData] = useState({
@@ -389,7 +388,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 	}
 
 	return (
-		<div className={`form-container ${close ? 'close' : ''}`}>
+		<div className={`event-form-container ${close ? 'close' : ''}`}>
 			<div className={`form-main-box ${close ? 'close' : ''}`}>
 				<div className='form-title'>
 					<span>{subEvent && update ? 'Editar Sub-Evento' : update ? 'Editar Evento' : subEvent ? 'Añadir Sub-Evento' : 'Añadir Evento'}</span>
@@ -542,7 +541,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 						}
 						{
 							section === 'cliente' && (
-								<div className="form-section">
+								<div className="form-section event-section">
 									<span className='section-title'>Datos del Solicitante</span>
 									<div className="row">
 										<div className="form-box">
@@ -581,7 +580,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 						}
 						{
 							section === 'tecnica' && (
-								<div className="form-section">
+								<div className="form-section event-section">
 									<span className='section-title'>Datos Técnicos</span>
 									<div><span className='form-subtitle'>Fecha y Hora Montaje</span></div>
 									<div className="row two-colums">

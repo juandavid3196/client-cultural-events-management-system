@@ -187,7 +187,7 @@
 
                             input {
                                 background-color: white;
-                                height: 30px;
+                                height: 35px;
                                 border-style: none;
                                 border: 1px solid #D3D3D3;
                                 border-radius: 5px;
@@ -205,6 +205,7 @@
                                 border-radius: 5px;
                                 resize: none;
                                 font-family: 'Poppins', sans-serif;
+                                padding: 3px 5px;
                             }
 
                             input:focus {
@@ -319,4 +320,43 @@
 
         }
     }
+}
+
+
+@media (max-width: 768px) {
+    .change-big-container {
+        .change-container {
+            main {
+                .event-section {
+                    .section-title {
+                        text-align: center;
+                    }
+
+                    form {
+
+                        .row {
+                            gap: 18px;
+                        }
+
+                        .form-subtitle {
+                            display: block;
+                        }
+
+                        .two-colums {
+                            flex-direction: column;
+                            gap: 15px;
+                            justify-content: none;
+                            margin-bottom: 15px;
+
+                            .form-box {
+                                width: 100%;
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
 }

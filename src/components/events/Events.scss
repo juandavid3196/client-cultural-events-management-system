@@ -1,5 +1,5 @@
 .event-container {
-    width:100%;
+    width: 100%;
     background-color: #F2F1F6;
     height: 100vh;
     display: flex;
@@ -228,4 +228,28 @@
         }
 
     }
+}
+
+@media (max-width: 768px) {
+    .event-container {
+        .events-container {
+            .events-top {
+                flex-direction: column;
+                gap: 15px;
+
+                .btn-add-event {
+                    width: 100%;
+                }
+            }
+
+            .events-bottom {
+                .event-box {
+                    .event-data {
+                        height: auto;
+                    }
+                }
+            }
+        }
+    }
+
 }
