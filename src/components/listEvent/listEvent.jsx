@@ -19,7 +19,7 @@ const ListEvent = () => {
   const [openMenu, setOpenMenu] = useState(false);
   const [update, setUpdate] = useState(false);
   const [id, setId] = useState("");
-  const [tablaKey, setTablaKey] = useState(0); 
+  const [tablaKey, setTablaKey] = useState(0);
   const [openCloseEventForm, setOpenCloseEventForm] = useState(false);
 
 
@@ -131,11 +131,17 @@ const ListEvent = () => {
   };
 
   const handleFormWindow = () => {
-    setClose(false);
-    setName("");
-    setDescription("");
-    setOpenForm(!openForm);
-    setOpenMenu(false);
+
+    if (selectedEvent === null) {
+      toast.error('Seleccione un evento primero');
+    } else {
+      setClose(false);
+      setName("");
+      setDescription("");
+      setOpenForm(!openForm);
+      setOpenMenu(false);
+    }
+
   };
 
   const handleClose = () => {
@@ -163,9 +169,14 @@ const ListEvent = () => {
   };
 
   const handleOpenCloseEventForm = () => {
-    setOpenCloseEventForm(true);
-    setOpenMenu(false);
-    setClose(false);
+
+    if (selectedEvent === null) {
+      toast.error('Seleccione primero un evento');
+    } else {
+      setOpenCloseEventForm(true);
+      setOpenMenu(false);
+      setClose(false);
+    }
   };
 
   return (

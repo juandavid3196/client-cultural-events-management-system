@@ -326,20 +326,21 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey, idByM
           <MdEditDocument className="text-gray-900 hover:text-gray-500 hover:cursor-pointer" onClick={generateDocumentTemplate} />
         </div>
       </Tooltip>
+
     </div>
 
     {openObservationForm && (
         <div className={`form-container ${close ? "close" : ""}`}>
           <div className={`form-main-box ${close ? "close" : ""}`}>
             <div className="form-title">
-              <span>Observations</span>
+              <span>{nameResp}</span>
               <i
                 className="fa-regular fa-circle-xmark"
                 onClick={() => handleClose()}
               ></i>
             </div>
             <div className="main-form">
-              <DeliverablesDialog/>
+            <DeliverablesDialog eventId={eventId} idEspecifyResponsability={idEspecifyResponsability} edit={edit} incrementTablaKey={incrementTablaKey} />
             </div>
           </div>
         </div>

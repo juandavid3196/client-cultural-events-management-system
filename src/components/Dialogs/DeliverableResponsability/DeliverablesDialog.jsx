@@ -6,24 +6,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import { PropertiesPanel } from 'devextreme-react/cjs/diagram';
 
 
-const DeliverablesDialog = ({ open, setDialogOpen, idEspecifyResponsability, edit, eventId, incrementTablaKey }) => {
+const DeliverablesDialog = ({ setDialogOpen, idEspecifyResponsability, edit, incrementTablaKey }) => {
     const [update, setUpdate] = useState(false);
     const [observations, setObservations] = useState('');
     const [deliverables, setDeliverables] = useState([]);
     const [responsibilityCompleted, setResponsibilityCompleted] = useState(false);
     const [file, setFile] = useState(null);
-    const [formData, setFormData] = useState({
-        observations: "",
-        filesObservations: []
-    });
-
-    const handleChange = (event) => {
-        const { name, value, type, checked } = event.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: type === "checkbox" ? checked : value,
-        }));
-    };
 
     useEffect(() => {
         if (edit) {
@@ -37,14 +25,6 @@ const DeliverablesDialog = ({ open, setDialogOpen, idEspecifyResponsability, edi
         }
 
     }, [edit, idEspecifyResponsability]);
-
-    const handleObservationsFilesUpload = (event) => {
-        const palcosAndCourtesy = Array.from(event.target.files);
-        setFormData((prevData) => ({
-            ...prevData,
-            filesPalcosAndCourtesy: palcosAndCourtesy
-        }));
-    };
 
     const handleUpload = async () => {
         if (!file && responsibilityCompleted === false) {
@@ -68,7 +48,6 @@ const DeliverablesDialog = ({ open, setDialogOpen, idEspecifyResponsability, edi
                 if (response.ok) {
                     toast.success('¡Entregable Editado con Exito!');
                     incrementTablaKey()
-                    setDialogOpen(false);
                 } else {
                     console.error('Failed to update accomplishment');
                 }
@@ -120,9 +99,21 @@ const DeliverablesDialog = ({ open, setDialogOpen, idEspecifyResponsability, edi
         }
     };
 
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setFile(e.target.files[0]);
+        }
+    };
+
+    const handleSelectChange = (event) => {
+        const value = event.target.value;
+        const completed = value === "SI" ? true : false;
+        setResponsibilityCompleted(completed);
+    };
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("Form data submitted:", formData);
+        handleUpload()
     };
 
     return (
@@ -140,27 +131,43 @@ const DeliverablesDialog = ({ open, setDialogOpen, idEspecifyResponsability, edi
                             name="observation"
                             cols="30" rows="4"
                             id="observation"
-                            value={formData.situationsWithOrganizer}
-                            onChange={handleChange}
+                            value={observations}
+                            onChange={(e) => setObservations(e.target.value)}
                             placeholder="Ingrese las observaciones"
                         />
+
+                        <div className="form-box">
+                            <label htmlFor="initiatedOnTime">Desea terminar la responsabilidad sin un archivo?</label>
+                            <select
+                                name="notFile"
+                                id="notFile"
+                                value={responsibilityCompleted ? "SI" : "NO"}
+                                onChange={handleSelectChange }
+                            >
+                                <option value="" disabled>
+                                    Seleccionar
+                                </option>
+                                <option value="SI">SI</option>
+                                <option value="NO">NO</option>
+                            </select>
+                        </div>
 
                         <label htmlFor="suportedDocument">Documento soporte del entregable:</label>
                         <input
                             type="file"
                             name="suportedDocument"
                             id="suportedDocument"
-                            multiple
-                            onChange={handleObservationsFilesUpload}
+                            onChange={handleFileChange}
                             placeholder="Suba el documento soporte"
                         />
-                        {formData.filesObservations && formData.filesObservations.length > 0 && (
-                            <ul>
-                                {formData.filesObservations.map((file, index) => (
-                                    <li key={index}>{file.name}</li>
-                                ))}
-                            </ul>
-                        )}
+                        <List>
+                            {deliverables.map((file, index) => (
+                                <ListItem key={index}>
+                                    <ListItemText primary={file.name} />
+                                </ListItem>
+                            ))}
+                        </List>
+
                     </div>
                     <div className="row">
                         <div className="form-box form-box-btn">

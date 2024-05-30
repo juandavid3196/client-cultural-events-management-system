@@ -119,9 +119,8 @@ const EventsBySpaces = () => {
     const [selectedSpace, setSelectedSpace] = useState('Todos');
 
     return (
-        <div className="w-full h-screen bg-gradient-to-r to-blue-800 from-white flex items-center justify-center">
+        
             <div className="bg-white rounded-lg p-8 shadow-md w-5/6">
-                <h1 className="text-3xl font-bold text-center mb-4">Bienvenido a reportes</h1>
                 <select
                     value={selectedSpace}
                     onChange={(e) => setSelectedSpace(e.target.value)}
@@ -166,7 +165,7 @@ const EventsBySpaces = () => {
                     <Tooltip enabled={true} />
                 </Chart>
             </div>
-        </div>
+        
     );
 };
 
