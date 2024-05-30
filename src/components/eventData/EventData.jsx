@@ -44,7 +44,7 @@ const EventData = ({ element, onCloseData, openData }) => {
             <div className={`data-main-box ${close ? 'close' : ''}`}>
                 <div className='form-title'>
                     <span>{`Datos ${element.parent_event_id ? `${element.specific_name}` : `${element.general_name}`}`}</span>
-                    <i class="fa-regular fa-circle-xmark" onClick={() => handleClose()}></i>
+                    <i className="fa-regular fa-circle-xmark" onClick={() => handleClose()}></i>
                 </div>
                 <main>
                     <div className='form-eyeslashes'>

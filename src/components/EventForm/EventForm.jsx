@@ -392,7 +392,7 @@ const EventForm = ({ onCloseForm, onFinishForm, updateItem, update, onUpdateStat
 			<div className={`form-main-box ${close ? 'close' : ''}`}>
 				<div className='form-title'>
 					<span>{subEvent && update ? 'Editar Sub-Evento' : update ? 'Editar Evento' : subEvent ? 'Añadir Sub-Evento' : 'Añadir Evento'}</span>
-					<i class="fa-regular fa-circle-xmark" onClick={handleClose}></i>
+					<i className="fa-regular fa-circle-xmark" onClick={handleClose}></i>
 				</div>
 				<div className='main-form'>
 					<div className='form-eyeslashes'>

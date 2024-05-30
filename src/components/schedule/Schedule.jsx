@@ -375,7 +375,7 @@ const Schedule = () => {
 
                                 <div className='form-title'>
                                     <span> {update ? "Editar Evento" : "Crear Evento"} </span>
-                                    <i class="fa-regular fa-circle-xmark" onClick={() => { handleClose() }}></i>
+                                    <i className="fa-regular fa-circle-xmark" onClick={() => { handleClose() }}></i>
                                 </div>
                                 <div className="main-form">
                                     <form onSubmit={handleForm}>

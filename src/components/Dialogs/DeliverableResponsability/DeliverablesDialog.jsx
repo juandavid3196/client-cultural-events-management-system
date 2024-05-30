@@ -7,10 +7,23 @@ import { PropertiesPanel } from 'devextreme-react/cjs/diagram';
 
 
 const DeliverablesDialog = ({ open, setDialogOpen, idEspecifyResponsability, edit, eventId, incrementTablaKey }) => {
+    const [update, setUpdate] = useState(false);
     const [observations, setObservations] = useState('');
     const [deliverables, setDeliverables] = useState([]);
     const [responsibilityCompleted, setResponsibilityCompleted] = useState(false);
     const [file, setFile] = useState(null);
+    const [formData, setFormData] = useState({
+        observations: "",
+        filesObservations: []
+    });
+
+    const handleChange = (event) => {
+        const { name, value, type, checked } = event.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: type === "checkbox" ? checked : value,
+        }));
+    };
 
     useEffect(() => {
         if (edit) {
@@ -25,10 +38,12 @@ const DeliverablesDialog = ({ open, setDialogOpen, idEspecifyResponsability, edi
 
     }, [edit, idEspecifyResponsability]);
 
-    const handleFileChange = (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setFile(e.target.files[0]);
-        }
+    const handleObservationsFilesUpload = (event) => {
+        const palcosAndCourtesy = Array.from(event.target.files);
+        setFormData((prevData) => ({
+            ...prevData,
+            filesPalcosAndCourtesy: palcosAndCourtesy
+        }));
     };
 
     const handleUpload = async () => {
@@ -103,63 +118,61 @@ const DeliverablesDialog = ({ open, setDialogOpen, idEspecifyResponsability, edi
                 console.error('Error uploading file:', error);
             }
         }
-
-
     };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log("Form data submitted:", formData);
+    };
+
     return (
-        <Dialog open={open}>
+        <form onSubmit={handleSubmit}>
+            <div className="form-section event-section">
+                <span className="section-title font-bold">Entrega de responsabilidad</span>
+                <div className="row">
 
-            <div className='px-4'>
-                <DialogTitle className='font-bold'>
-                    Observaciones
-                    <AiFillCloseCircle style={{ float: 'right', cursor: 'pointer' }} onClick={() => setDialogOpen(false)} />
-                </DialogTitle>
-                <div className='flex flex-row justify-center'>
-                    <TextareaAutosize
-                        aria-label="Introducir observaciones"
-                        minRows={8}
-                        maxRows={15}
-                        value={observations}
-                        onChange={(e) => setObservations(e.target.value)}
-                        className='w-full p-2 bg-gray-100 border-2 border-gray-400'
-                    />
+                    <div className="form-box">
+                        <label htmlFor="observation">
+                            Observaciones:
+                        </label>
+                        <textarea
+                            type="text"
+                            name="observation"
+                            cols="30" rows="4"
+                            id="observation"
+                            value={formData.situationsWithOrganizer}
+                            onChange={handleChange}
+                            placeholder="Ingrese las observaciones"
+                        />
+
+                        <label htmlFor="suportedDocument">Documento soporte del entregable:</label>
+                        <input
+                            type="file"
+                            name="suportedDocument"
+                            id="suportedDocument"
+                            multiple
+                            onChange={handleObservationsFilesUpload}
+                            placeholder="Suba el documento soporte"
+                        />
+                        {formData.filesObservations && formData.filesObservations.length > 0 && (
+                            <ul>
+                                {formData.filesObservations.map((file, index) => (
+                                    <li key={index}>{file.name}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                    <div className="row">
+                        <div className="form-box form-box-btn">
+                            <button type="submit" className="btn-send-form" >
+                                {" "}
+                                {update ? "Editar" : "Guardar"}{" "}
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <DialogTitle className='font-bold'>Subir entregables</DialogTitle>
-                <DialogContent>
-                    <input type="file" onChange={handleFileChange} />
-                    <List>
-                        {deliverables.map((file, index) => (
-                            <ListItem key={index}>
-                                <ListItemText primary={file.name} />
-                            </ListItem>
-                        ))}
-                    </List>
-                </DialogContent>
-
-                <div className='flex flex-row justify-center'>
-                    <DialogTitle className='font-bold'>Marcar responsabilidad como terminada</DialogTitle>
-                    <Checkbox
-                        checked={responsibilityCompleted}
-                        onChange={() => setResponsibilityCompleted(!responsibilityCompleted)}
-                    />
-                </div>
-
-                <button className='bg-blue-500 text-white border-2 rounded-md py-1 px-3' onClick={handleUpload}> Guardar</button>
             </div>
-
-            <ToastContainer
-                position="top-right"
-                autoClose={800}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-            />
-        </Dialog>
+        </form>
     );
 };
 

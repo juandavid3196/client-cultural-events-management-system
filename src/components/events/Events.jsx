@@ -232,7 +232,7 @@ const Events = () => {
 					<div className='input-box'>
 						<div className="input-box-relative">
 							<input type="text" placeholder='Buscar' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-							<i class="fa-solid fa-magnifying-glass"></i>
+							<i className="fa-solid fa-magnifying-glass"></i>
 						</div>
 					</div>
 					<button className='btn-add-event' onClick={() => handleAddEvent()}>Añadir evento</button>

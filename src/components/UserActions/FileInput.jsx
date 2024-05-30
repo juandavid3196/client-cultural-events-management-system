@@ -16,6 +16,11 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey, idByM
   const [idResp, setIdResp] = useState("");
   const [nameResp, setNameResp] = useState("");
   const [fileUrl, setFileUrl] = useState(null);
+  const [openForm, setOpenForm] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
+  const [openObservationForm, setOpenObservationForm] = useState(false);
+  const [close, setClose] = useState(false);
+
 
   const [formData, setFormData] = useState({
     user_email: "test@test.com",
@@ -141,11 +146,16 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey, idByM
     fetchIdResp();
   }, [idByMode]);
 
-
+  const handleClose = () => {
+    setClose(true);
+    setOpenObservationForm(false);
+    setOpenForm(false);
+  };
 
   const handleProgileDialogClick = () => {
-    setEdit(false)
-    setDialogOpen(true);
+    setOpenObservationForm(true);
+    setOpenMenu(false);
+    setClose(false);
   };
 
   const handleEditClick = () => {
@@ -270,7 +280,7 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey, idByM
   };
 
   return (
-
+    <>
     <div className="text-3xl flex gap-2">
 
       {!statusAcomplishments ?
@@ -316,9 +326,25 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey, idByM
           <MdEditDocument className="text-gray-900 hover:text-gray-500 hover:cursor-pointer" onClick={generateDocumentTemplate} />
         </div>
       </Tooltip>
-
-      <DeliverablesDialog open={dialogOpen} setDialogOpen={setDialogOpen} eventId={eventId} idEspecifyResponsability={idEspecifyResponsability} edit={edit} incrementTablaKey={incrementTablaKey} />
     </div>
+
+    {openObservationForm && (
+        <div className={`form-container ${close ? "close" : ""}`}>
+          <div className={`form-main-box ${close ? "close" : ""}`}>
+            <div className="form-title">
+              <span>Observations</span>
+              <i
+                className="fa-regular fa-circle-xmark"
+                onClick={() => handleClose()}
+              ></i>
+            </div>
+            <div className="main-form">
+              <DeliverablesDialog/>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -221,7 +221,7 @@ const ChangeState = ({ onCloseState, id, element, update }) => {
             <div className={`change-container ${close ? 'close' : ''}`}>
                 <div className='form-title'>
                     <span>{`Actualizar Estado`}</span>
-                    <i class="fa-regular fa-circle-xmark" onClick={handleClose}></i>
+                    <i className="fa-regular fa-circle-xmark" onClick={handleClose}></i>
                 </div>
                 <main>
                     <div className='form-eyeslashes'>
