@@ -22,7 +22,7 @@ const InterceptionTable = ({
   const generateCellKey = (row, column) => `${row}-${column}`;
 
   return (
-    <div style={{ width: "100%", maxHeight: "80vh", overflowY: "auto" }}>
+    <div style={{ width: "100%", maxHeight: "100vh", overflowY: "auto" }}>
       <table
         className="custom-table bg-white"
         style={{ borderCollapse: "collapse", width: "100%" }}
