@@ -160,7 +160,9 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey, idByM
 
   const handleEditClick = () => {
     setEdit(true)
-    setDialogOpen(true);
+    setOpenObservationForm(true);
+    setOpenMenu(false);
+    setClose(false);
   }
 
   const cancelToAcomplishments = async () => {
