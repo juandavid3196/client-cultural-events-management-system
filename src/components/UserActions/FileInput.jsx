@@ -335,14 +335,14 @@ const FileInput = ({ idEspecifyResponsability, eventId, incrementTablaKey, idByM
         <div className={`form-container ${close ? "close" : ""}`}>
           <div className={`form-main-box ${close ? "close" : ""}`}>
             <div className="form-title">
-              <span>{nameResp}</span>
+              <span className="text-white">{formData.general_name}</span>
               <i
                 className="fa-regular fa-circle-xmark"
                 onClick={() => handleClose()}
               ></i>
             </div>
             <div className="main-form">
-            <DeliverablesDialog eventId={eventId} idEspecifyResponsability={idEspecifyResponsability} edit={edit} incrementTablaKey={incrementTablaKey} />
+            <DeliverablesDialog eventId={eventId} idEspecifyResponsability={idEspecifyResponsability} edit={edit} incrementTablaKey={incrementTablaKey} respName={nameResp} />
             </div>
           </div>
         </div>

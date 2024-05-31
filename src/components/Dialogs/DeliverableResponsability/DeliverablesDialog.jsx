@@ -6,7 +6,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { PropertiesPanel } from 'devextreme-react/cjs/diagram';
 
 
-const DeliverablesDialog = ({ setDialogOpen, idEspecifyResponsability, edit, incrementTablaKey }) => {
+const DeliverablesDialog = ({ setDialogOpen, idEspecifyResponsability, edit, incrementTablaKey, respName }) => {
     const [update, setUpdate] = useState(false);
     const [observations, setObservations] = useState('');
     const [deliverables, setDeliverables] = useState([]);
@@ -119,7 +119,7 @@ const DeliverablesDialog = ({ setDialogOpen, idEspecifyResponsability, edit, inc
     return (
         <form onSubmit={handleSubmit}>
             <div className="form-section event-section">
-                <span className="section-title font-bold">Entrega de responsabilidad</span>
+                <span className="section-title font-bold">Entrega de responsabilidad {respName}</span>
                 <div className="row">
 
                     <div className="form-box">
