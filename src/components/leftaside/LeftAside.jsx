@@ -10,7 +10,6 @@ import { IoIosReturnLeft } from "react-icons/io";
 import axios from 'axios';
 
 const LeftAside = () => {
-
     const [modes, setModes] = useState([]);
 
     useEffect(() => {
@@ -37,9 +36,8 @@ const LeftAside = () => {
                     <img src="/media/img/image 2.svg" alt="img-aside" />
                     <MdMenu className="menu-icon" onClick={toggleMenu} />
                     <IoIosReturnLeft className='return-icon' onClick={toggleMenu} />
-
                 </div>
-                <div className="aside-bottom  event-section">
+                <div className="aside-bottom event-section">
                     {isAuthenticated && (
                         <div className='user-info'>
                             <span className='user-name'>{user.nickname}</span>
@@ -47,13 +45,13 @@ const LeftAside = () => {
                         </div>
                     )}
                     <div className='text-white'>
-                    <Card
-                        options={modes.map(mode => (
-                            <Link key={mode.id} to={`/tablapermisos?modeId=${mode.id}`}>{mode.name}</Link>
-                        ))}
-                        text="Modalidades"
-                        icon={<MdShield />}
-                    />
+                        <Card
+                            options={modes.map(mode => (
+                                <Link key={mode.id} to={`/tablapermisos?modeId=${mode.id}`}>{mode.name}</Link>
+                            ))}
+                            text="Modalidades"
+                            icon={<MdShield />}
+                        />
                         <Card
                             options={[
                                 <Link to="/responsabilidades">Responsabilidades</Link>,
@@ -93,7 +91,6 @@ const LeftAside = () => {
                 </div>
             </div>
         </>
-
     );
 };
 

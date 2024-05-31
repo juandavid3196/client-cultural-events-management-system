@@ -7,7 +7,7 @@
 }
 
 .container {
-    width: 30%;
+    width: 20%;
     min-height: 100vh;
 
     .aside-top {
@@ -19,6 +19,7 @@
 
         img {
             width: 70%;
+            transition: none;
         }
     }
 
@@ -49,7 +50,6 @@
         }
 
         .logout-section {
-
             display: flex;
             justify-content: center;
             margin-top: 30px;
@@ -60,15 +60,13 @@
                 border-radius: 5px;
                 color: white;
                 font-size: 14px;
-
             }
         }
-
-
     }
 
     .event-section {
         overflow-y: auto;
+        flex-grow: 1;
     }
 
     .event-section::-webkit-scrollbar {
@@ -82,16 +80,13 @@
     }
 }
 
-
-
-@media (min-width:769px) and (max-width: 1024px) {
+@media (min-width: 769px) and (max-width: 1024px) {
     .container {
         width: 10%;
         transition: width 0.3s ease-in-out;
         display: block;
         background-color: #1B222A;
 
-        /* Inicialmente oculta el menú */
         .aside-top {
             .menu-icon {
                 display: block;
@@ -111,24 +106,22 @@
         .aside-bottom {
             display: none;
         }
-
     }
 
     .container.open {
-        width: 30%;
+        width: 20%;
         transition: width 0.3s ease-in-out;
         display: block;
         position: fixed;
         z-index: 1000;
 
-        /* Muestra el menú cuando está abierto */
         .aside-top {
             .menu-icon {
                 display: none;
             }
 
             img {
-                display: none;
+                display: block;
             }
 
             .return-icon {
@@ -142,20 +135,15 @@
             display: block;
         }
     }
-
-
-
 }
 
 @media (max-width: 768px) {
-
     .container {
         width: 10%;
         transition: width 0.3s ease-in-out;
         display: block;
         background-color: #1B222A;
 
-        /* Inicialmente oculta el menú */
         .aside-top {
             .menu-icon {
                 display: block;
@@ -175,7 +163,6 @@
         .aside-bottom {
             display: none;
         }
-
     }
 
     .container.open {
@@ -185,14 +172,13 @@
         position: fixed;
         z-index: 1000;
 
-        /* Muestra el menú cuando está abierto */
         .aside-top {
             .menu-icon {
                 display: none;
             }
 
             img {
-                display: none;
+                display: block;
             }
 
             .return-icon {
@@ -206,5 +192,4 @@
             display: block;
         }
     }
-
 }
