@@ -84,7 +84,7 @@ const Schedule = () => {
     const getEvents = async () => {
         setLoading(true);
         try {
-            const data = await crudService.fetchItems('events');
+            const data = await crudService.fetchItems('events?skip=0&limit=0');
             const eventsCalendar = [];
 
             if (data.length > 0)

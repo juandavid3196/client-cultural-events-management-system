@@ -111,7 +111,7 @@ const Events = () => {
 	const getFullEvents = async () => {
 
 		try {
-			const data = await crudService.fetchItems('events');
+			const data = await crudService.fetchItems('events?skip=0&limit=0');
 			const subEvents = [];
 			const eventsWithoutParent = [];
 
