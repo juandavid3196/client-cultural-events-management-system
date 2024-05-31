@@ -210,7 +210,7 @@ const ListEvent = () => {
                 <strong>Espacio del evento:</strong> {eventSpace}
               </h4>
               <h4>
-                <strong>Estadodel evento:</strong> {stateId}
+                <strong>Estado del evento:</strong> {stateId}
               </h4>
             </div>
             <button
