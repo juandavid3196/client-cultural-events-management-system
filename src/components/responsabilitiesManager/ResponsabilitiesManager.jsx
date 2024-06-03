@@ -210,7 +210,7 @@ const ResponsabilitiesManager = () => {
                                 <i className="fa-solid fa-magnifying-glass"></i>
                             </div>
                         </div>
-                        <button className='btn-add-event' onClick={() => handleFormWindow()}>Añadir Responsabilidad</button>
+                        <button className='btn-add-event'  style={{ height: '60px' }}onClick={() => handleFormWindow()}>Añadir Responsabilidad</button>
                     </div>
                     <div className='events-bottom'>
                         {
